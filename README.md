@@ -9,6 +9,10 @@ use different sets of CDSs in its implementation, which we'll then compare memor
 The chosen compiler for this project is Google's `bazel`. Please [install bazel](https://docs.bazel.build/versions/master/install.html)
 before following the next steps.
 
+### Python dependencies
+- psutil: `pip3 install psutil`
+
 ## Run
 
-[TODO]
+on `temporalgraph`:
+- `python3 main.py`
