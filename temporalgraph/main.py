@@ -1,12 +1,13 @@
 import time
 import psutil
 import subprocess
+import argparse
 from monitor import ProcessMonitor
 
 BAZEL_BIN_DIR = '../bazel-bin/temporalgraph'
 
 
-def main():
+def main(args):
     # I am executing "make target" here
     for i in range(2):
         subprocess.run(["bazel", "build", f"v{i}:main"])
@@ -33,4 +34,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(
+        description="Please provide the input filename of the data.")
+    parser.add_argument("--data", help="Path to the input file")
+    args = parser.parse_args()
+    main(args)
