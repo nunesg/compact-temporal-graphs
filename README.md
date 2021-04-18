@@ -15,4 +15,4 @@ before following the next steps.
 ## Run
 
 on `temporalgraph`:
-- `python3 main.py`
+- `python3 main.py --data='data/input_graph.txt' --version=0`
