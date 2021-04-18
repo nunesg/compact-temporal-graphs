@@ -8,13 +8,13 @@ class ProcessMonitor:
         self.command = command
         self.execution_state = False
 
-    def execute(self):
+    def execute(self, shell=False):
         self.max_vms_memory = 0
         self.max_rss_memory = 0
 
         self.t1 = None
         self.t0 = time.time()
-        self.p = subprocess.Popen(self.command, shell=False)
+        self.p = subprocess.Popen(self.command, shell=shell)
         self.execution_state = True
 
     def poll(self):

@@ -2,6 +2,7 @@
 
 #include <bits/stdc++.h>
 
+#include "temporalgraph/common/Utils.h"
 #include "temporalgraph/common/Vertex.h"
 
 namespace compact {
@@ -29,7 +30,10 @@ class Edge {
   Edge getReverse() const { return Edge(to, from, start, end); }
 
   std::string toString() const {
-    return "(" + from.toString() + "," + to.toString() + ")";
+    auto v = std::array<std::string, 4>({from.toString(), to.toString(),
+                                         std::to_string(start),
+                                         std::to_string(end)});
+    return "(" + Utils::join(v.begin(), v.end(), ",") + ")";
   }
 };
 

@@ -33,7 +33,6 @@ class AdjacencyList {
     }
 
     list[u].push_back(edge);
-    list[v].push_back(edge.getReverse());
   }
 
   std::string toString() const {
