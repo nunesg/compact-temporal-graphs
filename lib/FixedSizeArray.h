@@ -11,6 +11,8 @@ namespace lib {
 template <uint length>
 class FixedSizeArray : public Array {
  public:
+  FixedSizeArray() : sz(0), arraySize(0), array(NULL) {}
+
   FixedSizeArray(const uint& n) {
     sz = n;
     arraySize = std::ceil(1.0 * (n * length) / kWordSize);
@@ -19,10 +21,19 @@ class FixedSizeArray : public Array {
 
   uint size() const override { return sz; }
 
+  void resize(const uint& n) { *this = FixedSizeArray(n); }
+
+  void assign(const uint& n, const uint& val) {
+    resize(n);
+    for (uint i = 0; i < n; i++) {
+      write(i, val);
+    }
+  }
+
   uint read(const uint& idx) const override {
     if (!is_index_valid(idx)) {
       throw std::runtime_error(
-          "Index " + std::to_string(idx) +
+          "Read failed! Index " + std::to_string(idx) +
           " is out of bounds! Array size is: " + std::to_string(sz));
     }
     auto bitInterval = get_interval(idx);
@@ -32,7 +43,7 @@ class FixedSizeArray : public Array {
   void write(const uint& idx, const uint& val) override {
     if (!is_index_valid(idx)) {
       throw std::runtime_error(
-          "Index " + std::to_string(idx) +
+          "Write failed! Index " + std::to_string(idx) +
           " is out of bounds! Array size is: " + std::to_string(sz));
     }
     auto bitInterval = get_interval(idx);

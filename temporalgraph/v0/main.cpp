@@ -10,7 +10,7 @@ using namespace compact::temporalgraph;
 int main() {
   int nVertices, nEdges;
   std::cin >> nVertices >> nEdges;
-  Graph g(nVertices, "MyGraph");
+  Graph<AdjacencyList> g(nVertices, "MyGraph");
 
   int from, to, st, en;
   while (scanf("%d %d %d %d", &from, &to, &st, &en) != EOF) {

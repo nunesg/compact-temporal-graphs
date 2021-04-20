@@ -1,24 +1,24 @@
 #include <bits/stdc++.h>
 
-#include "temporalgraph/common/AdjacencyList.h"
+#include "lib/FixedSizeArray.h"
+#include "temporalgraph/common/AdjacencyMatrix.h"
 #include "temporalgraph/common/Edge.h"
 #include "temporalgraph/common/Graph.h"
 #include "temporalgraph/common/Vertex.h"
 
+using namespace compact;
 using namespace compact::temporalgraph;
 
 int main() {
-  // long long int arr[1000000];
-  // for (int i = 0; i < 1000; i++) {
-  //   arr[i] = 10;
-  // }
-  // printf("arr[999] = %lld\n", arr[999]);
+  int nVertices, nEdges;
+  std::cin >> nVertices >> nEdges;
 
-  Vertex v1(1), v2(2);
-  Edge edge(v1, v2, 0, 5);
-  Graph g(3, "MyGraph");
+  Graph<AdjacencyMatrix<lib::FixedSizeArray<7>>> g(nVertices, "MyGraph");
 
-  g.addEdge(edge);
+  int from, to, st, en;
+  while (scanf("%d %d %d %d", &from, &to, &st, &en) != EOF) {
+    g.addEdge(from, to, st, en);
+  }
 
   std::cout << g.toString() << std::endl;
 

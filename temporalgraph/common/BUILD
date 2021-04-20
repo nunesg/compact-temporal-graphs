@@ -6,6 +6,7 @@ cc_library(
     name = "graph",
     hdrs = [
         "AdjacencyList.h",
+        "AdjacencyMatrix.h",
         "Edge.h",
         "Graph.h",
         "Utils.h",

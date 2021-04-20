@@ -2,7 +2,6 @@
 
 #include <bits/stdc++.h>
 
-#include "temporalgraph/common/AdjacencyList.h"
 #include "temporalgraph/common/Edge.h"
 #include "temporalgraph/common/Utils.h"
 #include "temporalgraph/common/Vertex.h"
@@ -10,9 +9,10 @@
 namespace compact {
 namespace temporalgraph {
 
+template <typename AdjacencyContainer>
 class Graph {
  private:
-  AdjacencyList adj;
+  AdjacencyContainer adj;
   std::vector<Vertex> vertices;
   std::string id;
   int nVertices;
@@ -25,7 +25,7 @@ class Graph {
     for (auto i = 0; i < n; i++) {
       vertices.push_back(Vertex(i));
     }
-    adj = AdjacencyList(n);
+    adj = AdjacencyContainer(n);
     id = id_;
   }
 

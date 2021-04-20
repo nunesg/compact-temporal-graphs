@@ -8,6 +8,7 @@ cc_binary(
         "main.cpp",
     ],
     deps = [
+        "//lib:array",
         "//temporalgraph/common:graph",
     ],
 )

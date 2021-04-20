@@ -24,6 +24,10 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   std::vector<int> v(7);
 
   // 1-cell value
+  arr.write(0, 22);
+  v[0] = 22;
+  EXPECT_EQ(arr[0], v[0]);
+
   arr.write(1, 22);
   v[1] = 22;
   EXPECT_EQ(arr[1], v[1]);
@@ -57,6 +61,28 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   } catch (std::exception& e) {
     LOG(INFO) << "Caught exception: " << e.what();
   }
+
+  /*
+    create an array of compact arrays
+  */
+  FixedSizeArray<5> mat[4];
+  mat[0].resize(4);
+  mat[0].write(3, 5);
+  LOG(INFO) << mat[0][3];
+  EXPECT_EQ(mat[0][3], 5);
+
+  FixedSizeArray<5>* matPtr;
+  matPtr = new FixedSizeArray<5>[4];
+  matPtr[0].assign(4, 0);
+  matPtr[0].write(3, 5);
+  LOG(INFO) << matPtr[0][3];
+  EXPECT_EQ(matPtr[0][3], 5);
+
+  std::vector<FixedSizeArray<5>> vet(4);
+  vet[0].resize(4);
+  vet[0].write(3, 3);
+  LOG(INFO) << vet[0][3];
+  EXPECT_EQ(vet[0][3], 3);
 }
 
 }  // namespace test
