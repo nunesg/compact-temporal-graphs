@@ -1,12 +1,15 @@
 #include <math.h>
 
-#include "Array.h"
+#include <utility>
 
+#include "Array.h"
+#include "glog/logging.h"
+
+template <unsigned int length>
 class FixedSizeArray : public Array {
  public:
-  FixedSizeArray(const unsigned int& n, const unsigned int& length) {
+  FixedSizeArray(const unsigned int& n) {
     sz = n;
-    this->length = length;
     arraySize = std::ceil(1.0 * (n * length) / kWordSize);
     array = new unsigned int[arraySize];
   }
@@ -14,12 +17,21 @@ class FixedSizeArray : public Array {
   unsigned int size() const override { return sz; }
 
   unsigned int read(const unsigned int& idx) const override {
+    if (!is_index_valid(idx)) {
+      throw std::runtime_error(
+          "Index " + std::to_string(idx) +
+          " is out of bounds! Array size is: " + std::to_string(sz));
+    }
     auto bitInterval = get_interval(idx);
     return read_interval(bitInterval.first, bitInterval.second);
   }
 
-  // TODO
   void write(const unsigned int& idx, const unsigned int& val) override {
+    if (!is_index_valid(idx)) {
+      throw std::runtime_error(
+          "Index " + std::to_string(idx) +
+          " is out of bounds! Array size is: " + std::to_string(sz));
+    }
     auto bitInterval = get_interval(idx);
     write_interval(bitInterval.first, bitInterval.second, val);
   }
@@ -29,11 +41,14 @@ class FixedSizeArray : public Array {
   }
 
  private:
-  static const unsigned int kWordSize = 8 * sizeof(int);
+  static const unsigned int kWordSize = 8 * sizeof(unsigned int);
   unsigned int sz;
-  unsigned int length;
   unsigned int arraySize;
   unsigned int* array;
+
+  bool is_index_valid(const unsigned int& idx) const {
+    return idx >= 0 && idx < sz;
+  }
 
   std::pair<unsigned int, unsigned int> get_interval(
       const unsigned int& idx) const {
@@ -62,7 +77,7 @@ class FixedSizeArray : public Array {
                                     const unsigned int& l,
                                     const unsigned int& r) const {
     unsigned int val = array[idx];
-    return (val >> (kWordSize - r - 1)) & ((1 << (r - l + 1)) - 1);
+    return (val >> l) & ((1 << (r - l + 1)) - 1);
   }
 
   void write_interval(const unsigned int& startBit, const unsigned int& endBit,
@@ -87,10 +102,9 @@ class FixedSizeArray : public Array {
   void write_incell_interval(const unsigned int& idx, const unsigned int& l,
                              const unsigned int& r,
                              const unsigned int& val) const {
-    unsigned int croppedVal =
-        get_mask_interval(val, kWordSize - length, kWordSize - 1);
+    unsigned int croppedVal = get_mask_interval(val, 0, length - 1);
     unsigned int v = clear_mask_interval(array[idx], l, r);
-    array[idx] = v | (croppedVal << (kWordSize - r - 1));
+    array[idx] = v | (croppedVal << l);
   }
 
   static unsigned int clear_mask_interval(const unsigned int& val,
@@ -102,8 +116,6 @@ class FixedSizeArray : public Array {
   static unsigned int get_mask_interval(const unsigned int& val,
                                         const unsigned int& l,
                                         const unsigned int& r) {
-    unsigned int rmask = val & ((1 << (kWordSize - r - 1)) - 1);
-    unsigned int lmask = val & ((1 << (kWordSize - l)) - 1);
-    return lmask ^ rmask;
+    return ((val >> l) & ((1 << (r - l + 1)) - 1)) << l;
   }
 };
