@@ -1,5 +1,8 @@
 #include "glog/logging.h"
 
+namespace compact {
+namespace lib {
+
 class Array {
  public:
   Array() {}
@@ -12,3 +15,6 @@ class Array {
 
   virtual void write(const unsigned int&, const unsigned int&) = 0;
 };
+
+}  // namespace lib
+}  // namespace compact

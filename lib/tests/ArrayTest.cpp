@@ -5,6 +5,10 @@
 #include "gtest/gtest.h"
 #include "lib/FixedSizeArray.h"
 
+namespace compact {
+namespace lib {
+namespace test {
+
 // test array of fixed-length elements
 TEST(ArrayTest, fixedSizeArrayTest) {
   /*
@@ -54,3 +58,7 @@ TEST(ArrayTest, fixedSizeArrayTest) {
     LOG(INFO) << "Caught exception: " << e.what();
   }
 }
+
+}  // namespace test
+}  // namespace lib
+}  // namespace compact
