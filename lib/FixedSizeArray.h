@@ -1,3 +1,5 @@
+#pragma once
+
 #include <math.h>
 
 #include <utility>
@@ -51,6 +53,16 @@ class FixedSizeArray : public Array {
   }
 
   uint operator[](const uint& idx) const override { return read(idx); }
+
+  bool operator==(const FixedSizeArray<length>& other) const {
+    if (other.size() != size()) return false;
+    for (int i = 0; i < sz; i++) {
+      if (read(i) != other.read(i)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
  private:
   static const uint kWordSize = 8 * sizeof(uint);
