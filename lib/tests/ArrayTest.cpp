@@ -83,6 +83,22 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   vet[0].write(3, 3);
   LOG(INFO) << vet[0][3];
   EXPECT_EQ(vet[0][3], 3);
+
+  /*
+    initialize array using vector constructor
+  */
+  FixedSizeArray<31> arr2(std::vector<uint>({0, 2, 3, 4}));
+  FixedSizeArray<31> arr3(4);
+  arr3.write(0, 0);
+  arr3.write(1, 2);
+  arr3.write(2, 3);
+  arr3.write(3, 4);
+  LOG(INFO) << "arr2 size = " << arr2.size();
+  for (uint i = 0; i < arr2.size(); i++) {
+    LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i]
+              << " arr3[i] = " << arr3[i];
+  }
+  EXPECT_EQ(arr2, arr3);
 }
 
 }  // namespace test

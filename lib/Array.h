@@ -9,13 +9,13 @@ class Array {
  public:
   Array() {}
 
-  virtual unsigned int size() const = 0;
+  virtual uint size() const = 0;
 
-  virtual unsigned int read(const unsigned int&) const = 0;
+  virtual uint read(uint) const = 0;
 
-  virtual unsigned int operator[](const unsigned int& idx) const = 0;
+  virtual uint operator[](uint idx) const = 0;
 
-  virtual void write(const unsigned int&, const unsigned int&) = 0;
+  virtual void write(uint, uint) = 0;
 };
 
 }  // namespace lib
