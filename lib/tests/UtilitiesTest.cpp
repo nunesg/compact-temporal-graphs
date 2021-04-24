@@ -35,6 +35,25 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
       std::vector<uint>{0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1});
 
   EXPECT_EQ(code_stream, expected_stream);
+
+  /*
+    Test decoding a bit array in gama format
+  */
+  uint start = 0;
+  for (uint i = 0; i < 3; i++) {
+    uint nxt = GamaUtility::decode_next(code_stream, start);
+    LOG(INFO) << "Next value decoded: " << nxt << ", start index = " << start;
+    EXPECT_EQ(arr2[i], nxt);
+  }
+
+  // invalid case
+  try {
+    start = 11;
+    GamaUtility::decode_next(code_stream, start);
+    LOG(FATAL) << "Exception not caught during decoding!";
+  } catch (std::exception& e) {
+    LOG(INFO) << "Caught exception during decoding: " << e.what();
+  }
 }
 
 }  // namespace test
