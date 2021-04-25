@@ -4,6 +4,7 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "lib/FixedSizeArray.h"
+#include "lib/VariableSizeArray.h"
 
 namespace compact {
 namespace lib {
@@ -99,6 +100,26 @@ TEST(ArrayTest, fixedSizeArrayTest) {
               << " arr3[i] = " << arr3[i];
   }
   EXPECT_EQ(arr2, arr3);
+}
+
+// test array of variable-length elements
+TEST(ArrayTest, variableSizeArrayTest) {
+  /*
+    init
+
+    Array of three elements {2, 3, 4}
+
+    Will generate the bitstream in gama format:
+
+    0110010000101
+  */
+
+  std::vector<uint> values{2, 3, 4};
+  VariableSizeArray arr(values);
+  for (uint i = 0; i < arr.size(); i++) {
+    LOG(INFO) << "i: " << i << ", val = " << values[i] << ", arr = " << arr[i];
+    EXPECT_EQ(arr[i], values[i]);
+  }
 }
 
 }  // namespace test

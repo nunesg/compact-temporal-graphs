@@ -5,6 +5,7 @@ cc_library(
     hdrs = [
         "Array.h",
         "FixedSizeArray.h",
+        "VariableSizeArray.h",
     ],
     deps = [
         ":utils",

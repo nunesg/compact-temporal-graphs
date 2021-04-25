@@ -31,7 +31,7 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }
-  GamaUtility::BitArray code_stream = GamaUtility::get_code(arr2);
+  GamaUtility::BitArray code_stream = GamaUtility::get_array_code(arr2);
   GamaUtility::BitArray expected_stream(
       std::vector<uint>{0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1});
 

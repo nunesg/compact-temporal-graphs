@@ -40,6 +40,14 @@ class FixedSizeArray : public Array {
 
   void resize(uint n) { setup_array(n); }
 
+  template <typename ArrayType>
+  void reset(const ArrayType& values) {
+    setup_array(values.size());
+    for (uint i = 0; i < values.size(); i++) {
+      write(i, values[i]);
+    }
+  }
+
   void assign(uint n, uint val) {
     resize(n);
     for (uint i = 0; i < n; i++) {
