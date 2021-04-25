@@ -3,6 +3,7 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "lib/BitmaskUtility.h"
 #include "lib/GamaUtility.h"
 
 namespace compact {
@@ -26,7 +27,7 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
   /*
     test ::get_code(array) function
   */
-  FixedSizeArray<GamaUtility::kMaxLength> arr2(std::vector<uint>{2, 3, 4});
+  FixedSizeArray<BitmaskUtility::kMaxLength> arr2(std::vector<uint>{2, 3, 4});
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }

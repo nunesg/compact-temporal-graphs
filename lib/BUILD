@@ -7,6 +7,7 @@ cc_library(
         "FixedSizeArray.h",
     ],
     deps = [
+        ":utils",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -14,10 +15,12 @@ cc_library(
 cc_library(
     name = "utils",
     hdrs = [
+        "Array.h",
+        "BitmaskUtility.h",
+        "FixedSizeArray.h",
         "GamaUtility.h",
     ],
     deps = [
-        ":array",
         "@com_github_google_glog//:glog",
     ],
 )

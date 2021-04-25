@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "Array.h"
+#include "BitmaskUtility.h"
 #include "FixedSizeArray.h"
 #include "glog/logging.h"
 
@@ -14,8 +14,6 @@ namespace lib {
 class GamaUtility {
  public:
   using BitArray = FixedSizeArray<1>;
-
-  static const uint kMaxLength = 31;
 
   /*
     Get the Gama code of a single value.
@@ -36,7 +34,8 @@ class GamaUtility {
     Get the bit array representing the binary stream in gama-compression format
     for a given array of values. Example: {2,3,4} -> {0110010000101}
   */
-  static BitArray get_code(const FixedSizeArray<kMaxLength>& values) {
+  static BitArray get_code(
+      const FixedSizeArray<BitmaskUtility::kMaxLength>& values) {
     uint totalSize = get_code_length(values);
     BitArray arr;
     arr.assign(totalSize, 0);
@@ -83,27 +82,20 @@ class GamaUtility {
   }
 
  private:
-  // return the amount of bits until the most-significant 1
-  static uint count_bits(uint val) {
-    uint count = 0;
-    while (val > 0) {
-      count++;
-      val >>= 1;
-    }
-    return count;
-  }
-
   /*
     Return the length of the gama code representing the given value
     Example: code length of 3 is 5
     3 -> 00100
   */
-  static uint get_code_length(uint val) { return (count_bits(val) << 1) - 1; }
+  static uint get_code_length(uint val) {
+    return (BitmaskUtility::count_bits(val) << 1) - 1;
+  }
 
   /*
     Return the sum of code lengths for an array of values
   */
-  static uint get_code_length(const FixedSizeArray<kMaxLength>& arr) {
+  static uint get_code_length(
+      const FixedSizeArray<BitmaskUtility::kMaxLength>& arr) {
     uint sum = 0;
     for (uint i = 0; i < arr.size(); i++) {
       sum += get_code_length(arr[i] + 1);
