@@ -34,8 +34,8 @@ class GamaUtility {
     Get the bit array representing the binary stream in gama-compression format
     for a given array of values. Example: {2,3,4} -> {0110010000101}
   */
-  static BitArray get_code(
-      const FixedSizeArray<BitmaskUtility::kMaxLength>& values) {
+  template <uint length>
+  static BitArray get_code(const FixedSizeArray<length>& values) {
     uint totalSize = get_code_length(values);
     BitArray arr;
     arr.assign(totalSize, 0);
