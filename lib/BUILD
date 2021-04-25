@@ -6,6 +6,7 @@ cc_library(
         "Array.h",
         "FixedSizeArray.h",
         "VariableSizeArray.h",
+        "VariableSizeDenseArray.h",
     ],
     deps = [
         ":utils",
@@ -18,6 +19,7 @@ cc_library(
     hdrs = [
         "Array.h",
         "BitmaskUtility.h",
+        "DensePointersUtility.h",
         "FixedSizeArray.h",
         "GamaUtility.h",
     ],

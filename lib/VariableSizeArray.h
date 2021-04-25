@@ -32,13 +32,9 @@ class VariableSizeArray : public Array {
     uint b = get_block(idx);
     uint targetPos = get_position_in_block(idx);
     uint offset = offsets[b];
-    // LOG(INFO) << "block of position " << idx << " is: " << b
-    //           << ", offset: " << offset;
     for (uint i = 0; i < targetPos; i++) {
-      // LOG(INFO) << "pass through offset: " << offset;
       GamaUtility::decode_next(bitStream, offset);
     }
-    LOG(INFO) << "get result at offset: " << offset;
     return GamaUtility::decode_next(bitStream, offset);
   }
 

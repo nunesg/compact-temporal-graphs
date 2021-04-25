@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 #include "lib/FixedSizeArray.h"
 #include "lib/VariableSizeArray.h"
+#include "lib/VariableSizeDenseArray.h"
 
 namespace compact {
 namespace lib {
@@ -119,6 +120,18 @@ TEST(ArrayTest, variableSizeArrayTest) {
   for (uint i = 0; i < arr.size(); i++) {
     LOG(INFO) << "i: " << i << ", val = " << values[i] << ", arr = " << arr[i];
     EXPECT_EQ(arr[i], values[i]);
+  }
+
+  std::vector<uint> values2{0, 1, 0, 2, 5, 1, 3, 2, 8, 2};
+  VariableSizeDenseArray arr2(values2);
+  LOG(INFO) << "Variable size array using dense pointers:";
+  for (uint i = 0; i < values2.size(); i++) {
+    LOG(INFO) << "i: " << i << ", val = " << values2[i];
+  }
+  for (uint i = 0; i < arr2.size(); i++) {
+    LOG(INFO) << "i: " << i << ", val = " << values2[i]
+              << ", arr = " << arr2[i];
+    EXPECT_EQ(arr2[i], values2[i]);
   }
 }
 
