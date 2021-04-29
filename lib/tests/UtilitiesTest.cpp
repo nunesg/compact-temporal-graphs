@@ -5,7 +5,11 @@
 #include "gtest/gtest.h"
 #include "lib/BitmaskUtility.h"
 #include "lib/DensePointersUtility.h"
+#include "lib/FixedSizeArray.h"
 #include "lib/GamaUtility.h"
+#include "lib/Utils.h"
+#include "lib/VariableSizeArray.h"
+#include "lib/VariableSizeDenseArray.h"
 
 namespace compact {
 namespace lib {
@@ -98,6 +102,49 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
     EXPECT_EQ(arr2[i], nxt);
     start += DensePointersUtility::get_code_length(arr2[i]);
   }
+}
+
+// test utils
+TEST(UtilsTest, utilitiesTest) {
+  // init
+  FixedSizeArray<3> farr(std::vector<uint>{0, 2, 4, 4, 5});
+  VariableSizeArray varr(std::vector<uint>{0, 2, 4, 4, 5});
+  VariableSizeDenseArray vdarr(std::vector<uint>{0, 2, 4, 4, 5});
+
+  /*
+    test lower_bound function
+  */
+  EXPECT_EQ(Utils::lower_bound(farr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::lower_bound(farr, 0, 4, 4), 2);
+  EXPECT_EQ(Utils::lower_bound(farr, 0, 4, 5), 4);
+  EXPECT_EQ(Utils::lower_bound(farr, 0, 4, 6), 5);
+  EXPECT_EQ(Utils::lower_bound(varr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::lower_bound(varr, 0, 4, 4), 2);
+  EXPECT_EQ(Utils::lower_bound(varr, 0, 4, 5), 4);
+  EXPECT_EQ(Utils::lower_bound(varr, 0, 4, 6), 5);
+  EXPECT_EQ(Utils::lower_bound(vdarr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::lower_bound(vdarr, 0, 4, 4), 2);
+  EXPECT_EQ(Utils::lower_bound(vdarr, 0, 4, 5), 4);
+  EXPECT_EQ(Utils::lower_bound(vdarr, 0, 4, 6), 5);
+
+  /*
+    test upper_bound function
+  */
+  EXPECT_EQ(Utils::upper_bound(farr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::upper_bound(farr, 0, 4, 4), 4);
+  EXPECT_EQ(Utils::upper_bound(farr, 0, 4, 5), 5);
+  EXPECT_EQ(Utils::upper_bound(farr, 0, 4, 6), 5);
+  EXPECT_EQ(Utils::upper_bound(farr, 0, 4, 3), 2);
+  EXPECT_EQ(Utils::upper_bound(varr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::upper_bound(varr, 0, 4, 4), 4);
+  EXPECT_EQ(Utils::upper_bound(varr, 0, 4, 5), 5);
+  EXPECT_EQ(Utils::upper_bound(varr, 0, 4, 6), 5);
+  EXPECT_EQ(Utils::upper_bound(varr, 0, 4, 3), 2);
+  EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, -2), 0);
+  EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, 4), 4);
+  EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, 5), 5);
+  EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, 6), 5);
+  EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, 3), 2);
 }
 
 }  // namespace test

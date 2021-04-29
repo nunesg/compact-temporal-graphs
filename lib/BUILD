@@ -22,6 +22,7 @@ cc_library(
         "DensePointersUtility.h",
         "FixedSizeArray.h",
         "GamaUtility.h",
+        "Utils.h",
     ],
     deps = [
         "@com_github_google_glog//:glog",
@@ -47,6 +48,7 @@ cc_test(
         "tests/UtilitiesTest.cpp",
     ],
     deps = [
+        ":array",
         ":utils",
         "@com_github_google_glog//:glog",
         "@gtest",

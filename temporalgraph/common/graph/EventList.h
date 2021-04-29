@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "glog/logging.h"
+#include "lib/Utils.h"
 #include "lib/VariableSizeDenseArray.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
@@ -32,6 +33,19 @@ class EventList {
     set_timestamps(events);
   }
 
+  bool check_edge(uint v, int start, int end) const {
+    if (timestamps.size() == 0) return false;
+    uint tbegin = lib::Utils::lower_bound(timestamps, 0,
+                                          (int)timestamps.size() - 1, start);
+    uint tend =
+        lib::Utils::upper_bound(timestamps, 0, (int)timestamps.size() - 1, end);
+    uint fbegin = count_label(v, tbegin);
+    uint fend = count_label(v, tend);
+    return (fbegin % 2) && fend > fbegin;
+  }
+
+  uint size() const { return sz; }
+
  private:
   uint sz;
   Array labels, timestamps;
@@ -50,6 +64,14 @@ class EventList {
       values.push_back(events[i].second);
     }
     labels.reset(values);
+  }
+
+  uint count_label(uint label, uint index) const {
+    uint count = 0;
+    for (uint i = 0; i < index; i++) {
+      count += labels[i] == label;
+    }
+    return count;
   }
 };
 

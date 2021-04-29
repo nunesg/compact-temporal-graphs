@@ -27,16 +27,21 @@ class EveLog : public GraphInterface {
 
   // returns whether there is an edge (u, v) active during that time interval
   bool has_edge(uint u, uint v, int start, int end) const override {
-    return false;
+    if (u >= n) {
+      throw std::runtime_error("Vertex index is out of bounds.");
+    }
+    return adj[u].check_edge(v, start, end);
   }
 
   // returns neighbours of vertex u on that time interval
   VertexContainer neighbours(uint u, int start, int end) const override {
+    // TODO
     return VertexContainer();
   }
 
   // returns the graph's edges that were active on that time interval
   EdgeContainer aggregate(int start, int end) const override {
+    // TODO
     return EdgeContainer();
   }
 

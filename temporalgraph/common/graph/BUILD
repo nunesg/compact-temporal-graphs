@@ -24,6 +24,7 @@ cc_library(
     ],
     deps = [
         "//lib:array",
+        "//lib:utils",
         "@com_github_google_glog//:glog",
     ],
 )
