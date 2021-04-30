@@ -61,6 +61,16 @@ class EveLog : public GraphInterface {
 
   uint size() const { return n; }
 
+  std::string to_string() const {
+    std::string line = "\nEveLog\n";
+    line += "n = ";
+    line += std::to_string(n) + "\n";
+    for (uint i = 0; i < n; i++) {
+      line += std::to_string(i) + ": " + adj[i].to_string() + "\n";
+    }
+    return line;
+  }
+
  private:
   uint n;
   EventList* adj;

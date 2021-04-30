@@ -44,6 +44,8 @@ TEST(EveLogTest, test) {
   EXPECT_EQ(true, graph.has_edge(2, 3, 3, 3));
   EXPECT_EQ(true, graph.has_edge(2, 3, 5, 5));
   EXPECT_EQ(true, graph.has_edge(2, 3, 2, 4));
+
+  LOG(INFO) << graph.to_string();
 }
 
 }  // namespace test

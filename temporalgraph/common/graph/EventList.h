@@ -95,6 +95,16 @@ class EventList {
 
   uint size() const { return sz; }
 
+  std::string to_string() const {
+    std::string line = "[";
+    for (uint i = 0; i < sz; i++) {
+      if (i) line += ", ";
+      line += GraphUtils::to_string(Edge(labels[i], timestamps[i]));
+    }
+    line += "]";
+    return line;
+  }
+
  private:
   uint sz;
   uint n;
