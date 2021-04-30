@@ -8,6 +8,6 @@ cc_binary(
         "main.cpp",
     ],
     deps = [
-        "//temporalgraph/common:graph",
+        "//temporalgraph/common",
     ],
 )

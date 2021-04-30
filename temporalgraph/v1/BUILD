@@ -9,6 +9,6 @@ cc_binary(
     ],
     deps = [
         "//lib:array",
-        "//temporalgraph/common:graph",
+        "//temporalgraph/common",
     ],
 )
