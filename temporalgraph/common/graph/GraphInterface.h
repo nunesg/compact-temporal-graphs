@@ -15,11 +15,11 @@ class GraphInterface {
   using VertexContainer = GraphUtils::VertexContainer;
   using EdgeContainer = GraphUtils::EdgeContainer;
 
-  virtual bool has_edge(uint u, uint v, int start, int end) const = 0;
+  virtual bool has_edge(uint u, uint v, uint start, uint end) const = 0;
 
-  virtual VertexContainer neighbours(uint u, int start, int end) const = 0;
+  virtual VertexContainer neighbours(uint u, uint start, uint end) const = 0;
 
-  virtual EdgeContainer aggregate(int start, int end) const = 0;
+  virtual EdgeContainer aggregate(uint start, uint end) const = 0;
 };
 
 }  // namespace temporalgraph
