@@ -17,10 +17,11 @@ class Array {
 
   uint operator[](uint idx) const { return this->read(idx); }
 
-  bool operator==(const Array& other) const {
+  template <typename ArrayType>
+  bool operator==(const ArrayType& other) const {
     if (other.size() != this->size()) return false;
     for (uint i = 0; i < this->size(); i++) {
-      if (read(i) != other.read(i)) {
+      if (read(i) != other[i]) {
         return false;
       }
     }

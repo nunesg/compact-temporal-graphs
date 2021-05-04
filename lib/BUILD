@@ -20,6 +20,7 @@ cc_library(
         "Array.h",
         "FixedSizeArray.h",
         "utils/BitmaskUtility.h",
+        "utils/DeltaGapUtility.h",
         "utils/DensePointersUtility.h",
         "utils/GamaUtility.h",
         "utils/Utils.h",

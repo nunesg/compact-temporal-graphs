@@ -7,6 +7,7 @@
 #include "lib/VariableSizeArray.h"
 #include "lib/VariableSizeDenseArray.h"
 #include "lib/utils/BitmaskUtility.h"
+#include "lib/utils/DeltaGapUtility.h"
 #include "lib/utils/DensePointersUtility.h"
 #include "lib/utils/GamaUtility.h"
 #include "lib/utils/Utils.h"
@@ -147,6 +148,52 @@ TEST(UtilsTest, utilitiesTest) {
   EXPECT_EQ(Utils::upper_bound(vdarr, 0, 4, 3), 2);
 }
 
+// test deltagap compression utility
+TEST(UtilsTest, deltaGapTest) {
+  // init
+
+  /*
+    after compressed using deltagap, te result would be:
+    deltaGap -> {0, 4, -3, 1, -2}
+    after applying the offset, the result would be:
+    deltaGap -> {0, 7, 0, 4, 1}
+  */
+  DeltaGapUtility::Container arr{0, 4, 1, 2, 0};
+  DeltaGapUtility::Container expectedArr{0, 7, 0, 4, 1};
+
+  // test coding
+  DeltaGapUtility utils;
+  DeltaGapUtility::Container code(utils.get_array_code(arr));
+
+  for (uint i = 0; i < code.size(); i++) {
+    LOG(INFO) << "code[" << i << "]: " << code[i] << ", arr = " << arr[i];
+  }
+  EXPECT_EQ(code, expectedArr);
+
+  // test decoding
+  DeltaGapUtility::Container decoded(utils.decode_array(code));
+  for (uint i = 0; i < decoded.size(); i++) {
+    LOG(INFO) << "decoded[" << i << "]: " << decoded[i] << ", arr = " << arr[i];
+  }
+  EXPECT_EQ(decoded, arr);
+
+  // test coding using dense pointers array
+  VariableSizeDenseArray codeDense(utils.get_array_code(arr));
+
+  for (uint i = 0; i < codeDense.size(); i++) {
+    LOG(INFO) << "codeDense[" << i << "]: " << codeDense[i]
+              << ", arr = " << arr[i];
+  }
+  EXPECT_EQ(codeDense, expectedArr);
+
+  // test decoding using dense pointers array
+  DeltaGapUtility::Container decodedDense(utils.decode_array(codeDense));
+  for (uint i = 0; i < decodedDense.size(); i++) {
+    LOG(INFO) << "decodedDense[" << i << "]: " << decodedDense[i]
+              << ", arr = " << arr[i];
+  }
+  EXPECT_EQ(decodedDense, arr);
+}
 }  // namespace test
 }  // namespace lib
 }  // namespace compact
