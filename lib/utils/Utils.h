@@ -14,7 +14,8 @@ class Utils {
     Example: array = {0, 2, 4, 4, 5} lower_bound(array, 1, 3, 4) will return 2,
     which is the index of the first 4
   */
-  static uint lower_bound(const Array& arr, uint begin, uint end, int val) {
+  template <typename ArrayType>
+  static uint lower_bound(const ArrayType& arr, uint begin, uint end, int val) {
     int low = begin, high = end, mid;
 
     uint answer = arr.size();
@@ -36,7 +37,8 @@ class Utils {
     Example: array = {0, 2, 4, 4, 5} upper_bound(array, 1, 3, 4) will return 4,
     which is the index of the first number greater than 4
   */
-  static uint upper_bound(const Array& arr, uint begin, uint end, int val) {
+  template <typename ArrayType>
+  static uint upper_bound(const ArrayType& arr, uint begin, uint end, int val) {
     int low = begin, high = end, mid;
 
     uint answer = arr.size();

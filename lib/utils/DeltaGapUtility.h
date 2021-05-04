@@ -28,6 +28,8 @@ class DeltaGapUtility {
 
     Example: {0, 4, 1, 2, 0} -> {0, 4, -3, 1, -2} (offset 3)
     result after applying the offset -> {0, 7, 0, 4, 1}
+
+    TODO: make this return a pointer
   */
   template <typename ArrayType>
   Container get_array_code(const ArrayType& values) {
@@ -46,9 +48,11 @@ class DeltaGapUtility {
     original array of values.
 
     Example: {0, 7, 0, 4, 1} -> {0, 4, 1, 2, 0}
+
+    TODO: make this return a pointer
   */
   template <typename ArrayType>
-  Container decode_array(const ArrayType& deltaGap) {
+  Container decode_array(const ArrayType& deltaGap) const {
     Container values(deltaGap.size());
 
     values[0] = deltaGap[0];

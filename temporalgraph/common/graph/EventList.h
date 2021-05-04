@@ -4,8 +4,9 @@
 
 #include "glog/logging.h"
 #include "lib/FixedSizeArray.h"
-#include "lib/Utils.h"
 #include "lib/VariableSizeDenseArray.h"
+#include "lib/utils/DeltaGapUtility.h"
+#include "lib/utils/Utils.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
 namespace compact {
@@ -36,6 +37,7 @@ class EventList {
   }
 
   bool check_edge(uint v, int start, int end) const {
+    auto timestamps = get_timestamps();
     if (timestamps.size() == 0) return false;
     uint tbegin = lib::Utils::lower_bound(timestamps, 0,
                                           (int)timestamps.size() - 1, start);
@@ -53,6 +55,7 @@ class EventList {
   VertexContainer get_neighbours(uint start, uint end) const {
     if (sz == 0) return VertexContainer();
 
+    auto timestamps = get_timestamps();
     lib::FixedSizeArray<1> activeElements;
     activeElements.assign(n, 0);
     // check which elements were active before the interval start
@@ -109,6 +112,7 @@ class EventList {
   uint sz;
   uint n;
   Array labels, timestamps;
+  lib::DeltaGapUtility deltaGapUtils;
 
   void set_labels(EdgeContainer& events) {
     std::vector<uint> values;
@@ -123,7 +127,11 @@ class EventList {
     for (uint i = 0; i < sz; i++) {
       values.push_back(events[i].second);
     }
-    timestamps.reset(values);
+    timestamps.reset(deltaGapUtils.get_array_code(values));
+  }
+
+  lib::DeltaGapUtility::Container get_timestamps() const {
+    return deltaGapUtils.decode_array(timestamps);
   }
 
   uint count_label(uint label, uint index) const {
