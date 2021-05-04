@@ -122,7 +122,7 @@ TEST(ArrayTest, variableSizeArrayTest) {
     EXPECT_EQ(arr[i], values[i]);
   }
 
-  std::vector<uint> values2{0, 1, 0, 2, 5, 1, 3, 2, 8, 2};
+  std::vector<uint> values2{3, 2, 3, 2, 5, 2, 3, 2, 8, 2};
   VariableSizeDenseArray arr2(values2);
   LOG(INFO) << "Variable size array using dense pointers:";
   for (uint i = 0; i < values2.size(); i++) {

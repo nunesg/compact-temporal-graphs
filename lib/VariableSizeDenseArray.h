@@ -49,7 +49,8 @@ class VariableSizeDenseArray : public Array {
  private:
   // TODO: make this equal to BitmaskUtility::kWordSize * ln(2)
   static const uint blockSize = 2;  // k
-  uint sz, valueOffset;
+  uint sz;
+  int valueOffset;
   BitArray bitStream;
   FixedSizeArray<BitmaskUtility::kMaxLength> offsets;
   // 12 = log2(w*w*2), where w = wordSize = 32
@@ -57,7 +58,7 @@ class VariableSizeDenseArray : public Array {
 
   void setup(std::vector<uint> values) {
     sz = values.size();
-    auto& minVal = *std::min_element(values.begin(), values.end());
+    int minVal = (int)*std::min_element(values.begin(), values.end());
     valueOffset = 1 - minVal;
     shift_values(values);
     bitStream.reset(DensePointersUtility::get_array_code(values));
