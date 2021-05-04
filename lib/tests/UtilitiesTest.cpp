@@ -3,13 +3,13 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
-#include "lib/BitmaskUtility.h"
-#include "lib/DensePointersUtility.h"
 #include "lib/FixedSizeArray.h"
-#include "lib/GamaUtility.h"
-#include "lib/Utils.h"
 #include "lib/VariableSizeArray.h"
 #include "lib/VariableSizeDenseArray.h"
+#include "lib/utils/BitmaskUtility.h"
+#include "lib/utils/DensePointersUtility.h"
+#include "lib/utils/GamaUtility.h"
+#include "lib/utils/Utils.h"
 
 namespace compact {
 namespace lib {

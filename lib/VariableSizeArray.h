@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "Array.h"
-#include "FixedSizeArray.h"
-#include "GamaUtility.h"
 #include "glog/logging.h"
+#include "lib/FixedSizeArray.h"
+#include "lib/utils/GamaUtility.h"
 
 namespace compact {
 namespace lib {

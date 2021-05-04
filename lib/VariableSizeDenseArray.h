@@ -6,10 +6,10 @@
 #include <utility>
 #include <vector>
 
-#include "Array.h"
-#include "DensePointersUtility.h"
-#include "FixedSizeArray.h"
 #include "glog/logging.h"
+#include "lib/Array.h"
+#include "lib/FixedSizeArray.h"
+#include "lib/utils/DensePointersUtility.h"
 
 namespace compact {
 namespace lib {

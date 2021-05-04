@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "Array.h"
-#include "BitmaskUtility.h"
 #include "glog/logging.h"
+#include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
 namespace lib {

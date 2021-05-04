@@ -4,9 +4,9 @@
 
 #include <utility>
 
-#include "BitmaskUtility.h"
-#include "FixedSizeArray.h"
 #include "glog/logging.h"
+#include "lib/FixedSizeArray.h"
+#include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
 namespace lib {

@@ -18,11 +18,11 @@ cc_library(
     name = "utils",
     hdrs = [
         "Array.h",
-        "BitmaskUtility.h",
-        "DensePointersUtility.h",
         "FixedSizeArray.h",
-        "GamaUtility.h",
-        "Utils.h",
+        "utils/BitmaskUtility.h",
+        "utils/DensePointersUtility.h",
+        "utils/GamaUtility.h",
+        "utils/Utils.h",
     ],
     deps = [
         "@com_github_google_glog//:glog",
