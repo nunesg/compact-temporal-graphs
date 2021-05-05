@@ -8,10 +8,17 @@ namespace temporalgraph {
 
 class GraphUtils {
  public:
-  using Vertex = int;
+  using IntType = uint;
+  using Vertex = IntType;
   using Edge = std::pair<Vertex, Vertex>;
   using VertexContainer = std::vector<Vertex>;
   using EdgeContainer = std::vector<Edge>;
+  using TimeInterval = std::pair<IntType, IntType>;
+  using TimeIntervalContainer = std::vector<TimeInterval>;
+  using TemporalNeighbour = std::pair<Vertex, TimeInterval>;
+  using TemporalNeighbourContainer = std::vector<TemporalNeighbour>;
+  using TemporalEdge = std::pair<Edge, TimeInterval>;
+  using TemporalEdgeContainer = std::vector<TemporalEdge>;
 
   static std::string to_string(const Vertex& vtx) {
     return std::to_string(vtx);

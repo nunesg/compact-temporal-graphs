@@ -14,6 +14,12 @@ class GraphInterface {
   using Edge = GraphUtils::Edge;
   using VertexContainer = GraphUtils::VertexContainer;
   using EdgeContainer = GraphUtils::EdgeContainer;
+  using TimeInterval = GraphUtils::TimeInterval;
+  using TimeIntervalContainer = GraphUtils::TimeIntervalContainer;
+  using TemporalNeighbour = GraphUtils::TemporalNeighbour;
+  using TemporalNeighbourContainer = GraphUtils::TemporalNeighbourContainer;
+  using TemporalEdge = GraphUtils::TemporalEdge;
+  using TemporalEdgeContainer = GraphUtils::TemporalEdgeContainer;
 
   virtual bool has_edge(uint u, uint v, uint start, uint end) const = 0;
 

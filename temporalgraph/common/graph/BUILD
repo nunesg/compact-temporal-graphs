@@ -29,6 +29,21 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "edgelog",
+    hdrs = [
+        "EdgeList.h",
+        "EdgeLog.h",
+        "GraphInterface.h",
+        "GraphUtils.h",
+    ],
+    deps = [
+        "//lib:array",
+        "//lib:utils",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
 cc_test(
     name = "test",
     srcs = [
