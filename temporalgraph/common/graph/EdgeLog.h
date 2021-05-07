@@ -55,9 +55,9 @@ class EdgeLog : public GraphInterface {
   }
 
   // consider each edge being a pair {v, t}, where v is the vertex number, and t
-  // is the time of the event
-  void set_events(Vertex u, const TemporalNeighbourContainer& events) {
-    adj[u].set_events(events, n);
+  // is the time of the event.
+  void set_events(Vertex u, TemporalNeighbourContainer& events) {
+    adj[u].set_events(events);
   }
 
   uint size() const { return n; }
