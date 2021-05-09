@@ -47,9 +47,11 @@ cc_library(
 cc_test(
     name = "test",
     srcs = [
+        "tests/EdgeLogTest.cpp",
         "tests/EveLogTest.cpp",
     ],
     deps = [
+        ":edgelog",
         ":evelog",
         "@com_github_google_glog//:glog",
         "@gtest",

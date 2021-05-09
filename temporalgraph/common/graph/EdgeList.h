@@ -34,7 +34,7 @@ class EdgeList {
 
     build_intervals(events);
     build_labels(events);
-    build_offsets(events, labels);
+    build_offsets(events, labels_dgap.decode_array(this->labels));
   }
 
   bool check_edge(uint v, int start, int end) const {
@@ -64,6 +64,8 @@ class EdgeList {
     [start, end], including the interval limits.
   */
   VertexContainer get_neighbours(uint start, uint end) const {
+    if (!sz) return VertexContainer();
+
     VertexContainer neighbours;
     auto labels = labels_dgap.decode_array(this->labels);
     for (uint i = 0; i < labels.size(); i++) {
@@ -77,8 +79,24 @@ class EdgeList {
   uint size() const { return sz; }
 
   std::string to_string() const {
-    // TODO
-    return "";
+    if (!sz) return "";
+    auto labels = labels_dgap.decode_array(this->labels);
+    auto intervals = intervals_dgap.decode_array(this->intervals);
+    auto offsets = offsets_dgap.decode_array(this->offsets);
+
+    std::string line("");
+    for (uint i = 0; i < labels.size(); i++) {
+      for (uint j = offsets[i]; j < intervals.size(); j += 2) {
+        if (i + 1 < labels.size() && j >= offsets[i + 1]) break;
+
+        if (line.size() != 0) line += ", ";
+        line += "{";
+        line += GraphUtils::to_string(labels[i]) + ",";
+        line += GraphUtils::to_string({intervals[j], intervals[j + 1]}) + "}";
+      }
+    }
+
+    return line;
   }
 
  private:
