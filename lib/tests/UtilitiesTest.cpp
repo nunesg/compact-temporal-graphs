@@ -10,6 +10,7 @@
 #include "lib/utils/DeltaGapUtility.h"
 #include "lib/utils/DensePointersUtility.h"
 #include "lib/utils/GamaUtility.h"
+#include "lib/utils/HuffmanUtility.h"
 #include "lib/utils/Utils.h"
 
 namespace compact {
@@ -193,6 +194,12 @@ TEST(UtilsTest, deltaGapTest) {
               << ", arr = " << arr[i];
   }
   EXPECT_EQ(decodedDense, arr);
+}
+
+// test huffman compression utility
+TEST(UtilsTest, huffmanTest) {
+  // init
+  HuffmanUtility huff;
 }
 }  // namespace test
 }  // namespace lib

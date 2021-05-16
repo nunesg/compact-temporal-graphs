@@ -23,6 +23,7 @@ cc_library(
         "utils/DeltaGapUtility.h",
         "utils/DensePointersUtility.h",
         "utils/GamaUtility.h",
+        "utils/HuffmanUtility.h",
         "utils/Utils.h",
     ],
     deps = [
