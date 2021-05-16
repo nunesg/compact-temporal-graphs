@@ -30,6 +30,17 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "heap",
+    hdrs = [
+        "Heap.h",
+    ],
+    deps = [
+        ":array",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
 cc_test(
     name = "array_test",
     srcs = [
@@ -51,6 +62,19 @@ cc_test(
     deps = [
         ":array",
         ":utils",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "heap_test",
+    srcs = [
+        "tests/HeapTest.cpp",
+    ],
+    deps = [
+        ":heap",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",

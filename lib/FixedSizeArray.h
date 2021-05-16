@@ -75,6 +75,18 @@ class FixedSizeArray : public Array {
     write_interval(bitInterval.first, bitInterval.second, val);
   }
 
+  std::string to_string() const {
+    if (size() == 0) {
+      return "[]";
+    }
+    std::string str("[");
+    str += std::to_string(read(0));
+    for (uint i = 1; i < size(); i++) {
+      str += std::string(",") + std::to_string(read(i));
+    }
+    return str + "]";
+  }
+
  private:
   uint sz;
   uint arraySize;
