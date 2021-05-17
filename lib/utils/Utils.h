@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "glog/logging.h"
 
 namespace compact {

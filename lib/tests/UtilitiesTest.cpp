@@ -200,6 +200,9 @@ TEST(UtilsTest, deltaGapTest) {
 TEST(UtilsTest, huffmanTest) {
   // init
   HuffmanUtility huff;
+
+  std::vector<uint> values{3, 1, 2, 1, 2, 1, 4};
+  huff.encode(values);
 }
 }  // namespace test
 }  // namespace lib

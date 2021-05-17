@@ -14,7 +14,7 @@ TEST(HeapTest, pushTest) {
   /*
     init
   */
-  Heap<3> heap(5, [](uint a, uint b) -> bool { return a < b; });
+  Heap heap(5, 3, [](uint a, uint b) -> bool { return a < b; });
 
   heap.push(4);
   LOG(INFO) << "heap = " << heap.to_string();
@@ -55,7 +55,7 @@ TEST(HeapTest, popTest) {
   /*
     init
   */
-  Heap<3> heap(5, [](uint a, uint b) -> bool { return a < b; });
+  Heap heap(5, 3, [](uint a, uint b) -> bool { return a < b; });
 
   std::vector<uint> vet{4, 2, 3, 1, 0};
 
@@ -84,7 +84,7 @@ TEST(HeapTest, comparatorTest) {
     init
   */
   std::vector<uint> f{5, 4, 3, 2, 1};
-  Heap<3> heap(5, [&f](uint a, uint b) -> bool { return f[a] < f[b]; });
+  Heap heap(5, 3, [&f](uint a, uint b) -> bool { return f[a] < f[b]; });
   std::vector<uint> vet{4, 2, 3, 1, 0};
 
   for (uint e : vet) {

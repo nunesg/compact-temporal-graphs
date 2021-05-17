@@ -1,28 +1,29 @@
 #pragma once
 
+#include <math.h>
+
 #include <functional>
 #include <string>
 
 #include "lib/FixedSizeArray.h"
+#include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
 namespace lib {
 
-template <uint BitSize>
 class Heap {
  public:
   using Comparator = typename std::function<bool(uint, uint)>;
 
-  Heap() {
-    max_size = 0;
-    sz = 0;
-  }
+  Heap() : max_size(0), sz(0) {}
 
   Heap(uint n, const Comparator& comparator) {
-    max_size = n;
-    sz = 0;
-    set_comparator(comparator);
-    heap.resize(max_size);
+    uint bit_size = BitmaskUtility::kMaxLength;
+    setup(n, bit_size, comparator);
+  }
+
+  Heap(uint n, uint bit_size, const Comparator& comparator) {
+    setup(n, bit_size, comparator);
   }
 
   void set_comparator(const Comparator& comparator) {
@@ -55,9 +56,17 @@ class Heap {
   std::string to_string() const { return heap.to_string(); }
 
  private:
-  FixedSizeArray<BitSize> heap;
-  uint max_size, sz;
+  FixedSizeArray heap;
+  uint max_size;
+  uint sz;
   Comparator comparator;
+
+  void setup(uint n, uint bit_size, const Comparator& comparator) {
+    max_size = n;
+    sz = 0;
+    set_comparator(comparator);
+    heap.resize(max_size, bit_size);
+  }
 
   void bubble_up(uint pos) {
     while (pos > 0) {
