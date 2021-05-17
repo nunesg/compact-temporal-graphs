@@ -8,6 +8,7 @@
 
 #include "glog/logging.h"
 #include "lib/Array.h"
+#include "lib/BitArray.h"
 #include "lib/FixedSizeArray.h"
 #include "lib/utils/DensePointersUtility.h"
 
@@ -16,8 +17,6 @@ namespace lib {
 
 class VariableSizeDenseArray : public Array {
  public:
-  using BitArray = DensePointersUtility::BitArray;
-
   VariableSizeDenseArray() : sz(0), bitStream() {}
 
   ~VariableSizeDenseArray() {}
@@ -48,13 +47,14 @@ class VariableSizeDenseArray : public Array {
 
  private:
   // TODO: make this equal to BitmaskUtility::kWordSize * ln(2)
-  static const uint blockSize = 2;  // k
+  static const uint kBlockSize = 2;  // k
+  // 12 = log2(w*w*2), where w = wordSize = 32
+  static const uint kInBlockOffsetsBitSize = 12;
   uint sz;
   int valueOffset;
   BitArray bitStream;
-  FixedSizeArray<BitmaskUtility::kMaxLength> offsets;
-  // 12 = log2(w*w*2), where w = wordSize = 32
-  FixedSizeArray<12> inBlockOffsets;
+  FixedSizeArray offsets;
+  FixedSizeArray inBlockOffsets;
 
   void setup(std::vector<uint> values) {
     sz = values.size();
@@ -62,8 +62,8 @@ class VariableSizeDenseArray : public Array {
     valueOffset = 1 - minVal;
     shift_values(values);
     bitStream.reset(DensePointersUtility::get_array_code(values));
-    offsets.assign(std::ceil(1.0 * sz / blockSize), 0);
-    inBlockOffsets.assign(sz, 0);
+    offsets.assign(std::ceil(1.0 * sz / kBlockSize), 0);
+    inBlockOffsets.assign(sz, 0, kInBlockOffsetsBitSize);
 
     uint offset = 0;
     uint inBlockOffset = 0;
@@ -89,9 +89,9 @@ class VariableSizeDenseArray : public Array {
     return offsets[get_block(idx)] + inBlockOffsets[idx];
   }
 
-  static uint get_block(uint idx) { return idx / blockSize; }
+  static uint get_block(uint idx) { return idx / kBlockSize; }
 
-  static uint get_position_in_block(uint idx) { return idx % blockSize; }
+  static uint get_position_in_block(uint idx) { return idx % kBlockSize; }
 
   bool is_index_valid(uint idx) const { return idx >= 0 && idx < sz; }
 };

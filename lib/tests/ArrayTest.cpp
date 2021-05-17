@@ -22,7 +22,7 @@ TEST(ArrayTest, fixedSizeArrayTest) {
     00000 00000 00000 00000 00000 00000 00 | 000 00000 00000 ...
     idx 0 idx 1 idx 2 idx 3 idx 4 idx 5  idx 6
   */
-  FixedSizeArray<5> arr(7);
+  FixedSizeArray arr(7, 5);
   std::vector<int> v(7);
 
   // 1-cell value
@@ -67,21 +67,21 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   /*
     create an array of compact arrays
   */
-  FixedSizeArray<5> mat[4];
-  mat[0].resize(4);
+  FixedSizeArray mat[4];
+  mat[0].resize(4, 5);
   mat[0].write(3, 5);
   LOG(INFO) << mat[0][3];
   EXPECT_EQ(mat[0][3], 5);
 
-  FixedSizeArray<5>* matPtr;
-  matPtr = new FixedSizeArray<5>[4];
-  matPtr[0].assign(4, 0);
+  FixedSizeArray* matPtr;
+  matPtr = new FixedSizeArray[4];
+  matPtr[0].assign(4, 0, 5);
   matPtr[0].write(3, 5);
   LOG(INFO) << matPtr[0][3];
   EXPECT_EQ(matPtr[0][3], 5);
 
-  std::vector<FixedSizeArray<5>> vet(4);
-  vet[0].resize(4);
+  std::vector<FixedSizeArray> vet(4);
+  vet[0].resize(4, 5);
   vet[0].write(3, 3);
   LOG(INFO) << vet[0][3];
   EXPECT_EQ(vet[0][3], 3);
@@ -89,8 +89,8 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   /*
     initialize array using vector constructor
   */
-  FixedSizeArray<31> arr2(std::vector<uint>({0, 2, 3, 4}));
-  FixedSizeArray<31> arr3(4);
+  FixedSizeArray arr2(std::vector<uint>({0, 2, 3, 4}));
+  FixedSizeArray arr3(4);
   arr3.write(0, 0);
   arr3.write(1, 2);
   arr3.write(2, 3);

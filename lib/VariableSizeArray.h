@@ -5,8 +5,9 @@
 #include <utility>
 #include <vector>
 
-#include "Array.h"
 #include "glog/logging.h"
+#include "lib/Array.h"
+#include "lib/BitArray.h"
 #include "lib/FixedSizeArray.h"
 #include "lib/utils/GamaUtility.h"
 
@@ -15,8 +16,6 @@ namespace lib {
 
 class VariableSizeArray : public Array {
  public:
-  using BitArray = GamaUtility::BitArray;
-
   VariableSizeArray() : sz(0), bitStream(), offsets() {}
 
   ~VariableSizeArray() {}
@@ -51,7 +50,7 @@ class VariableSizeArray : public Array {
   static const uint blockSize = 2;  // k
   uint sz;
   BitArray bitStream;
-  FixedSizeArray<BitmaskUtility::kMaxLength> offsets;
+  FixedSizeArray offsets;
 
   void setup(const std::vector<uint>& values) {
     sz = values.size();

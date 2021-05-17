@@ -3,6 +3,7 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "lib/BitArray.h"
 #include "lib/FixedSizeArray.h"
 #include "lib/VariableSizeArray.h"
 #include "lib/VariableSizeDenseArray.h"
@@ -22,8 +23,8 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
   /*
     test ::get_code(uint) function
   */
-  GamaUtility::BitArray code = GamaUtility::get_code(5);
-  GamaUtility::BitArray arr1(std::vector<uint>{0, 0, 1, 1, 0});
+  BitArray code = GamaUtility::get_code(5);
+  BitArray arr1(std::vector<uint>{0, 0, 1, 1, 0});
 
   for (int i = 0; i < 5; i++) {
     LOG(INFO) << "i = " << i << "code = " << code[i] << ", arr1 = " << arr1[i];
@@ -34,12 +35,12 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
   /*
     test ::get_code(array) function
   */
-  FixedSizeArray<BitmaskUtility::kMaxLength> arr2(std::vector<uint>{2, 3, 4});
+  FixedSizeArray arr2(std::vector<uint>{2, 3, 4});
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }
-  GamaUtility::BitArray code_stream = GamaUtility::get_array_code(arr2);
-  GamaUtility::BitArray expected_stream(
+  BitArray code_stream = GamaUtility::get_array_code(arr2);
+  BitArray expected_stream(
       std::vector<uint>{0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1});
 
   EXPECT_EQ(code_stream, expected_stream);
@@ -69,8 +70,8 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
   /*
     test ::get_code(uint) function
   */
-  DensePointersUtility::BitArray code = DensePointersUtility::get_code(5);
-  DensePointersUtility::BitArray arr1(std::vector<uint>{0, 1});
+  BitArray code = DensePointersUtility::get_code(5);
+  BitArray arr1(std::vector<uint>{0, 1});
 
   for (int i = 0; i < 2; i++) {
     LOG(INFO) << "i = " << i << ", code = " << code[i]
@@ -82,13 +83,12 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
   /*
     test ::get_code(array) function
   */
-  FixedSizeArray<BitmaskUtility::kMaxLength> arr2(std::vector<uint>{1, 2, 1});
+  FixedSizeArray arr2(std::vector<uint>{1, 2, 1});
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }
-  DensePointersUtility::BitArray code_stream =
-      DensePointersUtility::get_array_code(arr2);
-  DensePointersUtility::BitArray expected_stream(std::vector<uint>{0});
+  BitArray code_stream = DensePointersUtility::get_array_code(arr2);
+  BitArray expected_stream(std::vector<uint>{0});
 
   EXPECT_EQ(code_stream, expected_stream);
 
@@ -109,7 +109,7 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
 // test utils
 TEST(UtilsTest, utilitiesTest) {
   // init
-  FixedSizeArray<3> farr(std::vector<uint>{0, 2, 4, 4, 5});
+  FixedSizeArray farr(std::vector<uint>{0, 2, 4, 4, 5}, 3);
   VariableSizeArray varr(std::vector<uint>{0, 2, 4, 4, 5});
   VariableSizeDenseArray vdarr(std::vector<uint>{0, 2, 4, 4, 5});
 

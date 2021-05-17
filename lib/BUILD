@@ -1,15 +1,36 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "array",
+    name = "fixed_size_array",
     hdrs = [
         "Array.h",
+        "BitArray.h",
         "FixedSizeArray.h",
+    ],
+    deps = [
+        ":bitmask_utils",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_library(
+    name = "variable_size_array",
+    hdrs = [
         "VariableSizeArray.h",
         "VariableSizeDenseArray.h",
     ],
     deps = [
-        ":utils",
+        ":fixed_size_array",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_library(
+    name = "bitmask_utils",
+    hdrs = [
+        "utils/BitmaskUtility.h",
+    ],
+    deps = [
         "@com_github_google_glog//:glog",
     ],
 )
@@ -17,9 +38,6 @@ cc_library(
 cc_library(
     name = "utils",
     hdrs = [
-        "Array.h",
-        "FixedSizeArray.h",
-        "utils/BitmaskUtility.h",
         "utils/DeltaGapUtility.h",
         "utils/DensePointersUtility.h",
         "utils/GamaUtility.h",
@@ -27,6 +45,9 @@ cc_library(
         "utils/Utils.h",
     ],
     deps = [
+        ":bitmask_utils",
+        ":fixed_size_array",
+        ":heap",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -37,7 +58,7 @@ cc_library(
         "Heap.h",
     ],
     deps = [
-        ":array",
+        ":fixed_size_array",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -48,7 +69,9 @@ cc_test(
         "tests/ArrayTest.cpp",
     ],
     deps = [
-        ":array",
+        ":fixed_size_array",
+        ":utils",
+        ":variable_size_array",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
@@ -61,8 +84,8 @@ cc_test(
         "tests/UtilitiesTest.cpp",
     ],
     deps = [
-        ":array",
         ":utils",
+        ":variable_size_array",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",

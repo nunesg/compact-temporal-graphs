@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "glog/logging.h"
-#include "lib/FixedSizeArray.h"
+#include "lib/BitArray.h"
 #include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
@@ -13,8 +13,6 @@ namespace lib {
 
 class GamaUtility {
  public:
-  using BitArray = FixedSizeArray<1>;
-
   /*
     Get the Gama code of a single value.
     Example: 3 -> 00100 (binary_length(4)-1 zeroes + 4 representation in binary

@@ -5,7 +5,7 @@
 #include <utility>
 
 #include "glog/logging.h"
-#include "lib/FixedSizeArray.h"
+#include "lib/BitArray.h"
 #include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
@@ -13,8 +13,6 @@ namespace lib {
 
 class DensePointersUtility {
  public:
-  using BitArray = FixedSizeArray<1>;
-
   /*
    */
   static BitArray get_code(uint val) {

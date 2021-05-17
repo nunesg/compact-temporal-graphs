@@ -1,7 +1,6 @@
 #pragma once
 
 #include "glog/logging.h"
-#include "lib/Array.h"
 
 namespace compact {
 namespace lib {

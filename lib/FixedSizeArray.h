@@ -5,17 +5,16 @@
 #include <utility>
 #include <vector>
 
-#include "Array.h"
 #include "glog/logging.h"
+#include "lib/Array.h"
 #include "lib/utils/BitmaskUtility.h"
 
 namespace compact {
 namespace lib {
 
-template <uint length>
 class FixedSizeArray : public Array {
  public:
-  FixedSizeArray() : sz(0), arraySize(0), array(NULL) {}
+  FixedSizeArray() : sz(0), bit_size(1), array_size(0), array(NULL) {}
 
   ~FixedSizeArray() {
     if (array) {
@@ -23,13 +22,16 @@ class FixedSizeArray : public Array {
     }
   }
 
-  FixedSizeArray(uint n) {
+  FixedSizeArray(uint n, uint bit_size = BitmaskUtility::kMaxLength) {
     array = NULL;
+    this->bit_size = bit_size;
     setup_array(n);
   }
 
-  FixedSizeArray(const std::vector<uint>& values) {
+  FixedSizeArray(const std::vector<uint>& values,
+                 uint bit_size = BitmaskUtility::kMaxLength) {
     array = NULL;
+    this->bit_size = bit_size;
     setup_array(values.size());
     for (uint i = 0; i < values.size(); i++) {
       write(i, values[i]);
@@ -38,18 +40,23 @@ class FixedSizeArray : public Array {
 
   uint size() const override { return sz; }
 
-  void resize(uint n) { setup_array(n); }
+  void resize(uint n, uint bit_size = BitmaskUtility::kMaxLength) {
+    this->bit_size = bit_size;
+    setup_array(n);
+  }
 
   template <typename ArrayType>
-  void reset(const ArrayType& values) {
+  void reset(const ArrayType& values,
+             uint bit_size = BitmaskUtility::kMaxLength) {
+    this->bit_size = bit_size;
     setup_array(values.size());
     for (uint i = 0; i < values.size(); i++) {
       write(i, values[i]);
     }
   }
 
-  void assign(uint n, uint val) {
-    resize(n);
+  void assign(uint n, uint val, uint bit_size = BitmaskUtility::kMaxLength) {
+    resize(n, bit_size);
     for (uint i = 0; i < n; i++) {
       write(i, val);
     }
@@ -75,6 +82,8 @@ class FixedSizeArray : public Array {
     write_interval(bitInterval.first, bitInterval.second, val);
   }
 
+  uint get_bit_size() const { return this->bit_size; }
+
   std::string to_string() const {
     if (size() == 0) {
       return "[]";
@@ -89,22 +98,23 @@ class FixedSizeArray : public Array {
 
  private:
   uint sz;
-  uint arraySize;
+  uint bit_size;
+  uint array_size;
   uint* array;
 
   void setup_array(uint n) {
     sz = n;
-    arraySize = std::ceil(1.0 * (n * length) / BitmaskUtility::kWordSize);
+    array_size = std::ceil(1.0 * (n * bit_size) / BitmaskUtility::kWordSize);
     if (array) {
       delete[] array;
     }
-    array = new uint[arraySize];
+    array = new uint[array_size];
   }
 
   bool is_index_valid(uint idx) const { return idx >= 0 && idx < sz; }
 
   std::pair<uint, uint> get_interval(uint idx) const {
-    return {idx * length, int((idx + 1) * length) - 1};
+    return {idx * bit_size, int((idx + 1) * bit_size) - 1};
   }
 
   uint read_interval(uint startBit, uint endBit) const {
@@ -153,7 +163,7 @@ class FixedSizeArray : public Array {
   }
 
   void write_incell_interval(uint idx, uint l, uint r, uint val) const {
-    uint croppedVal = BitmaskUtility::get_mask_interval(val, 0, length - 1);
+    uint croppedVal = BitmaskUtility::get_mask_interval(val, 0, bit_size - 1);
     uint v = BitmaskUtility::clear_mask_interval(array[idx], l, r);
     array[idx] = v | (croppedVal << l);
   }
