@@ -201,8 +201,12 @@ TEST(UtilsTest, huffmanTest) {
   // init
   HuffmanUtility huff;
 
-  std::vector<uint> values{3, 1, 2, 1, 2, 1, 4};
-  huff.encode(values);
+  std::vector<uint> values{1, 1, 1, 2, 2, 3, 4};
+  BitArray expected_bit_stream({0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1});
+  BitArray bit_stream;
+  huff.encode(values, bit_stream);
+  LOG(INFO) << "bit_stream: " << bit_stream.to_string();
+  EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
 }
 }  // namespace test
 }  // namespace lib

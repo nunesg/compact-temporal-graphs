@@ -38,6 +38,7 @@ cc_library(
 cc_library(
     name = "utils",
     hdrs = [
+        "HuffmanTree.h",
         "utils/DeltaGapUtility.h",
         "utils/DensePointersUtility.h",
         "utils/GamaUtility.h",
