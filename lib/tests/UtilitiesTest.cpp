@@ -207,6 +207,11 @@ TEST(UtilsTest, huffmanTest) {
   huff.encode(values, bit_stream);
   LOG(INFO) << "bit_stream: " << bit_stream.to_string();
   EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
+
+  std::vector<uint> big_values{1000, 1000, 1000, 2000, 2000, 3000, 4000};
+  huff.encode(big_values, bit_stream);
+  LOG(INFO) << "bit_stream: " << bit_stream.to_string();
+  EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
 }
 }  // namespace test
 }  // namespace lib
