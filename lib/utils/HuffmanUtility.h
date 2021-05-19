@@ -34,7 +34,10 @@ class HuffmanUtility {
   }
 
   // TODO
-  void decode(const BitArray& bit_stream, ContainerType& values) { return; }
+  void decode(const BitArray& bit_stream, ContainerType& values) {
+    tree.decode();
+    return;
+  }
 
  private:
   HuffmanTree tree;

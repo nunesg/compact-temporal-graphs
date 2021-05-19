@@ -40,6 +40,83 @@ struct HuffmanTreeNode {
 
 }  // namespace
 
+class HuffmanBitTree {
+ public:
+  using Node = HuffmanTreeNode;
+  /*
+    Builds a compressed form of the huffman tree as a bitstream.
+    Each node will follow one of the two rules below:
+    - internal nodes: 0{left_subtree}{right_subtree}
+      -- note that each internal node has exactly 2 children
+    - leaf nodes: 1{label using leaf_bit_size bits}
+  */
+  void build(const Node* root, uint leaves, uint leaf_bit_size) {
+    uint tree_size = (leaves * 2) - 1;
+    this->leaf_bit_size = leaf_bit_size;
+    bit_tree.resize(tree_size + leaves * leaf_bit_size);
+
+    uint idx = 0;
+    build_pre_order(root, idx);
+  }
+
+  Node* get_tree() const {
+    uint idx = 0;
+    return get_tree_pre_order(idx);
+  }
+
+  std::string to_string() const { return bit_tree.to_string(); }
+
+ private:
+  BitArray bit_tree;
+  // number of bits necessary to store the label of the leaves
+  uint leaf_bit_size;
+
+  void build_pre_order(const Node* root, uint& idx) {
+    // leaf
+    if (!root->left && !root->right) {
+      bit_tree.write(idx++, 1);
+      write_value(root->val, idx);
+      return;
+    }
+    bit_tree.write(idx++, 0);
+    build_pre_order(root->left, idx);
+    build_pre_order(root->right, idx);
+  }
+
+  Node* get_tree_pre_order(uint& idx) const {
+    Node* root;
+    root = new Node();
+    // leaf
+    if (bit_tree[idx++] == 1) {
+      root->val = read_value(idx);
+      return root;
+    }
+    root->left = get_tree_pre_order(idx);
+    root->right = get_tree_pre_order(idx);
+    return root;
+  }
+
+  /*
+    write the value on the bit_tree bitstream using bit_size bits
+  */
+  void write_value(uint val, uint& idx) {
+    for (int i = leaf_bit_size - 1; i >= 0; i--) {
+      bit_tree.write(idx++, 1 & (val >> i));
+    }
+  }
+
+  /*
+    read the value on the bit_tree bitstream using bit_size bits
+  */
+  uint read_value(uint& idx) const {
+    uint val = 0;
+    for (uint i = 0; i < leaf_bit_size; i++) {
+      val = (val << 1) | bit_tree[idx++];
+    }
+    return val;
+  }
+};
+
 class HuffmanTree {
  public:
   using Node = HuffmanTreeNode;
@@ -51,10 +128,12 @@ class HuffmanTree {
   HuffmanTree() {}
 
   void build(const FrequencyContainer& freq, CodeContainer& codes) {
-    leaf_bit_size = 1 + int(log2(max_element(freq.begin(), freq.end())->first));
     NodeContainer nodes;
     Node* root = build_tree(freq, nodes);
-    build_bit_tree(root, freq.size());
+
+    uint leaf_bit_size =
+        1 + int(log2(max_element(freq.begin(), freq.end())->first));
+    bit_tree.build(root, freq.size(), leaf_bit_size);
     build_codes(freq.size(), nodes, codes);
 
     std::string tree_str;
@@ -65,6 +144,13 @@ class HuffmanTree {
     delete root;
   }
 
+  void decode() const {
+    std::string s;
+    Node* root = bit_tree.get_tree();
+    root->infix(s);
+    LOG(INFO) << "decoded tree: " << s;
+  }
+
  private:
   /*
     tree stored following the rules below:
@@ -73,9 +159,7 @@ class HuffmanTree {
     2. else:
       bit 0 + build_left + build_right
   */
-  BitArray bit_tree;
-  // number of bits necessary to store the label of the leaves
-  uint leaf_bit_size;
+  HuffmanBitTree bit_tree;
 
   /*
     Build huffman tree using pointers.
@@ -93,6 +177,15 @@ class HuffmanTree {
     };
 
     return build_tree(leaves, nodes, get_node_value);
+  }
+
+  void initialize_nodes(const FrequencyContainer& freq, NodeContainer& nodes,
+                        uint leaves, uint tree_max_size) {
+    nodes.resize(tree_max_size);
+
+    for (uint i = 0; i < leaves; i++) {
+      nodes[i] = new Node(freq[i].first);
+    }
   }
 
   Node* build_tree(uint leaves, NodeContainer& nodes,
@@ -130,51 +223,6 @@ class HuffmanTree {
     return nodes[heap.pop()];
   }
 
-  void initialize_nodes(const FrequencyContainer& freq, NodeContainer& nodes,
-                        uint leaves, uint tree_max_size) {
-    nodes.resize(tree_max_size);
-
-    for (uint i = 0; i < leaves; i++) {
-      nodes[i] = new Node(freq[i].first);
-    }
-  }
-
-  /*
-    Builds a compressed form of the huffman tree as a bitstream.
-    Each node will follow one of the two rules below:
-    - internal nodes: 0{left_subtree}{right_subtree}
-      -- note that each internal node has exactly 2 children
-    - leaf nodes: 1{label using leaf_bit_size bits}
-  */
-  void build_bit_tree(const Node* root, uint leaves) {
-    uint tree_size = (leaves * 2) - 1;
-    bit_tree.resize(tree_size + leaves * leaf_bit_size);
-
-    uint idx = 0;
-    build_bit_tree_pre_order(root, idx);
-  }
-
-  void build_bit_tree_pre_order(const Node* root, uint& idx) {
-    // leaf
-    if (!root->left && !root->right) {
-      bit_tree.write(idx++, 1);
-      write_value(root->val, idx);
-      return;
-    }
-    bit_tree.write(idx++, 0);
-    build_bit_tree_pre_order(root->left, idx);
-    build_bit_tree_pre_order(root->right, idx);
-  }
-
-  /*
-    write the value on the bit_tree bitstream using bit_size bits
-  */
-  void write_value(uint val, uint& idx) {
-    for (int i = leaf_bit_size - 1; i >= 0; i--) {
-      bit_tree.write(idx++, 1 & (val >> i));
-    }
-  }
-
   /*
     builds the dictionary {label: {code, code_size}}
   */
@@ -186,10 +234,11 @@ class HuffmanTree {
   }
 
   /*
-    get a reverse code from a given node.
-    if the code coming down on the tree is 110, the retured value will be 011
+    Get the code (path from root) of a given node.
+    Left edges have value 0, and right edges have value 1
 
-    the size of the code is necessary due to leading zeroes on the bitmask
+    For example, the path: left -> right -> right has code 011
+    The size of the code is necessary due to leading zeroes on the bitmask
   */
   static ii get_code(Node* leaf) {
     uint code_size = 0;
