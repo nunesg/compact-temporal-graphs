@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "glog/logging.h"
-#include "lib/FixedSizeArray.h"
+#include "lib/BitArray.h"
 #include "lib/VariableSizeDenseArray.h"
 #include "lib/utils/DeltaGapUtility.h"
 #include "lib/utils/Utils.h"
@@ -56,7 +56,7 @@ class EventList {
     if (sz == 0) return VertexContainer();
 
     auto timestamps = get_timestamps();
-    lib::FixedSizeArray<1> activeElements;
+    lib::BitArray activeElements;
     activeElements.assign(n, 0);
     // check which elements were active before the interval start
     uint i;

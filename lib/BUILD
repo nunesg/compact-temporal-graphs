@@ -26,6 +26,15 @@ cc_library(
 )
 
 cc_library(
+    name = "array",
+    deps = [
+        ":fixed_size_array",
+        ":variable_size_array",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_library(
     name = "bitmask_utils",
     hdrs = [
         "utils/BitmaskUtility.h",

@@ -121,6 +121,7 @@ class HuffmanTree {
  public:
   using Node = HuffmanTreeNode;
   using ii = std::pair<uint, uint>;
+  using ContainerType = std::vector<uint>;
   using FrequencyContainer = std::vector<ii>;
   using CodeContainer = std::unordered_map<uint, ii>;
   using NodeContainer = std::vector<Node*>;
@@ -136,19 +137,24 @@ class HuffmanTree {
     bit_tree.build(root, freq.size(), leaf_bit_size);
     build_codes(freq.size(), nodes, codes);
 
-    std::string tree_str;
-    root->infix(tree_str);
-    LOG(INFO) << "Huffman_tree: " + tree_str;
-    LOG(INFO) << "Huffman_bit_tree: " + bit_tree.to_string();
+    // std::string tree_str;
+    // root->infix(tree_str);
+    // LOG(INFO) << "Huffman_tree: " + tree_str;
+    // LOG(INFO) << "Huffman_bit_tree: " + bit_tree.to_string();
 
     delete root;
   }
 
-  void decode() const {
+  void decode(const BitArray& bit_stream, ContainerType& values) const {
     std::string s;
     Node* root = bit_tree.get_tree();
-    root->infix(s);
-    LOG(INFO) << "decoded tree: " << s;
+
+    uint idx = 0;
+    values.clear();
+    while (idx < bit_stream.size()) {
+      values.push_back(decode_next(bit_stream, root, idx));
+      // LOG(INFO) << "decoded value: " << values.back();
+    }
   }
 
  private:
@@ -265,6 +271,17 @@ class HuffmanTree {
       new_code = (new_code << 1) | (1 & (code >> i));
     }
     return new_code;
+  }
+
+  static uint decode_next(const BitArray& bit_stream, Node* root, uint& idx) {
+    while (root->left && root->right) {
+      if (bit_stream[idx++]) {
+        root = root->right;
+      } else {
+        root = root->left;
+      }
+    }
+    return root->val;
   }
 };
 

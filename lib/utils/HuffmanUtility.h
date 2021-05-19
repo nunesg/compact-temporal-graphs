@@ -19,7 +19,7 @@ class HuffmanUtility {
  public:
   using FrequencyContainer = HuffmanTree::FrequencyContainer;
   using CodeContainer = HuffmanTree::CodeContainer;
-  using ContainerType = std::vector<uint>;
+  using ContainerType = HuffmanTree::ContainerType;
 
   HuffmanUtility() {}
 
@@ -33,9 +33,8 @@ class HuffmanUtility {
     build_stream(values, codes, bit_stream);
   }
 
-  // TODO
   void decode(const BitArray& bit_stream, ContainerType& values) {
-    tree.decode();
+    tree.decode(bit_stream, values);
     return;
   }
 

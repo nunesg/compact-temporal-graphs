@@ -202,18 +202,24 @@ TEST(UtilsTest, huffmanTest) {
   HuffmanUtility huff;
 
   std::vector<uint> values{1, 1, 1, 2, 2, 3, 4};
+  std::vector<uint> decoded_values;
   BitArray expected_bit_stream({0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1});
   BitArray bit_stream;
+
   huff.encode(values, bit_stream);
   LOG(INFO) << "bit_stream: " << bit_stream.to_string();
   EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
-  huff.decode(bit_stream, values);
+  huff.decode(bit_stream, decoded_values);
+  EXPECT_EQ(values, decoded_values);
 
+  // test with big values which uses more than logm bits to store
   std::vector<uint> big_values{1000, 1000, 1000, 2000, 2000, 3000, 4000};
+
   huff.encode(big_values, bit_stream);
-  huff.decode(bit_stream, values);
+  huff.decode(bit_stream, decoded_values);
   LOG(INFO) << "bit_stream: " << bit_stream.to_string();
   EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
+  EXPECT_EQ(big_values, decoded_values);
 }
 }  // namespace test
 }  // namespace lib
