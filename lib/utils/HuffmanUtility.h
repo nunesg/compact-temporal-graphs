@@ -33,7 +33,7 @@ class HuffmanUtility {
     build_stream(values, codes, bit_stream);
   }
 
-  void decode(const BitArray& bit_stream, ContainerType& values) {
+  void decode(const BitArray& bit_stream, ContainerType& values) const {
     tree.decode(bit_stream, values);
     return;
   }

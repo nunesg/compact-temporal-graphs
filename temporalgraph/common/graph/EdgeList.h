@@ -4,8 +4,9 @@
 #include <unordered_map>
 
 #include "glog/logging.h"
-#include "lib/VariableSizeDenseArray.h"
+#include "lib/BitArray.h"
 #include "lib/utils/DeltaGapUtility.h"
+#include "lib/utils/HuffmanUtility.h"
 #include "lib/utils/Utils.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
@@ -21,6 +22,7 @@ class EdgeList {
   using TemporalNeighbourContainer = GraphUtils::TemporalNeighbourContainer;
   using TimeInterval = GraphUtils::TimeInterval;
   using Array = lib::VariableSizeDenseArray;
+  using Container = std::vector<uint>;
 
  public:
   EdgeList() {}
@@ -34,14 +36,14 @@ class EdgeList {
 
     build_intervals(events);
     build_labels(events);
-    build_offsets(events, labels_dgap.decode_array(this->labels));
+    build_offsets(events, retrieve(labels, labels_huff, labels_dgap));
   }
 
   bool check_edge(uint v, int start, int end) const {
     if (!sz) return false;
-    auto labels = labels_dgap.decode_array(this->labels);
-    auto intervals = intervals_dgap.decode_array(this->intervals);
-    auto offsets = offsets_dgap.decode_array(this->offsets);
+    auto labels = retrieve(this->labels, labels_huff, labels_dgap);
+    auto intervals = retrieve(this->intervals, intervals_huff, intervals_dgap);
+    auto offsets = retrieve(this->offsets, offsets_huff, offsets_dgap);
 
     uint v_index = get_label_index(v, labels);
     if (v_index == labels.size()) return false;
@@ -67,7 +69,7 @@ class EdgeList {
     if (!sz) return VertexContainer();
 
     VertexContainer neighbours;
-    auto labels = labels_dgap.decode_array(this->labels);
+    auto labels = retrieve(this->labels, labels_huff, labels_dgap);
     for (uint i = 0; i < labels.size(); i++) {
       if (check_edge(labels[i], start, end)) {
         neighbours.push_back(labels[i]);
@@ -80,9 +82,9 @@ class EdgeList {
 
   std::string to_string() const {
     if (!sz) return "";
-    auto labels = labels_dgap.decode_array(this->labels);
-    auto intervals = intervals_dgap.decode_array(this->intervals);
-    auto offsets = offsets_dgap.decode_array(this->offsets);
+    auto labels = retrieve(this->labels, labels_huff, labels_dgap);
+    auto intervals = retrieve(this->intervals, intervals_huff, intervals_dgap);
+    auto offsets = retrieve(this->offsets, offsets_huff, offsets_dgap);
 
     std::string line("");
     for (uint i = 0; i < labels.size(); i++) {
@@ -101,8 +103,17 @@ class EdgeList {
 
  private:
   uint sz;
-  Array labels, intervals, offsets;
+  lib::BitArray labels, intervals, offsets;
   lib::DeltaGapUtility labels_dgap, intervals_dgap, offsets_dgap;
+  lib::HuffmanUtility labels_huff, intervals_huff, offsets_huff;
+
+  Container retrieve(const lib::BitArray& bit_stream,
+                     const lib::HuffmanUtility& huff,
+                     const lib::DeltaGapUtility& dgap) const {
+    Container tmp;
+    huff.decode(bit_stream, tmp);
+    return dgap.decode_array(tmp);
+  }
 
   static uint get_label_index(uint label, const std::vector<uint>& labels) {
     auto idx = lib::Utils::lower_bound(labels, 0, labels.size(), label);
@@ -119,7 +130,8 @@ class EdgeList {
   void build_intervals(const TemporalNeighbourContainer& sorted_events) {
     std::vector<uint> interval_array;
     get_intervals_from_events(sorted_events, interval_array);
-    intervals.reset(intervals_dgap.get_array_code(interval_array));
+    intervals_huff.encode(intervals_dgap.get_array_code(interval_array),
+                          intervals);
   }
   /*
     Receive a sorted array of pairs {vertex, {start_t, end_t}} and builds the
@@ -128,7 +140,7 @@ class EdgeList {
   void build_labels(const TemporalNeighbourContainer& sorted_events) {
     VertexContainer labels_array;
     get_labels_from_events(sorted_events, labels_array);
-    labels.reset(labels_dgap.get_array_code(labels_array));
+    labels_huff.encode(labels_dgap.get_array_code(labels_array), labels);
   }
 
   /*
@@ -140,7 +152,7 @@ class EdgeList {
                      const ArrayType& labels) {
     VertexContainer offsets_array;
     get_offsets_from_events(sorted_events, labels, offsets_array);
-    offsets.reset(offsets_dgap.get_array_code(offsets_array));
+    offsets_huff.encode(offsets_dgap.get_array_code(offsets_array), offsets);
   }
 
   /*

@@ -20,11 +20,8 @@ TEST(EdgeLogTest, test) {
 
   GraphInterface::TemporalNeighbourContainer events = {{2, {0, 4}},
                                                        {3, {3, 5}}};
-  LOG(INFO) << "here";
   graph.set_events(0, events);
-  LOG(INFO) << "here 2";
   graph.set_events(2, events);
-  LOG(INFO) << "here 3";
 
   GraphInterface::EdgeContainer edges = graph.aggregate(2, 4);
   GraphInterface::EdgeContainer expectedEdges = {

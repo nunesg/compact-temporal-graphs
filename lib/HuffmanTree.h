@@ -22,8 +22,8 @@ namespace {
 struct HuffmanTreeNode {
   HuffmanTreeNode *left, *right, *parent;
   uint val;
-  HuffmanTreeNode() : left(NULL), right(NULL), val(0) {}
-  HuffmanTreeNode(uint v) : left(NULL), right(NULL), val(v) {}
+  HuffmanTreeNode() : left(NULL), right(NULL), parent(NULL), val(0) {}
+  HuffmanTreeNode(uint v) : left(NULL), right(NULL), parent(NULL), val(v) {}
   ~HuffmanTreeNode() {
     delete left;
     delete right;
@@ -132,8 +132,8 @@ class HuffmanTree {
     NodeContainer nodes;
     Node* root = build_tree(freq, nodes);
 
-    uint leaf_bit_size =
-        1 + int(log2(max_element(freq.begin(), freq.end())->first));
+    uint maxx = std::max(uint(1), max_element(freq.begin(), freq.end())->first);
+    uint leaf_bit_size = 1 + int(log2(maxx));
     bit_tree.build(root, freq.size(), leaf_bit_size);
     build_codes(freq.size(), nodes, codes);
 
@@ -155,6 +155,12 @@ class HuffmanTree {
       values.push_back(decode_next(bit_stream, root, idx));
       // LOG(INFO) << "decoded value: " << values.back();
     }
+  }
+
+  std::string to_string() const {
+    std::string s;
+    bit_tree.get_tree()->infix(s);
+    return s;
   }
 
  private:
