@@ -45,6 +45,17 @@ cc_library(
 )
 
 cc_library(
+    name = "bitvector",
+    hdrs = [
+        "BitVector.h",
+    ],
+    deps = [
+        ":fixed_size_array",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_library(
     name = "utils",
     hdrs = [
         "HuffmanTree.h",
@@ -109,6 +120,19 @@ cc_test(
     ],
     deps = [
         ":heap",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "bitvector_test",
+    srcs = [
+        "tests/BitVectorTest.cpp",
+    ],
+    deps = [
+        ":bitvector",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
