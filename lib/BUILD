@@ -48,6 +48,7 @@ cc_library(
     name = "bitvector",
     hdrs = [
         "BitVector.h",
+        "JacobsonRank.h",
     ],
     deps = [
         ":fixed_size_array",
