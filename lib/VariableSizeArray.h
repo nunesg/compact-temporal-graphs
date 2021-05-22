@@ -21,6 +21,8 @@ class VariableSizeArray : public Array {
   ~VariableSizeArray() {}
 
   VariableSizeArray(const std::vector<uint>& values) { setup(values); }
+  VariableSizeArray(const std::initializer_list<uint>& values)
+      : VariableSizeArray(std::vector<uint>(values)) {}
 
   uint size() const override { return sz; }
 

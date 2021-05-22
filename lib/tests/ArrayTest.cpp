@@ -90,7 +90,7 @@ TEST(ArrayTest, fixedSizeArrayTest) {
   /*
     initialize array using vector constructor
   */
-  FixedSizeArray arr2(std::vector<uint>({0, 2, 3, 4}));
+  FixedSizeArray arr2{0, 2, 3, 4};
   FixedSizeArray arr3(4);
   arr3.write(0, 0);
   arr3.write(1, 2);
@@ -117,14 +117,14 @@ TEST(ArrayTest, variableSizeArrayTest) {
   */
 
   std::vector<uint> values{2, 3, 4};
-  VariableSizeArray arr(values);
+  VariableSizeArray arr{2, 3, 4};
   for (uint i = 0; i < arr.size(); i++) {
     LOG(INFO) << "i: " << i << ", val = " << values[i] << ", arr = " << arr[i];
     EXPECT_EQ(arr[i], values[i]);
   }
 
   std::vector<uint> values2{3, 2, 3, 2, 5, 2, 3, 2, 8, 2};
-  VariableSizeDenseArray arr2(values2);
+  VariableSizeDenseArray arr2{3, 2, 3, 2, 5, 2, 3, 2, 8, 2};
   LOG(INFO) << "Variable size array using dense pointers:";
   for (uint i = 0; i < values2.size(); i++) {
     LOG(INFO) << "i: " << i << ", val = " << values2[i];

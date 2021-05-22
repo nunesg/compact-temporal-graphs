@@ -23,6 +23,9 @@ class VariableSizeDenseArray : public Array {
 
   VariableSizeDenseArray(const std::vector<uint>& values) { setup(values); }
 
+  VariableSizeDenseArray(const std::initializer_list<uint>& values)
+      : VariableSizeDenseArray(std::vector<uint>(values)) {}
+
   uint size() const override { return sz; }
 
   uint read(uint idx) const override {

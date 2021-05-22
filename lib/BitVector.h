@@ -18,14 +18,10 @@ class BitVector : public Array {
 
   BitVector(uint n) { resize(n); }
 
-  BitVector(const std::initializer_list<uint>& values) {
-    reset(std::vector<uint>(values));
-  }
+  BitVector(const std::vector<uint>& values) { reset(values); }
 
-  template <typename ArrayType>
-  BitVector(const ArrayType& values) {
-    reset(values);
-  }
+  BitVector(const std::initializer_list<uint>& values)
+      : BitVector(std::vector<uint>(values)) {}
 
   void resize(uint n) { bit_stream.resize(n); }
 

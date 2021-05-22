@@ -38,6 +38,10 @@ class FixedSizeArray : public Array {
     }
   }
 
+  FixedSizeArray(const std::initializer_list<uint>& values,
+                 uint bit_size = BitmaskUtility::kWordSize)
+      : FixedSizeArray(std::vector<uint>(values), bit_size) {}
+
   uint size() const override { return sz; }
 
   void resize(uint n, uint bit_size = BitmaskUtility::kWordSize) {

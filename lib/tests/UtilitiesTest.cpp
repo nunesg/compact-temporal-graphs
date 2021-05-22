@@ -24,7 +24,7 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
     test ::get_code(uint) function
   */
   BitArray code = GamaUtility::get_code(5);
-  BitArray arr1(std::vector<uint>{0, 0, 1, 1, 0});
+  BitArray arr1{0, 0, 1, 1, 0};
 
   for (int i = 0; i < 5; i++) {
     LOG(INFO) << "i = " << i << "code = " << code[i] << ", arr1 = " << arr1[i];
@@ -35,13 +35,12 @@ TEST(GamaUtilityTest, gamaCompressionTest) {
   /*
     test ::get_code(array) function
   */
-  FixedSizeArray arr2(std::vector<uint>{2, 3, 4});
+  FixedSizeArray arr2{2, 3, 4};
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }
   BitArray code_stream = GamaUtility::get_array_code(arr2);
-  BitArray expected_stream(
-      std::vector<uint>{0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1});
+  BitArray expected_stream{0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1};
 
   EXPECT_EQ(code_stream, expected_stream);
 
@@ -71,7 +70,7 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
     test ::get_code(uint) function
   */
   BitArray code = DensePointersUtility::get_code(5);
-  BitArray arr1(std::vector<uint>{0, 1});
+  BitArray arr1{0, 1};
 
   for (int i = 0; i < 2; i++) {
     LOG(INFO) << "i = " << i << ", code = " << code[i]
@@ -83,12 +82,12 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
   /*
     test ::get_code(array) function
   */
-  FixedSizeArray arr2(std::vector<uint>{1, 2, 1});
+  FixedSizeArray arr2{1, 2, 1};
   for (uint i = 0; i < arr2.size(); i++) {
     LOG(INFO) << "i = " << i << " arr2[i] = " << arr2[i];
   }
   BitArray code_stream = DensePointersUtility::get_array_code(arr2);
-  BitArray expected_stream(std::vector<uint>{0});
+  BitArray expected_stream{0};
 
   EXPECT_EQ(code_stream, expected_stream);
 
@@ -109,9 +108,9 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
 // test utils
 TEST(UtilsTest, utilitiesTest) {
   // init
-  FixedSizeArray farr(std::vector<uint>{0, 2, 4, 4, 5}, 3);
-  VariableSizeArray varr(std::vector<uint>{0, 2, 4, 4, 5});
-  VariableSizeDenseArray vdarr(std::vector<uint>{0, 2, 4, 4, 5});
+  FixedSizeArray farr({0, 2, 4, 4, 5}, 3);
+  VariableSizeArray varr{0, 2, 4, 4, 5};
+  VariableSizeDenseArray vdarr{0, 2, 4, 4, 5};
 
   /*
     test lower_bound function
@@ -203,7 +202,7 @@ TEST(UtilsTest, huffmanTest) {
 
   std::vector<uint> values{1, 1, 1, 2, 2, 3, 4};
   std::vector<uint> decoded_values;
-  BitArray expected_bit_stream({0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1});
+  BitArray expected_bit_stream{0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1};
   BitArray bit_stream;
 
   huff.encode(values, bit_stream);

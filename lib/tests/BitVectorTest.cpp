@@ -15,7 +15,7 @@ TEST(BitVectorTest, bitVectorTest) {
     init
   */
   BitVector bitv;
-  BitVector bitv2({1, 1, 0});
+  BitVector bitv2{1, 1, 0};
 
   EXPECT_EQ(bitv.size(), 0);
   EXPECT_EQ(bitv2[0], 1);

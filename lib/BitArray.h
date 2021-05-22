@@ -20,6 +20,9 @@ class BitArray : public Array {
 
   BitArray(const std::vector<uint>& values) { reset(values); }
 
+  BitArray(const std::initializer_list<uint>& values)
+      : BitArray(std::vector<uint>(values)) {}
+
   uint size() const override { return array.size(); }
 
   void resize(uint n) { array.resize(n, 1); }
