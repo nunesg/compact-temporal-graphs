@@ -22,14 +22,14 @@ class FixedSizeArray : public Array {
     }
   }
 
-  FixedSizeArray(uint n, uint bit_size = BitmaskUtility::kMaxLength) {
+  FixedSizeArray(uint n, uint bit_size = BitmaskUtility::kWordSize) {
     array = NULL;
     this->bit_size = bit_size;
     setup_array(n);
   }
 
   FixedSizeArray(const std::vector<uint>& values,
-                 uint bit_size = BitmaskUtility::kMaxLength) {
+                 uint bit_size = BitmaskUtility::kWordSize) {
     array = NULL;
     this->bit_size = bit_size;
     setup_array(values.size());
@@ -40,14 +40,14 @@ class FixedSizeArray : public Array {
 
   uint size() const override { return sz; }
 
-  void resize(uint n, uint bit_size = BitmaskUtility::kMaxLength) {
+  void resize(uint n, uint bit_size = BitmaskUtility::kWordSize) {
     this->bit_size = bit_size;
     setup_array(n);
   }
 
   template <typename ArrayType>
   void reset(const ArrayType& values,
-             uint bit_size = BitmaskUtility::kMaxLength) {
+             uint bit_size = BitmaskUtility::kWordSize) {
     this->bit_size = bit_size;
     setup_array(values.size());
     for (uint i = 0; i < values.size(); i++) {
@@ -55,7 +55,7 @@ class FixedSizeArray : public Array {
     }
   }
 
-  void assign(uint n, uint val, uint bit_size = BitmaskUtility::kMaxLength) {
+  void assign(uint n, uint val, uint bit_size = BitmaskUtility::kWordSize) {
     resize(n, bit_size);
     for (uint i = 0; i < n; i++) {
       write(i, val);
@@ -69,7 +69,7 @@ class FixedSizeArray : public Array {
           " is out of bounds! Array size is: " + std::to_string(sz));
     }
     auto bitInterval = get_interval(idx);
-    return read_interval(bitInterval.first, bitInterval.second);
+    return read_bit_interval(bitInterval.first, bitInterval.second);
   }
 
   void write(uint idx, uint val) override {
@@ -79,7 +79,26 @@ class FixedSizeArray : public Array {
           " is out of bounds! Array size is: " + std::to_string(sz));
     }
     auto bitInterval = get_interval(idx);
-    write_interval(bitInterval.first, bitInterval.second, val);
+    write_bit_interval(bitInterval.first, bitInterval.second, val);
+  }
+
+  uint read_bit_interval(uint startBit, uint endBit) const {
+    check_bit_interval(startBit, endBit);
+    uint startPos = startBit / BitmaskUtility::kWordSize;  // position in array
+    uint startOffset =
+        startBit % BitmaskUtility::kWordSize;  // position in array cell
+
+    uint endPos = endBit / BitmaskUtility::kWordSize;  // position in array
+    uint endOffset =
+        endBit % BitmaskUtility::kWordSize;  // position in array cell
+
+    if (startPos == endPos) {
+      return read_incell_interval(startPos, startOffset, endOffset);
+    }
+    uint leftPart = read_incell_interval(startPos, startOffset,
+                                         BitmaskUtility::kWordSize - 1);
+    uint rightPart = read_incell_interval(endPos, 0, endOffset);
+    return (leftPart << (endOffset + 1)) | rightPart;
   }
 
   uint get_bit_size() const { return this->bit_size; }
@@ -117,31 +136,12 @@ class FixedSizeArray : public Array {
     return {idx * bit_size, int((idx + 1) * bit_size) - 1};
   }
 
-  uint read_interval(uint startBit, uint endBit) const {
-    uint startPos = startBit / BitmaskUtility::kWordSize;  // position in array
-    uint startOffset =
-        startBit % BitmaskUtility::kWordSize;  // position in array cell
-
-    uint endPos = endBit / BitmaskUtility::kWordSize;  // position in array
-    uint endOffset =
-        endBit % BitmaskUtility::kWordSize;  // position in array cell
-
-    if (startPos == endPos) {
-      return read_incell_interval(startPos, startOffset, endOffset);
-    }
-    uint leftPart = read_incell_interval(startPos, startOffset,
-                                         BitmaskUtility::kWordSize - 1);
-    uint rightPart = read_incell_interval(endPos, 0, endOffset);
-
-    return (leftPart << (endOffset + 1)) | rightPart;
-  }
-
   uint read_incell_interval(uint idx, uint l, uint r) const {
-    uint val = array[idx];
-    return (val >> l) & ((1 << (r - l + 1)) - 1);
+    return BitmaskUtility::get_mask_interval(array[idx], l, r) >> l;
   }
 
-  void write_interval(uint startBit, uint endBit, uint val) const {
+  void write_bit_interval(uint startBit, uint endBit, uint val) {
+    check_bit_interval(startBit, endBit);
     uint startPos = startBit / BitmaskUtility::kWordSize;  // position in array
     uint startOffset =
         startBit % BitmaskUtility::kWordSize;  // position in array cell
@@ -156,16 +156,24 @@ class FixedSizeArray : public Array {
     }
 
     uint leftPart = val >> (endOffset + 1);
-    uint rightPart = val & ((1 << (endOffset + 1)) - 1);
+    uint rightPart = val & BitmaskUtility::get_full_ones(endOffset + 1);
     write_incell_interval(startPos, startOffset, BitmaskUtility::kWordSize - 1,
                           leftPart);
     write_incell_interval(endPos, 0, endOffset, rightPart);
   }
 
-  void write_incell_interval(uint idx, uint l, uint r, uint val) const {
-    uint croppedVal = BitmaskUtility::get_mask_interval(val, 0, bit_size - 1);
+  void write_incell_interval(uint idx, uint l, uint r, uint val) {
+    uint croppedVal = BitmaskUtility::get_mask_prefix(val, bit_size - 1);
     uint v = BitmaskUtility::clear_mask_interval(array[idx], l, r);
     array[idx] = v | (croppedVal << l);
+  }
+
+  static void check_bit_interval(uint startBit, uint endBit) {
+    if (startBit > endBit ||
+        (endBit - startBit + 1) > BitmaskUtility::kWordSize) {
+      throw std::runtime_error(
+          "Invalid bit interval! Interval should fit in a word len");
+    }
   }
 };
 

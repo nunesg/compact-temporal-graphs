@@ -18,7 +18,7 @@ class Heap {
   Heap() : max_size(0), sz(0) {}
 
   Heap(uint n, const Comparator& comparator) {
-    uint bit_size = BitmaskUtility::kMaxLength;
+    uint bit_size = BitmaskUtility::kWordSize;
     setup(n, bit_size, comparator);
   }
 

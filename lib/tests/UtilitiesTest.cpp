@@ -221,6 +221,19 @@ TEST(UtilsTest, huffmanTest) {
   EXPECT_EQ(bit_stream.to_string(), expected_bit_stream.to_string());
   EXPECT_EQ(big_values, decoded_values);
 }
+
+// test bitmask utility
+TEST(UtilsTest, bitmaskTest) {
+  // init
+  EXPECT_EQ(BitmaskUtility::count_bits(1 << 7), 8);
+  EXPECT_EQ(BitmaskUtility::clear_mask_interval(15, 1, 2), 9);
+  EXPECT_EQ(BitmaskUtility::get_most_significant(0),
+            BitmaskUtility::kWordSize - 1);
+  EXPECT_EQ(BitmaskUtility::get_mask_interval(31, 1, 3), 14);
+  EXPECT_EQ(BitmaskUtility::get_mask_prefix(42, 3), 10);
+  EXPECT_EQ(BitmaskUtility::get_full_ones(4), 15);
+  EXPECT_EQ(BitmaskUtility::get_full_ones(32), 0xFFFFFFFF);
+}
 }  // namespace test
 }  // namespace lib
 }  // namespace compact

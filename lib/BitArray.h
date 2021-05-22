@@ -35,6 +35,21 @@ class BitArray : public Array {
 
   void write(uint idx, uint val) override { array.write(idx, val); }
 
+  uint read_interval(uint startBit, uint endBit) const {
+    uint start_word = startBit / BitmaskUtility::kWordSize;
+    uint end_word = endBit / BitmaskUtility::kWordSize;
+    if (start_word == end_word) {
+      return array.read_bit_interval(startBit, endBit);
+    }
+    uint end_start_word = end_word * BitmaskUtility::kWordSize - 1;
+
+    uint left_part = array.read_bit_interval(startBit, end_start_word);
+    uint right_part = array.read_bit_interval(end_start_word + 1, endBit);
+    return left_part | (right_part << (end_start_word - startBit + 1));
+  }
+
+  // TODO: add write_interval
+
   std::string to_string() const { return array.to_string(); }
 
  private:

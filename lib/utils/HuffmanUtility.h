@@ -85,6 +85,8 @@ class HuffmanUtility {
 
   /*
     write a code on the bit_stream
+
+    TODO: change to bit_stream.write_interval()
   */
   static void write_code(BitArray& bit_stream, uint& idx, uint code,
                          uint code_size) {

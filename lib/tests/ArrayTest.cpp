@@ -3,6 +3,7 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "lib/BitArray.h"
 #include "lib/FixedSizeArray.h"
 #include "lib/VariableSizeArray.h"
 #include "lib/VariableSizeDenseArray.h"
@@ -133,6 +134,38 @@ TEST(ArrayTest, variableSizeArrayTest) {
               << ", arr = " << arr2[i];
     EXPECT_EQ(arr2[i], values2[i]);
   }
+}
+
+// test array of BitArray
+TEST(ArrayTest, bitArrayTest) {
+  /*
+    init
+
+    bit_stream:
+    00000000000000000000000000000011 11000000000000000000000000000000
+
+    LSB -> MSB
+  */
+  std::vector<uint> bit_stream(40);
+  bit_stream[30] = 1;
+  bit_stream[31] = 1;
+  bit_stream[32] = 1;
+  bit_stream[33] = 1;
+  BitArray arr(bit_stream);
+  arr.write(30, 1);
+  arr.write(31, 1);
+  arr.write(32, 1);
+  arr.write(33, 1);
+  LOG(INFO) << arr.to_string();
+  for (uint i = 0; i < arr.size(); i++) {
+    EXPECT_EQ(arr[i], bit_stream[i]);
+  }
+
+  EXPECT_EQ(arr.read_interval(0, 31), 0xC0000000);
+  EXPECT_EQ(arr.read_interval(30, 33), 15);
+  EXPECT_EQ(arr.read_interval(30, 31), 3);
+  EXPECT_EQ(arr.read_interval(32, 33), 3);
+  EXPECT_EQ(arr.read_interval(30, 34), 15);
 }
 
 }  // namespace test
