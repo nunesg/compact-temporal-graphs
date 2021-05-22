@@ -133,7 +133,7 @@ class HuffmanTree {
     Node* root = build_tree(freq, nodes);
 
     uint maxx = std::max(uint(1), max_element(freq.begin(), freq.end())->first);
-    uint leaf_bit_size = 1 + int(log2(maxx));
+    uint leaf_bit_size = 1 + BitmaskUtility::int_log(maxx);
     bit_tree.build(root, freq.size(), leaf_bit_size);
     build_codes(freq.size(), nodes, codes);
 
@@ -203,7 +203,7 @@ class HuffmanTree {
   Node* build_tree(uint leaves, NodeContainer& nodes,
                    const std::function<uint(uint)>& node_value_getter) {
     // number of bits to store a tree's node index
-    uint heap_bit_size = 1 + uint(log2(nodes.size()));
+    uint heap_bit_size = 1 + BitmaskUtility::int_log(nodes.size());
     Heap heap(nodes.size(), heap_bit_size,
               [&node_value_getter](uint idx1, uint idx2) -> bool {
                 return node_value_getter(idx1) < node_value_getter(idx2);

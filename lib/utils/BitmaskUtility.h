@@ -10,15 +10,16 @@ class BitmaskUtility {
   // sizes measured in bits
   static const uint kWordSize = sizeof(uint) * 8;
 
+  static uint popcount(uint mask) { return __builtin_popcount(mask); }
+
+  static uint clz(uint mask) { return __builtin_clz(mask); }
+
+  static uint ctz(uint mask) { return __builtin_ctz(mask); }
+
   // return the amount of bits until the most-significant 1
-  static uint count_bits(uint mask) {
-    uint count = 0;
-    while (mask > 0) {
-      count++;
-      mask >>= 1;
-    }
-    return count;
-  }
+  static uint count_bits(uint mask) { return kWordSize - clz(mask); }
+
+  static uint int_log(uint mask) { return mask ? count_bits(mask) - 1 : 0; }
 
   static uint clear_mask_interval(uint mask, uint l, uint r) {
     check_interval(l, r);
