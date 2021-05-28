@@ -17,7 +17,9 @@ class JacobsonRank {
  public:
   JacobsonRank() : bit_stream_ptr(NULL) {}
 
-  JacobsonRank(const std::shared_ptr<BitArrayType>& bits) {
+  JacobsonRank(const std::shared_ptr<BitArrayType>& bits) { reset(bits); }
+
+  void reset(const std::shared_ptr<BitArrayType>& bits) {
     bit_stream_ptr = bits;
   }
 

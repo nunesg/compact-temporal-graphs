@@ -50,10 +50,7 @@ TEST(BitVectorTest, clarkSelectTest) {
   std::shared_ptr<BitArray> bitv(
       new BitArray({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}));
-  std::shared_ptr<JacobsonRank<BitArray>> rk_mgr(
-      new JacobsonRank<BitArray>(bitv));
-  std::shared_ptr<ClarkSelect<BitArray>> clark(
-      new ClarkSelect<BitArray>(bitv, rk_mgr));
+  std::shared_ptr<ClarkSelect<BitArray>> clark(new ClarkSelect<BitArray>(bitv));
 
   clark->build();
 }
