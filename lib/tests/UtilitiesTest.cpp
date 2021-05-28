@@ -232,6 +232,13 @@ TEST(UtilsTest, bitmaskTest) {
   EXPECT_EQ(BitmaskUtility::get_mask_prefix(42, 3), 10);
   EXPECT_EQ(BitmaskUtility::get_full_ones(4), 15);
   EXPECT_EQ(BitmaskUtility::get_full_ones(32), 0xFFFFFFFF);
+
+  EXPECT_EQ(BitmaskUtility::rank(44 /*00110100*/, 4), 2);
+  EXPECT_EQ(BitmaskUtility::rank(44 /*00110100*/, 3), 1);
+  EXPECT_EQ(BitmaskUtility::select(44 /*00110100*/, 0), 2);
+  EXPECT_EQ(BitmaskUtility::select(44 /*00110100*/, 2), 5);
+  EXPECT_EQ(BitmaskUtility::select(44 /*00110100*/, 3),
+            BitmaskUtility::kWordSize);
 }
 }  // namespace test
 }  // namespace lib

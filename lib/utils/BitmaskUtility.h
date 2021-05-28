@@ -8,13 +8,26 @@ namespace lib {
 class BitmaskUtility {
  public:
   // sizes measured in bits
-  static const uint kWordSize = sizeof(uint) * 8;
+  static const uint kWordSize;
 
   static uint popcount(uint mask) { return __builtin_popcount(mask); }
 
   static uint clz(uint mask) { return __builtin_clz(mask); }
 
   static uint ctz(uint mask) { return __builtin_ctz(mask); }
+
+  static uint rank(uint mask, uint pos) {
+    if (pos == 0) return 0;
+    return popcount(get_mask_prefix(mask, pos - 1));
+  }
+
+  static uint select(uint mask, uint i) {
+    if (i >= popcount(mask)) return kWordSize;
+    while (i--) {
+      mask -= mask & (-mask);  // remove LSB
+    }
+    return ctz(mask);
+  }
 
   // return the amount of bits until the most-significant 1
   static uint count_bits(uint mask) { return kWordSize - clz(mask); }
@@ -71,6 +84,8 @@ class BitmaskUtility {
     }
   }
 };
+
+const uint BitmaskUtility::kWordSize = sizeof(uint) * 8;
 
 }  // namespace lib
 }  // namespace compact
