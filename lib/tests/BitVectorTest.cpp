@@ -3,7 +3,10 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "lib/BitArray.h"
 #include "lib/BitVector.h"
+#include "lib/ClarkSelect.h"
+#include "lib/JacobsonRank.h"
 
 namespace compact {
 namespace lib {
@@ -38,6 +41,23 @@ TEST(BitVectorTest, bitVectorTest) {
   LOG(INFO) << "rank(5) = " << bitv2.rank(5);
   EXPECT_EQ(bitv2.rank(5), 4);
 }
+
+// test BitVector
+TEST(BitVectorTest, clarkSelectTest) {
+  /*
+    init
+  */
+  std::shared_ptr<BitArray> bitv(
+      new BitArray({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}));
+  std::shared_ptr<JacobsonRank<BitArray>> rk_mgr(
+      new JacobsonRank<BitArray>(bitv));
+  std::shared_ptr<ClarkSelect<BitArray>> clark(
+      new ClarkSelect<BitArray>(bitv, rk_mgr));
+
+  clark->build();
+}
+
 }  // namespace test
 }  // namespace lib
 }  // namespace compact

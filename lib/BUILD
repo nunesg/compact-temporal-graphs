@@ -48,6 +48,7 @@ cc_library(
     name = "bitvector",
     hdrs = [
         "BitVector.h",
+        "ClarkSelect.h",
         "JacobsonRank.h",
     ],
     deps = [
@@ -134,6 +135,7 @@ cc_test(
     ],
     deps = [
         ":bitvector",
+        ":fixed_size_array",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
