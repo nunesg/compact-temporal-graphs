@@ -37,8 +37,7 @@ class JacobsonRank {
   }
 
   uint rank(uint pos) const {
-    assert(pos <= bit_stream_ptr->size());
-    if (pos == bit_stream_ptr->size()) {
+    if (pos >= bit_stream_ptr->size()) {
       return total_rank;
     }
     uint big_block_idx = get_big_block(pos);
@@ -63,7 +62,6 @@ class JacobsonRank {
     uint n = bit_stream_ptr->size();
     uint big_block_sum = 0;
     uint small_block_sum = 0;
-    small_block_rank.write(0, 0);
     for (uint i = 0; i < n; i++) {
       uint big_block_idx = get_big_block(i);
       uint small_block_idx = get_small_block(i);

@@ -10,6 +10,7 @@
 #include "lib/BitVector.h"
 #include "lib/ClarkSelect.h"
 #include "lib/JacobsonRank.h"
+#include "lib/VariableSizeArray.h"
 
 namespace compact {
 namespace lib {
@@ -43,29 +44,58 @@ TEST(BitVectorTest, bitVectorTest) {
   /*
     init
   */
-  BitVector bitv;
-  BitVector bitv2{1, 1, 0, 1, 1};
+  std::shared_ptr<BitVector> bitv;
 
-  EXPECT_EQ(bitv.size(), 0);
-  EXPECT_EQ(bitv2.size(), 5);
-  EXPECT_EQ(bitv2[0], 1);
-  EXPECT_EQ(bitv2[1], 1);
-  EXPECT_EQ(bitv2[2], 0);
+  // test constructors
+  bitv.reset(new BitVector());
+  EXPECT_EQ(bitv->size(), 0);
+  EXPECT_EQ(bitv->rank(1), 0);
+  EXPECT_EQ(bitv->select(1), 0);
 
-  LOG(INFO) << "bitstream: " << bitv2.to_string();
+  bitv.reset(new BitVector(5));
+  EXPECT_EQ(bitv->size(), 5);
+  EXPECT_EQ(bitv->rank(5), 0);
+  EXPECT_EQ(bitv->select(1), 5);
 
-  LOG(INFO) << "rank(0) = " << bitv2.rank(0);
-  EXPECT_EQ(bitv2.rank(0), 0);
-  LOG(INFO) << "rank(1) = " << bitv2.rank(1);
-  EXPECT_EQ(bitv2.rank(1), 1);
-  LOG(INFO) << "rank(2) = " << bitv2.rank(2);
-  EXPECT_EQ(bitv2.rank(2), 2);
-  LOG(INFO) << "rank(3) = " << bitv2.rank(3);
-  EXPECT_EQ(bitv2.rank(3), 2);
-  LOG(INFO) << "rank(4) = " << bitv2.rank(4);
-  EXPECT_EQ(bitv2.rank(4), 3);
-  LOG(INFO) << "rank(5) = " << bitv2.rank(5);
-  EXPECT_EQ(bitv2.rank(5), 4);
+  VariableSizeArray v_arr{0, 1, 0, 1, 0};
+  bitv.reset(new BitVector(v_arr));
+  EXPECT_EQ(bitv->size(), 5);
+  EXPECT_EQ(bitv->rank(5), 2);
+  EXPECT_EQ(bitv->select(1), 3);
+
+  std::vector<uint> vec{0, 1, 0, 1, 0};
+  bitv.reset(new BitVector(vec));
+  EXPECT_EQ(bitv->size(), 5);
+  EXPECT_EQ(bitv->rank(5), 2);
+  EXPECT_EQ(bitv->select(1), 3);
+
+  bitv.reset(new BitVector{0, 1, 0, 1, 0});
+  EXPECT_EQ(bitv->size(), 5);
+  EXPECT_EQ(bitv->rank(5), 2);
+  EXPECT_EQ(bitv->select(1), 3);
+
+  // test operations
+  uint iterations = 20;
+  for (uint i = 0; i < iterations; i++) {
+    uint p = i * (100 / iterations);
+    auto bit_stream_ptr = get_random_bitarray(1000, p);
+    bitv.reset(new BitVector(*bit_stream_ptr));
+
+    // test rank
+    for (uint i = 0; i < bitv->size(); i++) {
+      EXPECT_EQ(bitv->rank(i), linear_rank(bit_stream_ptr, i));
+    }
+
+    // test select
+    for (uint i = 0; i < bitv->size(); i++) {
+      EXPECT_EQ(bitv->select(i), linear_select(bit_stream_ptr, i));
+    }
+
+    // test read
+    for (uint i = 0; i < bitv->size(); i++) {
+      EXPECT_EQ((*bitv)[i], (*bit_stream_ptr)[i]);
+    }
+  }
 }
 
 // test rank

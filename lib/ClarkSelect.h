@@ -8,6 +8,7 @@
 #include "glog/logging.h"
 #include "lib/Array.h"
 #include "lib/BitArray.h"
+#include "lib/JacobsonRank.h"
 
 namespace compact {
 namespace lib {

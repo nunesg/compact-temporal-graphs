@@ -21,6 +21,7 @@ cc_library(
     ],
     deps = [
         ":fixed_size_array",
+        ":utils",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -134,8 +135,8 @@ cc_test(
         "tests/BitVectorTest.cpp",
     ],
     deps = [
+        ":array",
         ":bitvector",
-        ":fixed_size_array",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
