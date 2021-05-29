@@ -12,7 +12,26 @@ before following the next steps.
 ### Python dependencies
 - psutil: `pip3 install psutil`
 
-## Run
+## Unit testing
 
-on `temporalgraph`:
-- `python3 main.py --data='data/input_graph.txt' --version=0`
+For this project we're using the GTest framework. To add new tests, add a build rule on the BUILD file and execute it with `bazel test <rule-path>`.
+
+For example, to run the tests for the compact arrays in `lib/tests/ArrayTest.cpp`, run the build rule `array_test` in `lib/BUILD`:
+- `bazel test lib:array_test`
+
+Or, if you want to run all tests in a given folder (for example, the tests under `lib/`) run:
+- `bazel test lib/...`
+
+The output should look like this:
+
+![Example of unit testing output](images/test_example.png)
+
+## Experimentation
+
+The experiments for temporal graphs are under the `temporalgraph` folder, on the `v<version_number>` subfolders. So, to run the experiments, on `temporalgraph`:
+
+- To run all experiments
+    - `python3 main.py --data='data/input_graph.txt'`
+
+- To run a specific experiment version (for example, version 0)
+    - `python3 main.py --data='data/input_graph.txt' --version=0`
