@@ -27,12 +27,12 @@ class JacobsonRank {
     assert(bit_stream_ptr != NULL);
     uint n = bit_stream_ptr->size();
     uint logn = BitmaskUtility::int_log(n) + 1;
-    uint loglogn = BitmaskUtility::int_log(logn) + 1;
     small_block_size = logn;
     big_block_size = logn * logn;
+    uint bit_size = BitmaskUtility::int_log(big_block_size) + 1;  // 2*loglogn
     big_block_rank.resize(1 + n / big_block_size, logn);  // O(n/logn) = o(n)
     small_block_rank.resize(1 + n / small_block_size,
-                            loglogn);  // O(loglogn*n/logn) = o(n)
+                            bit_size);  // O(loglogn*n/logn) = o(n)
     build_blocks();
   }
 
@@ -45,6 +45,7 @@ class JacobsonRank {
     uint small_block_idx = get_small_block(pos);
     uint in_small_block_mask = bit_stream_ptr->read_interval(
         get_start_of_small_block(small_block_idx), pos);
+
     return big_block_rank[big_block_idx] + small_block_rank[small_block_idx] +
            BitmaskUtility::popcount(in_small_block_mask) -
            (*bit_stream_ptr)[pos];
