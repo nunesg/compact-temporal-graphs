@@ -16,10 +16,11 @@ namespace lib {
 template <typename BitArrayType = BitArray>
 class ClarkSelect {
  public:
-  ClarkSelect() : bit_stream_ptr(NULL) {}
+  ClarkSelect() : bit_stream_ptr(NULL), bit_value(1) {}
 
-  ClarkSelect(const std::shared_ptr<BitArrayType>& bits) {
+  ClarkSelect(const std::shared_ptr<BitArrayType>& bits, uint bit_val = 1) {
     bit_stream_ptr = bits;
+    bit_value = bit_val;
   }
 
   void build() {
@@ -61,18 +62,21 @@ class ClarkSelect {
         std::min(start + BitmaskUtility::kWordSize, bit_stream_ptr->size()) - 1;
     return big_block_select[big_block] + small_block_select[small_block] +
            BitmaskUtility::select(bit_stream_ptr->read_interval(start, end),
-                                  idx);
+                                  idx, end - start + 1, bit_value);
   }
 
  private:
+  // which kind of bit this select is about: 0s or 1s
+  uint bit_value;
+  // amount of bits equals to bit_value on the bit_stream
   uint total_rank;
-  // (logn)^2 1 bits per big block
+  // (logn)^2 bit_value bits per big block
   uint big_block_weight;
   // number of big blocks
   uint n_big_blocks;
   // (logn)^4
   uint big_block_threshold;
-  // sqrt(logn) 1 bits per small block
+  // sqrt(logn) bit_value bits per small block
   uint small_block_weight;
   // number of small blocks
   uint n_small_blocks;
@@ -133,7 +137,7 @@ class ClarkSelect {
   void build_blocks() {
     total_rank = 0;
     for (uint i = 0; i < bit_stream_ptr->size(); i++)
-      total_rank += (*bit_stream_ptr)[i];
+      total_rank += get_bit_weight((*bit_stream_ptr)[i]);
     build_big_blocks();
     build_small_blocks();
   }
@@ -149,7 +153,7 @@ class ClarkSelect {
       }
       n_big_blocks = block + 1;
       previous_block = block;
-      uint bit = (*bit_stream_ptr)[i];
+      uint bit = get_bit_weight((*bit_stream_ptr)[i]);
       total_sum += bit;
     }
     build_big_sparse();
@@ -180,7 +184,7 @@ class ClarkSelect {
         sum_block = 0;
         inblock_offset = 0;
       }
-      if ((*bit_stream_ptr)[i]) {
+      if (get_bit_weight((*bit_stream_ptr)[i])) {
         if (is_big_block_sparse(block)) {
           big_sparse_lookup[get_big_sparse_index(block)].write(sum_block,
                                                                inblock_offset);
@@ -214,7 +218,7 @@ class ClarkSelect {
       n_small_blocks = small_block + 1;
       previous_big_block = big_block;
       previous_small_block = small_block;
-      uint bit = (*bit_stream_ptr)[i];
+      uint bit = get_bit_weight((*bit_stream_ptr)[i]);
       total_sum += bit;
       big_block_sum += bit;
       inblock_offset++;
@@ -249,7 +253,7 @@ class ClarkSelect {
         sum_block = 0;
         inblock_offset = 0;
       }
-      if ((*bit_stream_ptr)[i]) {
+      if (get_bit_weight((*bit_stream_ptr)[i])) {
         if (is_small_block_sparse(block)) {
           small_sparse_lookup[get_small_sparse_index(block)].write(
               sum_block, inblock_offset);
@@ -267,6 +271,8 @@ class ClarkSelect {
   bool is_small_block_sparse(uint b) const {
     return (*small_block_sparse_ptr)[b];
   }
+
+  uint get_bit_weight(uint bit) const { return bit == bit_value; }
 
   uint get_big_block(uint i) const { return i / big_block_weight; }
 

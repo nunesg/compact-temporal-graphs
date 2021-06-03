@@ -23,18 +23,20 @@ std::shared_ptr<BitArray> get_random_bitarray(uint n, uint p1 = 50) {
   return arr_ptr;
 }
 
-uint linear_select(const std::shared_ptr<BitArray>& arr_ptr, uint idx) {
+uint linear_select(const std::shared_ptr<BitArray>& arr_ptr, uint idx,
+                   uint bit_value = 1) {
   for (uint i = 0; i < arr_ptr->size(); i++) {
-    if (arr_ptr->read(i) && !idx) return i;
-    idx -= arr_ptr->read(i);
+    if (arr_ptr->read(i) == bit_value && !idx) return i;
+    idx -= arr_ptr->read(i) == bit_value;
   }
   return arr_ptr->size();
 }
 
-uint linear_rank(const std::shared_ptr<BitArray>& arr_ptr, uint idx) {
+uint linear_rank(const std::shared_ptr<BitArray>& arr_ptr, uint idx,
+                 uint bit_value = 1) {
   uint ans = 0;
   for (uint i = 0; i < std::min(idx, arr_ptr->size()); i++) {
-    ans += arr_ptr->read(i);
+    ans += arr_ptr->read(i) == bit_value;
   }
   return ans;
 }
@@ -76,24 +78,28 @@ TEST(BitVectorTest, bitVectorTest) {
 
   // test operations
   uint iterations = 20;
-  for (uint i = 0; i < iterations; i++) {
-    uint p = i * (100 / iterations);
-    auto bit_stream_ptr = get_random_bitarray(1000, p);
-    bitv.reset(new BitVector(*bit_stream_ptr));
+  for (uint bit_value = 0; bit_value < 2; bit_value++) {
+    for (uint i = 0; i < iterations; i++) {
+      uint p = i * (100 / iterations);
+      auto bit_stream_ptr = get_random_bitarray(1000, p);
+      bitv.reset(new BitVector(*bit_stream_ptr));
 
-    // test rank
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ(bitv->rank(i), linear_rank(bit_stream_ptr, i));
-    }
+      // test rank
+      for (uint i = 0; i < bitv->size(); i++) {
+        EXPECT_EQ(bitv->rank(i, bit_value),
+                  linear_rank(bit_stream_ptr, i, bit_value));
+      }
 
-    // test select
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ(bitv->select(i), linear_select(bit_stream_ptr, i));
-    }
+      // test select
+      for (uint i = 0; i < bitv->size(); i++) {
+        EXPECT_EQ(bitv->select(i, bit_value),
+                  linear_select(bit_stream_ptr, i, bit_value));
+      }
 
-    // test read
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ((*bitv)[i], (*bit_stream_ptr)[i]);
+      // test read
+      for (uint i = 0; i < bitv->size(); i++) {
+        EXPECT_EQ((*bitv)[i], (*bit_stream_ptr)[i]);
+      }
     }
   }
 }
@@ -154,42 +160,46 @@ TEST(BitVectorTest, clarkSelectTest) {
   //                  0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0,
   //                  0, 1, 0, 1});
   std::shared_ptr<BitArray> bitv;
-  std::shared_ptr<ClarkSelect<BitArray>> clark;
+  std::shared_ptr<ClarkSelect<BitArray>> clark[2];
 
-  // bitvector of size 1
-  bitv.reset(new BitArray{0});
-  clark.reset(new ClarkSelect<BitArray>(bitv));
-  clark->build();
-  for (uint i = 0; i < bitv->size(); i++) {
-    EXPECT_EQ(clark->select(i), linear_select(bitv, i));
-  }
-  bitv.reset(new BitArray{1});
-  clark.reset(new ClarkSelect<BitArray>(bitv));
-  clark->build();
-  for (uint i = 0; i < bitv->size(); i++) {
-    EXPECT_EQ(clark->select(i), linear_select(bitv, i));
-  }
+  for (uint bit_value = 0; bit_value < 2; bit_value++) {
+    // bitvector of size 1
+    bitv.reset(new BitArray{0});
+    clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
+    clark[bit_value]->build();
+    for (uint i = 0; i < bitv->size(); i++) {
+      EXPECT_EQ(clark[bit_value]->select(i), linear_select(bitv, i, bit_value));
+    }
+    bitv.reset(new BitArray{1});
+    clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
+    clark[bit_value]->build();
+    for (uint i = 0; i < bitv->size(); i++) {
+      EXPECT_EQ(clark[bit_value]->select(i), linear_select(bitv, i, bit_value));
+    }
 
-  uint iterations = 20;
-  for (uint i = 0; i < iterations; i++) {
-    uint p = i * (100 / iterations);
-    bitv = get_random_bitarray(1000, p);
-    clark.reset(new ClarkSelect<BitArray>(bitv));
-    clark->build();
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ(clark->select(i), linear_select(bitv, i));
+    uint iterations = 12;
+    for (uint i = 0; i < iterations; i++) {
+      uint p = i * (100 / iterations);
+      bitv = get_random_bitarray(1000, p);
+      clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
+      clark[bit_value]->build();
+      for (uint i = 0; i < bitv->size(); i++) {
+        EXPECT_EQ(clark[bit_value]->select(i),
+                  linear_select(bitv, i, bit_value));
+      }
+      // LOG(INFO) << "p = " << p << ", bitarray = " << bitv->to_string();
     }
-    // LOG(INFO) << "p = " << p << ", bitarray = " << bitv->to_string();
-  }
-  for (uint i = 0; 4 * i < iterations; i++) {
-    uint p = 4 * i * (100 / iterations);
-    bitv = get_random_bitarray(5000, p);
-    clark.reset(new ClarkSelect<BitArray>(bitv));
-    clark->build();
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ(clark->select(i), linear_select(bitv, i));
+    for (uint i = 0; 4 * i < iterations; i++) {
+      uint p = 4 * i * (100 / iterations);
+      bitv = get_random_bitarray(5000, p);
+      clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
+      clark[bit_value]->build();
+      for (uint i = 0; i < bitv->size(); i++) {
+        EXPECT_EQ(clark[bit_value]->select(i),
+                  linear_select(bitv, i, bit_value));
+      }
+      // LOG(INFO) << "bitarray = " << bitv->to_string();
     }
-    // LOG(INFO) << "bitarray = " << bitv->to_string();
   }
 }
 

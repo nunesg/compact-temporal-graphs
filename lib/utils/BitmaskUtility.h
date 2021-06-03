@@ -16,12 +16,26 @@ class BitmaskUtility {
 
   static uint ctz(uint mask) { return __builtin_ctz(mask); }
 
-  static uint rank(uint mask, uint pos) {
+  static uint rank(uint mask, uint pos, uint bit_value = 1) {
+    bit_value %= 2;
     if (pos == 0) return 0;
-    return popcount(get_mask_prefix(mask, pos - 1));
+    uint rank1 = popcount(get_mask_prefix(mask, pos - 1));
+    if (bit_value)
+      return rank1;
+    else
+      return pos - rank1;
   }
 
-  static uint select(uint mask, uint i) {
+  static uint select(uint mask, uint i, uint prefix_size = kWordSize,
+                     uint bit_value = 1) {
+    if (!prefix_size) {
+      return 0;
+    }
+    bit_value %= 2;
+    prefix_size = std::min(prefix_size, kWordSize);
+    if (!bit_value) {
+      mask = get_mask_prefix(~mask, prefix_size - 1);
+    }
     if (i >= popcount(mask)) return kWordSize;
     while (i--) {
       mask -= mask & (-mask);  // remove LSB

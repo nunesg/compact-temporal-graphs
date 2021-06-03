@@ -19,7 +19,8 @@ class BitVector : public Array {
   BitVector()
       : bit_stream(new BitArray()),
         rank_manager(bit_stream),
-        select_manager(bit_stream) {}
+        select_manager({ClarkSelect<BitArray>(bit_stream, 0),
+                        ClarkSelect<BitArray>(bit_stream)}) {}
 
   BitVector(uint n) : BitVector() { resize(n); }
 
@@ -51,20 +52,31 @@ class BitVector : public Array {
     throw std::runtime_error("BitVector is a read-only array!");
   }
 
-  uint rank(uint pos) const { return rank_manager.rank(pos); }
+  uint rank(uint pos, uint bit_value = 1) const {
+    bit_value %= 2;
+    uint rank1 = rank_manager.rank(pos);
+    if (bit_value)
+      return rank1;  // rank 1
+    else
+      return pos - rank1;  // rank 0
+  }
 
-  uint select(uint idx) const { return select_manager.select(idx); }
+  uint select(uint idx, uint bit_value = 1) const {
+    bit_value %= 2;
+    return select_manager[bit_value].select(idx);
+  }
 
   std::string to_string() const { return bit_stream->to_string(); }
 
  private:
   std::shared_ptr<BitArray> bit_stream;
   JacobsonRank<BitArray> rank_manager;
-  ClarkSelect<BitArray> select_manager;
+  ClarkSelect<BitArray> select_manager[2];
 
   void build() {
     rank_manager.build();
-    select_manager.build();
+    select_manager[0].build();
+    select_manager[1].build();
   }
 };
 
