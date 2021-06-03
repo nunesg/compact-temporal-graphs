@@ -87,6 +87,17 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "wavelet_tree",
+    hdrs = [
+        "WaveletTree.h",
+    ],
+    deps = [
+        ":array",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
 cc_test(
     name = "array_test",
     srcs = [
@@ -137,6 +148,19 @@ cc_test(
     deps = [
         ":array",
         ":bitvector",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "wavelet_tree_test",
+    srcs = [
+        "tests/WaveletTreeTest.cpp",
+    ],
+    deps = [
+        ":wavelet_tree",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
