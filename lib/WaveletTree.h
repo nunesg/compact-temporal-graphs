@@ -67,6 +67,18 @@ class WaveletTreeNode {
     return right->rank(bitvec.rank(idx), c);
   }
 
+  uint select(uint idx, uint c) const {
+    if (low == high) return idx;
+
+    uint idx_below;
+    if (c <= get_mid()) {
+      idx_below = left->select(idx, c);
+      return bitvec.select(idx_below, 0);
+    }
+    idx_below = right->select(idx, c);
+    return bitvec.select(idx_below, 1);
+  }
+
  private:
   // smallest value represented by this node
   uint low;
@@ -108,12 +120,13 @@ class WaveletTree {
 
   uint rank(uint pos, uint c) const {
     check_value(c);
-    pos = std::min(pos, root->size());
     return root->rank(pos, c);
   }
 
-  // TODO
-  uint select(uint idx, uint c) const { return 0; }
+  uint select(uint pos, uint c) const {
+    check_value(c);
+    return root->select(pos, c);
+  }
 
   // TODO
   std::string to_string() const { return "Wavelet Tree"; }

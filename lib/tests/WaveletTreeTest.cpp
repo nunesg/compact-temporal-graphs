@@ -1,22 +1,59 @@
+#include <memory>
+#include <unordered_map>
+
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "lib/WaveletTree.h"
+#include "lib/utils/Utils.h"
 
 namespace compact {
 namespace lib {
 namespace test {
+
+std::unique_ptr<std::vector<uint>> get_random_array(uint sz, uint low,
+                                                    uint high) {
+  srand((unsigned)time(NULL));
+  std::unique_ptr<std::vector<uint>> vet(new std::vector<uint>(sz));
+  uint alph_size = high - low + 1;
+  for (uint i = 0; i < sz; i++) (*vet)[i] = (rand() % alph_size) + low;
+  return vet;
+}
 
 // test WaveletTree
 TEST(WaveletTreeTest, waveletTreeTest) {
   /*
     init
   */
-  WaveletTree tree({1, 2, 3, 1, 2, 4});
-  LOG(INFO) << tree.to_string() << " test!";
+  WaveletTree tree;
+  std::unordered_map<uint, uint> f;
+  std::unique_ptr<std::vector<uint>> vet_ptr;
 
-  EXPECT_EQ(tree.rank(4, 1), 2);
-  EXPECT_EQ(tree.rank(2, 3), 0);
-  EXPECT_EQ(tree.rank(8, 4), 1);
+  auto run_tests = [&]() {
+    tree.reset(*vet_ptr);
+    f.clear();
+    for (uint i = 0; i < vet_ptr->size(); i++) {
+      uint c = (*vet_ptr)[i];
+      EXPECT_EQ(tree.rank(i, c), f[c]);
+      EXPECT_EQ(tree.select(f[c], c), i);
+      f[c]++;
+    }
+  };
+
+  // test basic operations
+  vet_ptr = get_random_array(100, 0, 20);
+  // LOG(INFO) << "random_vet: "
+  //           << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
+  run_tests();
+
+  // test 1-size alphabet
+  vet_ptr = get_random_array(10, 3, 3);
+  run_tests();
+
+  // test high alphabet
+  vet_ptr = get_random_array(10, UINT32_MAX - 2, UINT32_MAX);
+  // LOG(INFO) << "random_vet: "
+  //           << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
+  run_tests();
 }
 
 }  // namespace test
