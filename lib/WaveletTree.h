@@ -34,7 +34,7 @@ class WaveletTreeNode {
     //           << ", start = " << start << ", end = " << end;
     if (start == end || low == high) return;
 
-    uint mid = low + (high - low) / 2;
+    uint mid = get_mid();
     auto checker = [&mid](uint val) -> bool { return val <= mid; };
 
     uint sz = end - start;
@@ -58,6 +58,15 @@ class WaveletTreeNode {
 
   uint size() const { return bitvec.size(); }
 
+  uint rank(uint idx, uint c) const {
+    if (low == high) {
+      return low == c ? idx : 0;
+    }
+
+    if (c <= get_mid()) return left->rank(bitvec.rank(idx, 0), c);
+    return right->rank(bitvec.rank(idx), c);
+  }
+
  private:
   // smallest value represented by this node
   uint low;
@@ -69,6 +78,8 @@ class WaveletTreeNode {
   WaveletTreeNodePointer left;
   // right node
   WaveletTreeNodePointer right;
+
+  uint get_mid() const { return low + (high - low) / 2; }
 };
 
 // ========================= Wavelet Tree ========================
@@ -88,15 +99,18 @@ class WaveletTree {
       : WaveletTree(std::vector<uint>(values)) {}
 
   void reset(const std::vector<uint>& values) {
-    uint low = *std::min_element(values.begin(), values.end());
-    uint high = *std::max_element(values.begin(), values.end());
+    low = *std::min_element(values.begin(), values.end());
+    high = *std::max_element(values.begin(), values.end());
     root.reset(new WaveletTreeNode(values, 0, values.size(), low, high));
   }
 
   uint size() const { return root->size(); }
 
-  // TODO
-  uint rank(uint pos, uint c) const { return 0; }
+  uint rank(uint pos, uint c) const {
+    check_value(c);
+    pos = std::min(pos, root->size());
+    return root->rank(pos, c);
+  }
 
   // TODO
   uint select(uint idx, uint c) const { return 0; }
@@ -105,7 +119,17 @@ class WaveletTree {
   std::string to_string() const { return "Wavelet Tree"; }
 
  private:
+  uint low;
+  uint high;
   NodePtr root;
+
+  void check_value(uint val) const {
+    if (val < low || val > high) {
+      throw std::runtime_error(std::string() + "Error! The value " +
+                               std::to_string(val) +
+                               " is not part of the wavelet tree!");
+    }
+  }
 };
 
 }  // namespace lib
