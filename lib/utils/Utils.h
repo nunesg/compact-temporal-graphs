@@ -54,6 +54,19 @@ class Utils {
     }
     return answer;
   }
+
+  template <typename Iterator>
+  static std::string join(Iterator begin, Iterator end,
+                          const std::string& delim) {
+    std::ostringstream os;
+    if (begin != end) {
+      os << *begin++;
+      for (; begin != end; begin++) {
+        os << delim << *begin;
+      }
+    }
+    return os.str();
+  }
 };
 
 }  // namespace lib

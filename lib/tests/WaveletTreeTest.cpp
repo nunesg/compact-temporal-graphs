@@ -11,7 +11,7 @@ TEST(WaveletTreeTest, waveletTreeTest) {
   /*
     init
   */
-  WaveletTree tree;
+  WaveletTree tree({1, 2, 3, 1, 2, 4});
   LOG(INFO) << tree.to_string() << " test!";
 }
 

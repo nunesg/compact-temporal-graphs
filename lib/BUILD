@@ -94,6 +94,8 @@ cc_library(
     ],
     deps = [
         ":array",
+        ":bitvector",
+        ":utils",
         "@com_github_google_glog//:glog",
     ],
 )
