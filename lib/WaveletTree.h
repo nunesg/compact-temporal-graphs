@@ -58,6 +58,15 @@ class WaveletTreeNode {
 
   uint size() const { return bitvec.size(); }
 
+  uint access(uint idx) const {
+    if (low == high) {
+      return low;
+    }
+
+    if (!bitvec[idx]) return left->access(bitvec.rank(idx, 0));
+    return right->access(bitvec.rank(idx));
+  }
+
   uint rank(uint idx, uint c) const {
     if (low == high) {
       return low == c ? idx : 0;
@@ -118,6 +127,8 @@ class WaveletTree {
 
   uint size() const { return root->size(); }
 
+  uint access(uint idx) const { return root->access(idx); }
+
   uint rank(uint pos, uint c) const {
     check_value(c);
     return root->rank(pos, c);
@@ -127,6 +138,8 @@ class WaveletTree {
     check_value(c);
     return root->select(pos, c);
   }
+
+  uint operator[](uint idx) const { return access(idx); }
 
   // TODO
   std::string to_string() const { return "Wavelet Tree"; }

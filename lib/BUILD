@@ -37,6 +37,9 @@ cc_library(
 
 cc_library(
     name = "bitmask_utils",
+    srcs = [
+        "utils/BitmaskUtility.cpp",
+    ],
     hdrs = [
         "utils/BitmaskUtility.h",
     ],
@@ -90,6 +93,7 @@ cc_library(
 cc_library(
     name = "wavelet_tree",
     hdrs = [
+        "HuffmanWaveletTree.h",
         "WaveletTree.h",
     ],
     deps = [

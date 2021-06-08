@@ -16,8 +16,6 @@
 namespace compact {
 namespace lib {
 
-namespace {
-
 // Node for HuffmanTree
 struct HuffmanTreeNode {
   HuffmanTreeNode *left, *right, *parent;
@@ -29,6 +27,8 @@ struct HuffmanTreeNode {
     delete right;
   }
 
+  bool leaf() const { return !left && !right; }
+
   void infix(std::string& str) const {
     str += "{";
     if (left) left->infix(str);
@@ -37,8 +37,6 @@ struct HuffmanTreeNode {
     str += "}";
   }
 };
-
-}  // namespace
 
 class HuffmanBitTree {
  public:
@@ -123,6 +121,9 @@ class HuffmanTree {
   using ii = std::pair<uint, uint>;
   using ContainerType = std::vector<uint>;
   using FrequencyContainer = std::vector<ii>;
+  /*
+    dictionary {label: {code, code_size}}
+  */
   using CodeContainer = std::unordered_map<uint, ii>;
   using NodeContainer = std::vector<Node*>;
 
@@ -157,6 +158,13 @@ class HuffmanTree {
     }
   }
 
+  static Node* get(const FrequencyContainer& freq, CodeContainer& codes) {
+    NodeContainer nodes;
+    Node* root = build_tree(freq, nodes);
+    build_codes(freq.size(), nodes, codes);
+    return root;
+  }
+
   std::string to_string() const {
     std::string s;
     bit_tree.get_tree()->infix(s);
@@ -178,7 +186,8 @@ class HuffmanTree {
     - Value of leaves are the labels of the elements.
     - Value of non-leaf nodes are the sum of their subtree frequencies
   */
-  Node* build_tree(const FrequencyContainer& freq, NodeContainer& nodes) {
+  static Node* build_tree(const FrequencyContainer& freq,
+                          NodeContainer& nodes) {
     const uint leaves = freq.size();
     const uint tree_max_size = (leaves << 1) - 1;
 
@@ -191,8 +200,9 @@ class HuffmanTree {
     return build_tree(leaves, nodes, get_node_value);
   }
 
-  void initialize_nodes(const FrequencyContainer& freq, NodeContainer& nodes,
-                        uint leaves, uint tree_max_size) {
+  static void initialize_nodes(const FrequencyContainer& freq,
+                               NodeContainer& nodes, uint leaves,
+                               uint tree_max_size) {
     nodes.resize(tree_max_size);
 
     for (uint i = 0; i < leaves; i++) {
@@ -200,8 +210,8 @@ class HuffmanTree {
     }
   }
 
-  Node* build_tree(uint leaves, NodeContainer& nodes,
-                   const std::function<uint(uint)>& node_value_getter) {
+  static Node* build_tree(uint leaves, NodeContainer& nodes,
+                          const std::function<uint(uint)>& node_value_getter) {
     // number of bits to store a tree's node index
     uint heap_bit_size = 1 + BitmaskUtility::int_log(nodes.size());
     Heap heap(nodes.size(), heap_bit_size,
@@ -238,8 +248,8 @@ class HuffmanTree {
   /*
     builds the dictionary {label: {code, code_size}}
   */
-  void build_codes(uint leaves, const NodeContainer& nodes,
-                   CodeContainer& codes) {
+  static void build_codes(uint leaves, const NodeContainer& nodes,
+                          CodeContainer& codes) {
     for (uint i = 0; i < leaves; i++) {
       codes[nodes[i]->val] = get_code(nodes[i]);
     }
@@ -268,7 +278,7 @@ class HuffmanTree {
       }
       code_size++;
     }
-    return {reverse_code(code, code_size), code_size};
+    return {code, code_size};
   }
 
   static uint reverse_code(uint code, uint code_size) {

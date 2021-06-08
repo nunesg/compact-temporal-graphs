@@ -97,9 +97,16 @@ class BitmaskUtility {
                                std::to_string(kWordSize));
     }
   }
-};
 
-const uint BitmaskUtility::kWordSize = sizeof(uint) * 8;
+  static std::string to_string(uint mask, uint len) {
+    len = std::min(len, kWordSize);
+    std::string s;
+    for (uint i = 0; i < len; i++) {
+      s.push_back('0' + (1 & (mask >> i)));
+    }
+    return s;
+  }
+};
 
 }  // namespace lib
 }  // namespace compact

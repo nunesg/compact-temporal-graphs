@@ -38,6 +38,15 @@ class HuffmanUtility {
     return;
   }
 
+  template <typename ArrayType>
+  static HuffmanTree::Node* get_tree(const ArrayType& values,
+                                     CodeContainer& codes) {
+    FrequencyContainer freq;
+    build_frequencies(values, freq);
+
+    return HuffmanTree::get(freq, codes);
+  }
+
  private:
   HuffmanTree tree;
 
@@ -90,7 +99,7 @@ class HuffmanUtility {
   */
   static void write_code(BitArray& bit_stream, uint& idx, uint code,
                          uint code_size) {
-    for (int i = code_size - 1; i >= 0; i--) {
+    for (uint i = 0; i < code_size; i++) {
       bit_stream.write(idx++, 1 & (code >> i));
     }
   }
