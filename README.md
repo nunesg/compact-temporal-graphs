@@ -28,10 +28,10 @@ The output should look like this:
 
 ## Experimentation
 
-The experiments for temporal graphs are under the `temporalgraph` folder, on the `v<version_number>` subfolders. So, to run the experiments, on `temporalgraph`:
+The parameters for the experimentation are in the file `config.py`. You should first fill
+the parameters as you like, before proceeding with the experimentation.
 
-- To run all experiments
-    - `python3 main.py --data='data/input_graph.txt'`
+The experiments for temporal graphs are under the `temporalgraph` folder, on the `v<version_number>` subfolders. So, to run the experiments, on `temporalgraph` run:
 
-- To run a specific experiment version (for example, version 0)
-    - `python3 main.py --data='data/input_graph.txt' --version=0`
+- `python3 main.py`
+- This will execute the experiments considering the parameters in `config.py`
