@@ -41,6 +41,3 @@ class GraphGenerator:
             temporal_edges.append((u, v, tbegin, tend))
             curr_time = tend
         return temporal_edges
-
-
-print(GraphGenerator.gen_adjacencies(5, 10, DummyGenerator()))

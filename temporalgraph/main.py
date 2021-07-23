@@ -1,17 +1,35 @@
 import time
-import psutil
+import config as config_obj
+import timegen
 import subprocess
-import argparse
+from datagenerator import DataGenerator
+from graphgenerator import GraphGenerator
 from monitor import ProcessMonitor
 
 BAZEL_BIN_DIR = '../bazel-bin/temporalgraph'
 
+TIME_GENERATORS = {
+    'dummy': timegen.DummyGenerator()
+}
 
-def run_version(args, version):
+
+def get_time_generator(timegen_type):
+    return TIME_GENERATORS.get(timegen_type, timegen.DummyGenerator())
+
+
+def generate_data(config):
+    V = config.graph_vertices
+    E = config.graph_edges
+    graph = GraphGenerator.gen_adjacencies(
+        V, E, get_time_generator(config.time_gen))
+    DataGenerator.gen(graph, V, E, config.datapath)
+
+
+def run_version(config, version):
     subprocess.run(["bazel", "build", f"v{version}:main"])
-    print(args.data)
+    print(config.datapath)
     pmonitor = ProcessMonitor(
-        f"{BAZEL_BIN_DIR}/v{version}/main < {args.data}")
+        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath}")
 
     try:
         pmonitor.execute(shell=True)
@@ -33,20 +51,17 @@ def run_version(args, version):
     return
 
 
-def main(args):
+def main(config):
+    generate_data(config)
+
     # I am executing "make target" here
-    if args.version == "all":
+    if config.version == "all":
         for i in range(2):
-            run_version(args, i)
+            run_version(config, i)
     else:
-        run_version(args, args.version)
+        run_version(config, int(config.version))
     return
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--data", help="Path to the input file")
-    parser.add_argument("--version", default="all",
-                        help="Specific version to execute")
-    args = parser.parse_args()
-    main(args)
+    main(config_obj)

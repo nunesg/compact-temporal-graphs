@@ -15,11 +15,14 @@ int main() {
 
   Graph<AdjacencyMatrix<lib::FixedSizeArray>> g(nVertices, "MyGraph");
 
-  int from, to, st, en;
-  while (scanf("%d %d %d %d", &from, &to, &st, &en) != EOF) {
-    g.addEdge(from, to, st, en);
+  int from, to, st, en, neighbours;
+  for (from = 0; from < nVertices; from++) {
+    scanf("%d", &neighbours);
+    for (int j = 0; j < neighbours; j++) {
+      scanf("%d %d %d", &to, &st, &en);
+      g.addEdge(from, to, st, en);
+    }
   }
-
   std::cout << g.toString() << std::endl;
 
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
