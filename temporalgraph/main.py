@@ -20,6 +20,7 @@ def get_time_generator(timegen_type):
 def generate_data(config):
     V = config.graph_vertices
     E = config.graph_edges
+    print(f"V = {V}, E = {E}")
     graph = GraphGenerator.gen_adjacencies(
         V, E, get_time_generator(config.time_gen))
     DataGenerator.gen(graph, V, E, config.datapath)

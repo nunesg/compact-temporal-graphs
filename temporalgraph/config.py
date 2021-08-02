@@ -1,5 +1,5 @@
 datapath = "data/input_graph.txt"
-version = 'all'
-graph_vertices = 5
-graph_edges = 7
+version = 0
+graph_vertices = 5000
+graph_edges = 70000
 time_gen = 'dummy'
