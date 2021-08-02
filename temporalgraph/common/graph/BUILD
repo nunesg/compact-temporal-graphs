@@ -44,13 +44,29 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "cas",
+    hdrs = [
+        "CAS.h",
+        "GraphInterface.h",
+        "GraphUtils.h",
+    ],
+    deps = [
+        "//lib:bitvector",
+        "//lib:wavelet_tree",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
 cc_test(
     name = "test",
     srcs = [
+        "tests/CASTest.cpp",
         "tests/EdgeLogTest.cpp",
         "tests/EveLogTest.cpp",
     ],
     deps = [
+        ":cas",
         ":edgelog",
         ":evelog",
         "@com_github_google_glog//:glog",
