@@ -11,19 +11,19 @@ namespace temporalgraph {
 namespace test {
 
 // test expected functionalities of EdgeLog data structure
-TEST(EdgeLogTest, test) {
+TEST(EdgeLogTest, edgelog_test) {
   /*
     init
   */
   EdgeLog graph(5);
   EXPECT_EQ(5, graph.size());
-
   GraphInterface::TemporalNeighbourContainer events = {{2, {0, 4}},
                                                        {3, {3, 5}}};
   graph.set_events(0, events);
   graph.set_events(2, events);
 
   GraphInterface::EdgeContainer edges = graph.aggregate(2, 4);
+  LOG(INFO) << "here";
   GraphInterface::EdgeContainer expectedEdges = {
       {0, 2}, {0, 3}, {2, 2}, {2, 3}};
 

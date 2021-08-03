@@ -11,7 +11,7 @@ namespace temporalgraph {
 namespace test {
 
 // test expected functionalities of EveLog data structure
-TEST(EveLogTest, test) {
+TEST(EveLogTest, evelog_test) {
   /*
     init
   */

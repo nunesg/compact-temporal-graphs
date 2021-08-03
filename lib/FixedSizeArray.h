@@ -131,7 +131,7 @@ class FixedSizeArray : public Array {
     if (array) {
       delete[] array;
     }
-    array = new uint[array_size];
+    array = new uint[array_size]();
   }
 
   bool is_index_valid(uint idx) const { return idx >= 0 && idx < sz; }

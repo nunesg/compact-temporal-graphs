@@ -59,6 +59,48 @@ cc_library(
 )
 
 cc_test(
+    name = "cas_test",
+    srcs = [
+        "tests/CASTest.cpp",
+    ],
+    deps = [
+        ":cas",
+        "//temporalgraph/common",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "evelog_test",
+    srcs = [
+        "tests/EveLogTest.cpp",
+    ],
+    deps = [
+        ":evelog",
+        "//temporalgraph/common",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "edgelog_test",
+    srcs = [
+        "tests/EdgeLogTest.cpp",
+    ],
+    deps = [
+        ":edgelog",
+        "//temporalgraph/common",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "test",
     srcs = [
         "tests/CASTest.cpp",
@@ -69,6 +111,7 @@ cc_test(
         ":cas",
         ":edgelog",
         ":evelog",
+        "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",
         "@gtest//:gtest_main",
