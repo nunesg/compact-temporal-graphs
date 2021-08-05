@@ -95,6 +95,7 @@ cc_library(
     hdrs = [
         "HuffmanWaveletTree.h",
         "WaveletTree.h",
+        "WaveletTreeInterface.h",
     ],
     deps = [
         ":array",

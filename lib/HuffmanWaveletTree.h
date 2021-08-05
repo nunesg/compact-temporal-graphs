@@ -6,6 +6,7 @@
 #include "lib/Array.h"
 #include "lib/BitVector.h"
 #include "lib/HuffmanTree.h"
+#include "lib/WaveletTreeInterface.h"
 #include "lib/utils/BitmaskUtility.h"
 #include "lib/utils/HuffmanUtility.h"
 #include "lib/utils/Utils.h"
@@ -118,7 +119,7 @@ class HuffmanWaveletTreeNode {
 
 // ========================= Wavelet Tree ========================
 
-class HuffmanWaveletTree {
+class HuffmanWaveletTree : public WaveletTreeInterface {
  public:
   using Node = HuffmanWaveletTreeNode;
   using NodePtr = HuffmanWaveletTreeNode::HuffmanWaveletTreeNodePointer;
@@ -144,24 +145,28 @@ class HuffmanWaveletTree {
         new HuffmanWaveletTreeNode(values, 0, values.size(), codes, huff_root));
   }
 
-  uint size() const { return root->size(); }
+  uint size() const override { return root->size(); }
 
-  uint access(uint idx) const { return root->access(idx); }
+  uint access(uint idx) const override { return root->access(idx); }
 
-  uint rank(uint pos, uint c) const {
+  uint rank(uint pos, uint c) const override {
     check_value(c);
     return root->rank(pos, codes.at(c).first);
   }
 
-  uint select(uint pos, uint c) const {
+  uint select(uint pos, uint c) const override {
     check_value(c);
     return root->select(pos, codes.at(c).first);
   }
 
-  uint operator[](uint idx) const { return access(idx); }
+  uint range_count(uint l, uint r, uint val) const override {
+    return rank(r + 1, val) - rank(l, val);
+  }
 
   // TODO
-  std::string to_string() const { return "Huffman Wavelet Tree"; }
+  std::string to_string() const override { return "Huffman Wavelet Tree"; }
+
+  uint operator[](uint idx) const override { return access(idx); }
 
  private:
   uint low;

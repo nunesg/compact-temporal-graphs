@@ -5,6 +5,7 @@
 #include "glog/logging.h"
 #include "lib/Array.h"
 #include "lib/BitVector.h"
+#include "lib/WaveletTreeInterface.h"
 #include "lib/utils/Utils.h"
 
 namespace compact {
@@ -116,7 +117,7 @@ class WaveletTreeNode {
 
 // ========================= Wavelet Tree ========================
 
-class WaveletTree {
+class WaveletTree : public WaveletTreeInterface {
  public:
   using Node = WaveletTreeNode;
   using NodePtr = WaveletTreeNode::WaveletTreeNodePointer;
@@ -160,7 +161,7 @@ class WaveletTree {
     return root->range_count(l, r, val);
   }
 
-  uint operator[](uint idx) const { return access(idx); }
+  uint operator[](uint idx) const override { return access(idx); }
 
   // TODO
   std::string to_string() const { return "Wavelet Tree"; }
