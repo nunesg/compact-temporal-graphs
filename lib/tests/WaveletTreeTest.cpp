@@ -56,6 +56,20 @@ TEST(WaveletTreeTest, waveletTreeTest) {
   // LOG(INFO) << "random_vet: "
   //           << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
   run_tests();
+
+  // ========= test range_count ===========
+  vet_ptr = get_random_array(15, 1, 4);
+  LOG(INFO) << "random_vet for range_count test: "
+            << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
+  tree.reset(*vet_ptr);
+  for (uint i = 0; i < vet_ptr->size(); i++) {
+    f.clear();
+    for (uint j = i; j < vet_ptr->size(); j++) {
+      uint c = (*vet_ptr)[j];
+      f[c]++;
+      EXPECT_EQ(tree.range_count(i, j, c), f[c]);
+    }
+  }
 }
 
 // test HuffmanWaveletTree

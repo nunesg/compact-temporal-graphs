@@ -88,6 +88,17 @@ class WaveletTreeNode {
     return bitvec.select(idx_below, 1);
   }
 
+  uint range_count(uint l, uint r, uint val) const {
+    if (low == high) {
+      return low == val ? (r - l + 1) : 0;
+    }
+
+    if (val <= get_mid()) {
+      return left->range_count(bitvec.rank(l, 0), bitvec.rank(r, 0), val);
+    }
+    return right->range_count(bitvec.rank(l), bitvec.rank(r), val);
+  }
+
  private:
   // smallest value represented by this node
   uint low;
@@ -137,6 +148,16 @@ class WaveletTree {
   uint select(uint pos, uint c) const {
     check_value(c);
     return root->select(pos, c);
+  }
+
+  uint range_count(uint l, uint r, uint val) const {
+    check_value(val);
+    if (l < 0 || l >= size() || r < 0 || r >= size()) {
+      LOG(WARNING) << "invalid interval bounds on Wavelet Tree";
+      return 0;
+    }
+
+    return root->range_count(l, r, val);
   }
 
   uint operator[](uint idx) const { return access(idx); }
