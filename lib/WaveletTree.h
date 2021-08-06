@@ -100,6 +100,44 @@ class WaveletTreeNode {
     return right->range_count(bitvec.rank(l), bitvec.rank(r), val);
   }
 
+  // considering half-open interval [l, r)
+  uint range_next_value_pos(uint l, uint r, uint val) const {
+    // LOG(INFO) << "low = " << low << ", high = " << high
+    //           << ", mid = " << get_mid() << ", [l = " << l << ", r = " << r
+    //           << ")";
+    if (low == high) {
+      if (low <= val) {
+        // LOG(INFO) << "leaf >> low = " << low << ", return " << r;
+        return r;
+      }
+      // LOG(INFO) << "leaf << low = " << low << ", return " << l;
+      return l;
+    }
+
+    // if val is on the right, the answer must also be to the right
+    if (val >= get_mid()) {
+      uint idx_below =
+          right->range_next_value_pos(bitvec.rank(l), bitvec.rank(r), val);
+      LOG(INFO) << "idx_below (right) = " << idx_below;
+      return bitvec.select(idx_below, 1);
+    }
+
+    // all elements that went to the right are valid, but there may be some
+    // valid values to the left as well
+
+    // position of first element to go to the right
+    uint ans_right = bitvec.select(bitvec.rank(l, 1), 1);
+    // position of the answer going to the left
+    uint idx_below =
+        left->range_next_value_pos(bitvec.rank(l, 0), bitvec.rank(r, 0), val);
+    uint ans_left = bitvec.select(idx_below, 0);
+
+    // LOG(INFO) << "ans_right = " << ans_right
+    //           << ", idx_below (left) = " << idx_below
+    //           << ", ans_left = " << ans_left;
+    return std::min(ans_left, ans_right);
+  }
+
  private:
   // smallest value represented by this node
   uint low;
@@ -153,12 +191,30 @@ class WaveletTree : public WaveletTreeInterface {
 
   uint range_count(uint l, uint r, uint val) const {
     check_value(val);
-    if (l < 0 || l >= size() || r < 0 || r >= size()) {
-      LOG(WARNING) << "invalid interval bounds on Wavelet Tree";
-      return 0;
-    }
+    check_interval(l, r);
 
     return root->range_count(l, r, val);
+  }
+
+  // returns the index of the first number greater than val in [l, r]
+  // or r+1 in case there's no number greater than val in [l, r]
+  uint range_next_value_pos(uint l, uint r, uint val) const {
+    check_value(val);
+    check_interval(l, r);
+    // r+1 because the interval on the wavelet_tree node is half-empty
+    return std::min(root->range_next_value_pos(l, r + 1, val), r + 1);
+  }
+
+  // returns the value of the first number greater than val in [l, r]
+  uint range_next_value(uint l, uint r, uint val) const {
+    uint idx = range_next_value_pos(l, r + 1, val);
+    if (idx > r) {
+      LOG(WARNING) << "range_next_value for value " << val
+                   << " doesn't exist on the interval [" << l << "," << r
+                   << "]";
+      return 0;
+    }
+    return access(idx);
   }
 
   uint operator[](uint idx) const override { return access(idx); }
@@ -176,6 +232,12 @@ class WaveletTree : public WaveletTreeInterface {
       throw std::runtime_error(std::string() + "Error! The value " +
                                std::to_string(val) +
                                " is not part of the wavelet tree!");
+    }
+  }
+
+  void check_interval(uint l, uint r) const {
+    if (l < 0 || l >= size() || r < 0 || r >= size()) {
+      throw std::runtime_error("invalid interval bounds on Wavelet Tree");
     }
   }
 };

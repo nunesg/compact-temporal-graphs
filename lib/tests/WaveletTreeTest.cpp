@@ -21,6 +21,14 @@ std::unique_ptr<std::vector<uint>> get_random_array(uint sz, uint low,
   return vet;
 }
 
+uint range_next_value_pos(const std::unique_ptr<std::vector<uint>> &vet_ptr,
+                          uint l, uint r, uint val) {
+  for (uint i = l; i <= r; i++) {
+    if ((*vet_ptr)[i] > val) return i;
+  }
+  return r + 1;
+}
+
 void run_basic_tests(WaveletTreeInterface &tree,
                      std::unique_ptr<std::vector<uint>> &vet_ptr) {
   std::unordered_map<uint, uint> f;
@@ -54,6 +62,28 @@ void run_range_count_tests(WaveletTreeInterface &tree) {
   }
 }
 
+void run_range_next_value_pos_tests(WaveletTree &tree) {
+  std::unordered_map<uint, uint> f;
+  std::unique_ptr<std::vector<uint>> vet_ptr;
+  // std::unique_ptr<std::vector<uint>> vet_ptr(
+  //     new std::vector<uint>{1, 1, 3, 4, 4, 3, 2});
+
+  // ========= test range_count ===========
+  vet_ptr = get_random_array(15, 1, 4);
+  LOG(INFO) << "random_vet for range_count test: "
+            << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
+  tree.reset(*vet_ptr);
+  for (uint i = 0; i < vet_ptr->size(); i++) {
+    f.clear();
+    for (uint j = i; j < vet_ptr->size(); j++) {
+      uint c = (*vet_ptr)[j];
+      LOG(INFO) << "i = " << i << ", j = " << j << ", val = " << c;
+      EXPECT_EQ(tree.range_next_value_pos(i, j, c),
+                range_next_value_pos(vet_ptr, i, j, c));
+    }
+  }
+}
+
 // test WaveletTree
 TEST(WaveletTreeTest, waveletTreeTest) {
   /*
@@ -80,6 +110,9 @@ TEST(WaveletTreeTest, waveletTreeTest) {
 
   // ========= test range_count ===========
   run_range_count_tests(tree);
+
+  // ========= test range_next_value_pos ==
+  run_range_next_value_pos_tests(tree);
 }
 
 // test HuffmanWaveletTree
