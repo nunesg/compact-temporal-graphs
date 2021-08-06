@@ -49,6 +49,10 @@ class CAS : public GraphInterface {
 
   // returns whether there is an edge (u, v) active during that time interval
   bool has_edge(uint u, uint v, uint start, uint end) const override {
+    // u's range on the wavelet tree is [i,j]
+    uint i = bitv.rank(bitv.select(u, 1), 0);
+    uint j = bitv.rank(bitv.select(u + 1, 1), 0) - 1;
+
     // TODO
     return false;
   }
