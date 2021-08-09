@@ -104,20 +104,21 @@ class WaveletTreeNode {
   uint range_next_value_pos(uint l, uint r, uint val) const {
     // LOG(INFO) << "low = " << low << ", high = " << high
     //           << ", mid = " << get_mid() << ", [l = " << l << ", r = " << r
-    //           << ")";
+    //           << "), val = " << val;
     if (low == high) {
-      if (low <= val) {
+      if (low < val) {
         // LOG(INFO) << "leaf >> low = " << low << ", return " << r;
         return r;
       }
       // LOG(INFO) << "leaf << low = " << low << ", return " << l;
       return l;
     }
-
+    // LOG(INFO) << "not leaf";
     // if val is on the right, the answer must also be to the right
-    if (val >= get_mid()) {
-      uint idx_below =
-          right->range_next_value_pos(bitvec.rank(l), bitvec.rank(r), val);
+    if (val > get_mid()) {
+      uint idx_below = right ? right->range_next_value_pos(bitvec.rank(l),
+                                                           bitvec.rank(r), val)
+                             : r;
       LOG(INFO) << "idx_below (right) = " << idx_below;
       return bitvec.select(idx_below, 1);
     }
@@ -127,10 +128,15 @@ class WaveletTreeNode {
 
     // position of first element to go to the right
     uint ans_right = bitvec.select(bitvec.rank(l, 1), 1);
+    // LOG(INFO) << "ans_right = " << ans_right;
+    // LOG(INFO) << "left_null = " << (left == nullptr);
     // position of the answer going to the left
-    uint idx_below =
-        left->range_next_value_pos(bitvec.rank(l, 0), bitvec.rank(r, 0), val);
+    uint idx_below = left ? left->range_next_value_pos(bitvec.rank(l, 0),
+                                                       bitvec.rank(r, 0), val)
+                          : r;
+    // LOG(INFO) << "idx_below = " << idx_below;
     uint ans_left = bitvec.select(idx_below, 0);
+    // LOG(INFO) << "ans_left = " << ans_left;
 
     // LOG(INFO) << "ans_right = " << ans_right
     //           << ", idx_below (left) = " << idx_below
@@ -180,32 +186,34 @@ class WaveletTree : public WaveletTreeInterface {
   uint access(uint idx) const { return root->access(idx); }
 
   uint rank(uint pos, uint c) const {
-    check_value(c);
+    if (!check_value(c)) {
+      return 0;
+    }
     return root->rank(pos, c);
   }
 
   uint select(uint pos, uint c) const {
-    check_value(c);
+    if (!check_value(c)) return size();
     return root->select(pos, c);
   }
 
   uint range_count(uint l, uint r, uint val) const {
-    check_value(val);
-    check_interval(l, r);
+    if (!check_value(val) || !check_interval(l, r)) {
+      return 0;
+    }
 
     return root->range_count(l, r, val);
   }
 
-  // returns the index of the first number greater than val in [l, r]
-  // or r+1 in case there's no number greater than val in [l, r]
+  // returns the index of the first number >= val in [l, r]
+  // or r+1 in case there's no number >= val in [l, r]
   uint range_next_value_pos(uint l, uint r, uint val) const {
-    check_value(val);
-    check_interval(l, r);
+    if (!check_interval(l, r)) return r + 1;
     // r+1 because the interval on the wavelet_tree node is half-empty
     return std::min(root->range_next_value_pos(l, r + 1, val), r + 1);
   }
 
-  // returns the value of the first number greater than val in [l, r]
+  // returns the value of the first number >= val in [l, r]
   uint range_next_value(uint l, uint r, uint val) const {
     uint idx = range_next_value_pos(l, r + 1, val);
     if (idx > r) {
@@ -227,18 +235,21 @@ class WaveletTree : public WaveletTreeInterface {
   uint high;
   NodePtr root;
 
-  void check_value(uint val) const {
+  bool check_value(uint val) const {
     if (val < low || val > high) {
-      throw std::runtime_error(std::string() + "Error! The value " +
-                               std::to_string(val) +
-                               " is not part of the wavelet tree!");
+      LOG(INFO) << (std::string() + "Error! The value " + std::to_string(val) +
+                    " is not part of the wavelet tree!");
+      return false;
     }
+    return true;
   }
 
-  void check_interval(uint l, uint r) const {
+  bool check_interval(uint l, uint r) const {
     if (l < 0 || l >= size() || r < 0 || r >= size()) {
-      throw std::runtime_error("invalid interval bounds on Wavelet Tree");
+      LOG(INFO) << ("invalid interval bounds on Wavelet Tree");
+      return false;
     }
+    return true;
   }
 };
 

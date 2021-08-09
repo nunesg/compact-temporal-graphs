@@ -24,7 +24,7 @@ std::unique_ptr<std::vector<uint>> get_random_array(uint sz, uint low,
 uint range_next_value_pos(const std::unique_ptr<std::vector<uint>> &vet_ptr,
                           uint l, uint r, uint val) {
   for (uint i = l; i <= r; i++) {
-    if ((*vet_ptr)[i] > val) return i;
+    if ((*vet_ptr)[i] >= val) return i;
   }
   return r + 1;
 }
