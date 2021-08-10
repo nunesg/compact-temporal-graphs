@@ -89,15 +89,19 @@ class WaveletTreeNode {
     return bitvec.select(idx_below, 1);
   }
 
+  // calculates the frequency of val in range [l, r)
   uint range_count(uint l, uint r, uint val) const {
+    // LOG(INFO) << "low: " << low << ", high: " << high << ", l: " << l
+    //           << ", r: " << r;
     if (low == high) {
-      return low == val ? (r - l + 1) : 0;
+      return low == val ? (r - l) : 0;
     }
 
     if (val <= get_mid()) {
-      return left->range_count(bitvec.rank(l, 0), bitvec.rank(r, 0), val);
+      return left ? left->range_count(bitvec.rank(l, 0), bitvec.rank(r, 0), val)
+                  : 0;
     }
-    return right->range_count(bitvec.rank(l), bitvec.rank(r), val);
+    return right ? right->range_count(bitvec.rank(l), bitvec.rank(r), val) : 0;
   }
 
   // considering half-open interval [l, r)
@@ -119,7 +123,7 @@ class WaveletTreeNode {
       uint idx_below = right ? right->range_next_value_pos(bitvec.rank(l),
                                                            bitvec.rank(r), val)
                              : r;
-      LOG(INFO) << "idx_below (right) = " << idx_below;
+      // LOG(INFO) << "idx_below (right) = " << idx_below;
       return bitvec.select(idx_below, 1);
     }
 
@@ -197,12 +201,13 @@ class WaveletTree : public WaveletTreeInterface {
     return root->select(pos, c);
   }
 
+  // calculates the frenquency of val in range [l, r]
   uint range_count(uint l, uint r, uint val) const {
     if (!check_value(val) || !check_interval(l, r)) {
       return 0;
     }
 
-    return root->range_count(l, r, val);
+    return root->range_count(l, r + 1, val);
   }
 
   // returns the index of the first number >= val in [l, r]
