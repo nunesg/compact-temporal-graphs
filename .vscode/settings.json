@@ -76,6 +76,7 @@
     "variant": "cpp",
     "hash_map": "cpp",
     "hash_set": "cpp",
-    "slist": "cpp"
+    "slist": "cpp",
+    "*.proto": "cpp"
   }
 }

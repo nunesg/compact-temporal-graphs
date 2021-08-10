@@ -47,14 +47,35 @@ class CAS : public GraphInterface {
     build(adj);
   }
 
-  // returns whether there is an edge (u, v) active during that time interval
+  // returns whether there is an edge (u, v) active at some moment during that
+  // time interval
   bool has_edge(uint u, uint v, uint start, uint end) const override {
+    start += offset;
+    end += offset;
+    // LOG(INFO) << "start (+offset): " << start << ", end (+offset)" << end;
     // u's range on the wavelet tree is [i,j]
     uint i = bitv.rank(bitv.select(u, 1), 0);
+    // LOG(INFO) << "select = " << bitv.select(u, 1) << ", i: " << i;
     uint j = bitv.rank(bitv.select(u + 1, 1), 0) - 1;
+    // LOG(INFO) << "select = " << bitv.select(u + 1, 1) << ", j: " << j;
 
-    // TODO
-    return false;
+    uint kbegin = wavelet.range_next_value_pos(i, j, start);
+    // LOG(INFO) << "kbegin: " << kbegin;
+    uint kend = wavelet.range_next_value_pos(i, j, end + 1);
+
+    // LOG(INFO) << "i = " << i << " j = " << j << " kbegin = " << kbegin
+    //           << " kend = " << kend << ", u = " << u << ", v = " << v;
+
+    uint freq_at_beginning =
+        (i != kbegin ? (wavelet.range_count(i, kbegin - 1, v)) : 0);
+    uint freq_at_end = (i != kend ? (wavelet.range_count(i, kend - 1, v)) : 0);
+    uint freq_on_interval = freq_at_end - freq_at_beginning;
+    bool active_at_beginning = freq_at_beginning & 1;
+
+    // LOG(INFO) << "fbegin: " << freq_at_beginning << ", fend: " <<
+    // freq_at_end; LOG(INFO) << wavelet.to_string();
+
+    return active_at_beginning || freq_on_interval > 0;
   }
 
   // returns neighbours of vertex u on that time interval
