@@ -227,8 +227,15 @@ class WaveletTree : public WaveletTreeInterface {
 
   uint operator[](uint idx) const override { return access(idx); }
 
-  // TODO
-  std::string to_string() const { return "Wavelet Tree"; }
+  std::string to_string() const {
+    std::string s("WaveletTree: [");
+    for (uint i = 0; i < size(); i++) {
+      if (i) s += ",";
+      s += std::to_string(access(i));
+    }
+    s += "]";
+    return s;
+  }
 
  private:
   uint low;
