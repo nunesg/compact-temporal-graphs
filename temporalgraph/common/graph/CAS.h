@@ -114,8 +114,8 @@ class CAS : public GraphInterface {
   uint size() const { return n; }
 
   std::string to_string() const {
-    // TODO
-    std::string line = "\nTODO: CAS\n";
+    std::string line("CAS_");
+    line += wavelet.to_string();
     return line;
   }
 

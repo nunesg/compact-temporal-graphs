@@ -48,6 +48,7 @@ TEST(CASTest, cas_test) {
       }
     }
   }
+  LOG(INFO) << graph.to_string();
 }
 
 }  // namespace test
