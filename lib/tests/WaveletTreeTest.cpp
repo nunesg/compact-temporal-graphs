@@ -29,6 +29,23 @@ uint range_next_value_pos(const std::unique_ptr<std::vector<uint>> &vet_ptr,
   return r + 1;
 }
 
+uint range_report(const std::unique_ptr<std::vector<uint>> &vet_ptr, uint l,
+                  uint r, std::unordered_map<uint, uint> &result) {
+  result.clear();
+  for (uint i = l; i <= r; i++) {
+    result[(*vet_ptr)[i]]++;
+  }
+}
+
+bool check_reports(std::unordered_map<uint, uint> &r1,
+                   std::unordered_map<uint, uint> &r2) {
+  if (r1.size() != r2.size()) return false;
+  for (auto &it1 : r1) {
+    if (!r2.count(it1.first) || r2[it1.first] != it1.second) return false;
+  }
+  return true;
+}
+
 void run_basic_tests(WaveletTreeInterface &tree,
                      std::unique_ptr<std::vector<uint>> &vet_ptr) {
   std::unordered_map<uint, uint> f;
@@ -95,6 +112,34 @@ void run_range_next_value_pos_tests(WaveletTree &tree) {
   }
 }
 
+void run_range_report_tests(WaveletTree &tree) {
+  std::unordered_map<uint, uint> r1, r2;
+  std::unique_ptr<std::vector<uint>> vet_ptr;
+  // std::unique_ptr<std::vector<uint>> vet_ptr(
+  //     new std::vector<uint>{1, 1, 3, 4, 4, 3, 2});
+
+  // ========= test range_report ===========
+  vet_ptr = get_random_array(100, 1, 100);
+  LOG(INFO) << "random_vet for range_report test: "
+            << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
+  tree.reset(*vet_ptr);
+  for (uint i = 0; i < vet_ptr->size(); i++) {
+    for (uint j = i; j < vet_ptr->size(); j++) {
+      range_report(vet_ptr, i, j, r1);
+      tree.range_report(i, j, r2);
+      // LOG(INFO) << "r1 [" << i << "," << j << "]:";
+      // for (auto &p : r1) {
+      //   LOG(INFO) << p.first << ": " << p.second;
+      // }
+      // LOG(INFO) << "r2 [" << i << "," << j << "]:";
+      // for (auto &p : r2) {
+      //   LOG(INFO) << p.first << ": " << p.second;
+      // }
+      EXPECT_EQ(true, check_reports(r1, r2));
+    }
+  }
+}
+
 // test WaveletTree
 TEST(WaveletTreeTest, waveletTreeTest) {
   /*
@@ -124,6 +169,9 @@ TEST(WaveletTreeTest, waveletTreeTest) {
 
   // ========= test range_next_value_pos ==
   run_range_next_value_pos_tests(tree);
+
+  // ========= test range_report ==========
+  run_range_report_tests(tree);
 }
 
 // test HuffmanWaveletTree

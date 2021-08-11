@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 
 #include "glog/logging.h"
@@ -148,6 +149,22 @@ class WaveletTreeNode {
     return std::min(ans_left, ans_right);
   }
 
+  // retorn the frequencies of each symbol on range [l, r)
+  void range_report(uint l, uint r,
+                    std::unordered_map<uint, uint>& result) const {
+    if (l >= r) return;
+    if (low == high) {
+      result[low] = (r - l);
+      return;
+    }
+    if (left) {
+      left->range_report(bitvec.rank(l, 0), bitvec.rank(r, 0), result);
+    }
+    if (right) {
+      right->range_report(bitvec.rank(l), bitvec.rank(r), result);
+    }
+  }
+
  private:
   // smallest value represented by this node
   uint low;
@@ -228,6 +245,14 @@ class WaveletTree : public WaveletTreeInterface {
       return 0;
     }
     return access(idx);
+  }
+
+  void range_report(uint l, uint r,
+                    std::unordered_map<uint, uint>& report_container) const {
+    report_container.clear();
+    if (!check_interval(l, r)) return;
+    // wavelet_tree node consider the interval open on r
+    root->range_report(l, r + 1, report_container);
   }
 
   uint operator[](uint idx) const override { return access(idx); }
