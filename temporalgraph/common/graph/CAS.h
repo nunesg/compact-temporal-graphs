@@ -78,9 +78,30 @@ class CAS : public GraphInterface {
     return active_at_beginning || freq_on_interval > 0;
   }
 
-  // returns neighbours of vertex u on that time interval
+  // returns neighbours of vertex u on the [start, end] time interval
   VertexContainer neighbours(uint u, uint start, uint end) const override {
-    // TODO
+    start += offset;
+    end += offset;
+    // LOG(INFO) << "start (+offset): " << start << ", end (+offset)" << end;
+    // u's range on the wavelet tree is [i,j]
+    uint i = bitv.rank(bitv.select(u, 1), 0);
+    // LOG(INFO) << "select = " << bitv.select(u, 1) << ", i: " << i;
+    uint j = bitv.rank(bitv.select(u + 1, 1), 0) - 1;
+    // LOG(INFO) << "select = " << bitv.select(u + 1, 1) << ", j: " << j;
+
+    uint kbegin = wavelet.range_next_value_pos(i, j, start);
+    // LOG(INFO) << "kbegin: " << kbegin;
+    uint kend = wavelet.range_next_value_pos(i, j, end + 1);
+
+    // LOG(INFO) << "i = " << i << " j = " << j << " kbegin = " << kbegin
+    //           << " kend = " << kend << ", u = " << u << ", v = " << v;
+
+    std::unordered_map<uint, uint> report_before;
+    std::unordered_map<uint, uint> report_interval;
+    if (i != kbegin) wavelet.range_report(i, kbegin - 1, report_before);
+    if (i != kend) wavelet.range_report(kbegin, kend - 1, report_interval);
+
+    // TODO: check weak or strong semantics
     return VertexContainer();
   }
 
