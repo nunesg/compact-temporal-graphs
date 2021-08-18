@@ -119,7 +119,7 @@ void run_range_report_tests(WaveletTree &tree) {
   //     new std::vector<uint>{1, 1, 3, 4, 4, 3, 2});
 
   // ========= test range_report ===========
-  vet_ptr = get_random_array(100, 1, 100);
+  vet_ptr = get_random_array(5, 1, 100);
   LOG(INFO) << "random_vet for range_report test: "
             << Utils::join(vet_ptr->begin(), vet_ptr->end(), ",");
   tree.reset(*vet_ptr);
@@ -127,14 +127,14 @@ void run_range_report_tests(WaveletTree &tree) {
     for (uint j = i; j < vet_ptr->size(); j++) {
       range_report(vet_ptr, i, j, r1);
       tree.range_report(i, j, r2);
-      // LOG(INFO) << "r1 [" << i << "," << j << "]:";
-      // for (auto &p : r1) {
-      //   LOG(INFO) << p.first << ": " << p.second;
-      // }
-      // LOG(INFO) << "r2 [" << i << "," << j << "]:";
-      // for (auto &p : r2) {
-      //   LOG(INFO) << p.first << ": " << p.second;
-      // }
+      LOG(INFO) << "r1 [" << i << "," << j << "]:";
+      for (auto &p : r1) {
+        LOG(INFO) << p.first << ": " << p.second;
+      }
+      LOG(INFO) << "r2 [" << i << "," << j << "]:";
+      for (auto &p : r2) {
+        LOG(INFO) << p.first << ": " << p.second;
+      }
       EXPECT_EQ(true, check_reports(r1, r2));
     }
   }

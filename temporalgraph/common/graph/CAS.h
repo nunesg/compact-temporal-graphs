@@ -105,6 +105,7 @@ class CAS : public AbstractGraph {
     std::unordered_map<uint, bool> chosen;
     for (auto& p : report_before) {
       uint v = p.first, f = p.second;
+      if (v >= n) continue;
       if ((f & 1) ||
           report_interval.count(v)) {  // odd frequency before the time interval
         answer.push_back(v);
@@ -113,6 +114,7 @@ class CAS : public AbstractGraph {
     }
     for (auto& p : report_interval) {
       uint v = p.first, f = p.second;
+      if (v >= n) continue;
       if (!chosen.count(v) && f > 0) {  // vertex appears inside the interval
         answer.push_back(v);
       }
