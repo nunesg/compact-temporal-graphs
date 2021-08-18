@@ -4,17 +4,17 @@
 
 #include "glog/logging.h"
 #include "lib/VariableSizeDenseArray.h"
+#include "temporalgraph/common/graph/AbstractGraph.h"
 #include "temporalgraph/common/graph/EventList.h"
-#include "temporalgraph/common/graph/GraphInterface.h"
 
 namespace compact {
 namespace temporalgraph {
 
-class EveLog : public GraphInterface {
-  using GraphInterface::Edge;
-  using GraphInterface::EdgeContainer;
-  using GraphInterface::Vertex;
-  using GraphInterface::VertexContainer;
+class EveLog : public AbstractGraph {
+  using AbstractGraph::Edge;
+  using AbstractGraph::EdgeContainer;
+  using AbstractGraph::Vertex;
+  using AbstractGraph::VertexContainer;
 
  public:
   using EventContainer = EventList;
@@ -38,21 +38,6 @@ class EveLog : public GraphInterface {
     return adj[u].get_neighbours(start, end);
   }
 
-  // returns the graph's edges that were active on that time interval
-  EdgeContainer aggregate(uint start, uint end) const override {
-    EdgeContainer edges;
-    VertexContainer tmpVertices;
-    for (uint i = 0; i < n; i++) {
-      tmpVertices.clear();
-      tmpVertices = neighbours(i, start, end);
-
-      for (uint j = 0; j < tmpVertices.size(); j++) {
-        edges.push_back(Edge(i, tmpVertices[j]));
-      }
-    }
-    return edges;
-  }
-
   // consider each edge being a pair {v, t}, where v is the vertex number, and t
   // is the time of the event
   void set_events(uint u, EdgeContainer& events) {
@@ -72,7 +57,6 @@ class EveLog : public GraphInterface {
   }
 
  private:
-  uint n;
   EventList* adj;
 
   void check_vertex(uint u) const {

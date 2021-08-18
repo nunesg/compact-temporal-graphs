@@ -9,18 +9,18 @@
 #include "lib/BitVector.h"
 #include "lib/WaveletTree.h"
 #include "temporalgraph/common/Utils.h"
-#include "temporalgraph/common/graph/GraphInterface.h"
+#include "temporalgraph/common/graph/AbstractGraph.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
 namespace compact {
 namespace temporalgraph {
 
-class CAS : public GraphInterface {
-  using GraphInterface::Edge;
-  using GraphInterface::EdgeContainer;
-  using GraphInterface::TemporalNeighbourContainer;
-  using GraphInterface::Vertex;
-  using GraphInterface::VertexContainer;
+class CAS : public AbstractGraph {
+  using AbstractGraph::Edge;
+  using AbstractGraph::EdgeContainer;
+  using AbstractGraph::TemporalNeighbourContainer;
+  using AbstractGraph::Vertex;
+  using AbstractGraph::VertexContainer;
 
  public:
   using IntType = GraphUtils::IntType;
@@ -101,14 +101,23 @@ class CAS : public GraphInterface {
     if (i != kbegin) wavelet.range_report(i, kbegin - 1, report_before);
     if (i != kend) wavelet.range_report(kbegin, kend - 1, report_interval);
 
-    // TODO: check weak or strong semantics
-    return VertexContainer();
-  }
-
-  // returns the graph's edges that were active on that time interval
-  EdgeContainer aggregate(uint start, uint end) const override {
-    // TODO
-    return EdgeContainer();
+    VertexContainer answer;
+    std::unordered_map<uint, bool> chosen;
+    for (auto& p : report_before) {
+      uint v = p.first, f = p.second;
+      if ((f & 1) ||
+          report_interval.count(v)) {  // odd frequency before the time interval
+        answer.push_back(v);
+        chosen[v] = true;
+      }
+    }
+    for (auto& p : report_interval) {
+      uint v = p.first, f = p.second;
+      if (!chosen.count(v) && f > 0) {  // vertex appears inside the interval
+        answer.push_back(v);
+      }
+    }
+    return answer;
   }
 
   uint size() const { return n; }
@@ -120,7 +129,6 @@ class CAS : public GraphInterface {
   }
 
  private:
-  uint n;
   uint offset;
   lib::BitVector bitv;
   lib::WaveletTree wavelet;

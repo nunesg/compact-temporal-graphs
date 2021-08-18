@@ -3,8 +3,8 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "temporalgraph/common/graph/AbstractGraph.h"
 #include "temporalgraph/common/graph/EveLog.h"
-#include "temporalgraph/common/graph/GraphInterface.h"
 
 namespace compact {
 namespace temporalgraph {
@@ -18,13 +18,12 @@ TEST(EveLogTest, evelog_test) {
   EveLog graph(5);
   EXPECT_EQ(5, graph.size());
 
-  GraphInterface::EdgeContainer events = {{2, 0}, {3, 3}, {3, 5}, {2, 4}};
+  AbstractGraph::EdgeContainer events = {{2, 0}, {3, 3}, {3, 5}, {2, 4}};
   graph.set_events(0, events);
   graph.set_events(2, events);
 
-  GraphInterface::EdgeContainer edges = graph.aggregate(2, 4);
-  GraphInterface::EdgeContainer expectedEdges = {
-      {0, 2}, {0, 3}, {2, 2}, {2, 3}};
+  AbstractGraph::EdgeContainer edges = graph.aggregate(2, 4);
+  AbstractGraph::EdgeContainer expectedEdges = {{0, 2}, {0, 3}, {2, 2}, {2, 3}};
 
   LOG(INFO) << "Aggregate result:";
   for (uint i = 0; i < edges.size(); i++) {

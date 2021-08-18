@@ -17,9 +17,9 @@ cc_library(
 cc_library(
     name = "evelog",
     hdrs = [
+        "AbstractGraph.h",
         "EveLog.h",
         "EventList.h",
-        "GraphInterface.h",
         "GraphUtils.h",
     ],
     deps = [
@@ -32,9 +32,9 @@ cc_library(
 cc_library(
     name = "edgelog",
     hdrs = [
+        "AbstractGraph.h",
         "EdgeList.h",
         "EdgeLog.h",
-        "GraphInterface.h",
         "GraphUtils.h",
     ],
     deps = [
@@ -47,8 +47,8 @@ cc_library(
 cc_library(
     name = "cas",
     hdrs = [
+        "AbstractGraph.h",
         "CAS.h",
-        "GraphInterface.h",
         "GraphUtils.h",
     ],
     deps = [
