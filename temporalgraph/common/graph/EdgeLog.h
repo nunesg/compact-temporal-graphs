@@ -39,8 +39,7 @@ class EdgeLog : public AbstractGraph {
     return adj[u].get_neighbours(start, end);
   }
 
-  // consider each edge being a pair {v, t}, where v is the vertex number, and t
-  // is the time of the event.
+  // each event is a triple {vertex, {start_t, end_t}}
   void set_events(Vertex u, TemporalNeighbourContainer& events) {
     adj[u].set_events(events);
   }

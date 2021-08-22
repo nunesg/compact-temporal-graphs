@@ -8,7 +8,7 @@ cc_binary(
         "main.cpp",
     ],
     deps = [
-        "//temporalgraph/common",
+        "//temporalgraph/common/graph:evelog",
         "//temporalgraph/common/graph:parser",
     ],
 )

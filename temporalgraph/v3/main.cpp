@@ -1,11 +1,10 @@
 /*
-  Test using standard Adjacency List to represent Temporal Graphs
+  Test using EveLog to represent Temporal Graphs
 */
 
 #include <bits/stdc++.h>
 
-#include "temporalgraph/common/AdjacencyList.h"
-#include "temporalgraph/common/Graph.h"
+#include "temporalgraph/common/graph/EveLog.h"
 #include "temporalgraph/common/graph/GraphParser.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
@@ -16,10 +15,10 @@ int main() {
   GraphParser::TemporalAdjacencyList adj;
   GraphParser::parseStdin(adj, nVertices, nEdges);
 
-  Graph<AdjacencyList> g(nVertices, "MyAdjacencyListGraph");
-  GraphParser::fillGraph(adj, g);
+  EveLog g(nVertices);
+  GraphParser::fillEveLog(adj, g);
 
-  std::cout << g.toString() << std::endl;
+  std::cout << g.to_string() << std::endl;
 
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   return 0;

@@ -138,17 +138,17 @@ class CAS : public AbstractGraph {
   void build(TemporalAdjacencyList adj) {
     n = adj.size();
     offset = n;  // value to be added to every timestamp
-    LOG(INFO) << "Build CAS, adj.size() = " << adj.size();
+    // LOG(INFO) << "Build CAS, adj.size() = " << adj.size();
     EventContainer events;
     build_events(adj, events);
-    LOG(INFO) << "Events (not ordered):" << events;
+    // LOG(INFO) << "Events (not ordered):" << events;
     sort_events(adj, events);
-    LOG(INFO) << "Events (ordered):" << events;
+    // LOG(INFO) << "Events (ordered):" << events;
     std::vector<uint> sizes, sequence;
     build_sequence(adj, events, sequence, sizes);
-    LOG(INFO) << "Sequence:" << sequence;
+    // LOG(INFO) << "Sequence:" << sequence;
     build_bitvector(sizes);
-    LOG(INFO) << "BitVector:" << bitv.to_string();
+    // LOG(INFO) << "BitVector:" << bitv.to_string();
     wavelet.reset(sequence);
   }
 
@@ -210,7 +210,7 @@ class CAS : public AbstractGraph {
   // wavelet_tree
   void build_bitvector(const std::vector<uint>& sizes) {
     uint sum = sizes.size() + std::accumulate(sizes.begin(), sizes.end(), 0);
-    LOG(INFO) << "sizes = " << sizes << ", sum = " << sum;
+    // LOG(INFO) << "sizes = " << sizes << ", sum = " << sum;
     lib::BitArray bitarr(sum);
     for (uint bidx = 0, i = 0; i < sizes.size(); i++) {
       bitarr.write(bidx, 1);

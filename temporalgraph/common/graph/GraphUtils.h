@@ -42,6 +42,18 @@ class GraphUtils {
     return std::string() + "(" + to_string(ed.first) + "," +
            to_string(ed.second) + ")";
   }
+
+  static void extractTemporalNeighbour(const TemporalNeighbour& neigh, uint& to,
+                                       uint& t_begin, uint& t_end) {
+    to = neigh.first;
+    t_begin = neigh.second.first;
+    t_end = neigh.second.second;
+  }
+
+  static TemporalNeighbour createTemporalNeighbour(uint to, uint t_begin,
+                                                   uint t_end) {
+    return {to, {t_begin, t_end}};
+  }
 };
 
 }  // namespace temporalgraph
