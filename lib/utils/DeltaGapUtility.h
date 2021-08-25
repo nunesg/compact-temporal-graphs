@@ -33,6 +33,9 @@ class DeltaGapUtility {
   */
   template <typename ArrayType>
   Container get_array_code(const ArrayType& values) {
+    if (!values.size()) {
+      return Container();
+    }
     offset = get_offset(values);
 
     Container deltaGap(values.size());
@@ -53,6 +56,9 @@ class DeltaGapUtility {
   */
   template <typename ArrayType>
   Container decode_array(const ArrayType& deltaGap) const {
+    if (!deltaGap.size()) {
+      return Container();
+    }
     Container values(deltaGap.size());
 
     values[0] = deltaGap[0];

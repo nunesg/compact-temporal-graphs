@@ -16,7 +16,9 @@ int main() {
   GraphParser::parseStdin(adj, nVertices, nEdges);
 
   EveLog g(nVertices);
+  // LOG(INFO) << "built evelog";
   GraphParser::fillEveLog(adj, g);
+  // LOG(INFO) << "filled evelog";
 
   std::cout << g.to_string() << std::endl;
 

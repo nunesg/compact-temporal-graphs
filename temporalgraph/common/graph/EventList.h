@@ -28,12 +28,15 @@ class EventList {
     sz = events.size();
     this->n = n;
 
+    // LOG(INFO) << "EventList set_events. events size: " << events.size();
     // order events by time in ascending order
     std::sort(events.begin(), events.end(), [](const Edge& e1, const Edge& e2) {
       return e1.second < e2.second;
     });
     set_labels(events);
+    // LOG(INFO) << "labels set. labels size: " << labels.size();
     set_timestamps(events);
+    // LOG(INFO) << "timestamps set. timestamps size: " << timestamps.size();
   }
 
   bool check_edge(uint v, int start, int end) const {

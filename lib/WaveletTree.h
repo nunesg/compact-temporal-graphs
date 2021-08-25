@@ -239,9 +239,9 @@ class WaveletTree : public WaveletTreeInterface {
   uint range_next_value(uint l, uint r, uint val) const {
     uint idx = range_next_value_pos(l, r + 1, val);
     if (idx > r) {
-      LOG(WARNING) << "range_next_value for value " << val
-                   << " doesn't exist on the interval [" << l << "," << r
-                   << "]";
+      // LOG(WARNING) << "range_next_value for value " << val
+      //              << " doesn't exist on the interval [" << l << "," << r
+      //              << "]";
       return 0;
     }
     return access(idx);
@@ -274,8 +274,9 @@ class WaveletTree : public WaveletTreeInterface {
 
   bool check_value(uint val) const {
     if (val < low || val > high) {
-      LOG(INFO) << (std::string() + "Error! The value " + std::to_string(val) +
-                    " is not part of the wavelet tree!");
+      // LOG(INFO) << (std::string() + "Error! The value " + std::to_string(val)
+      // +
+      //               " is not part of the wavelet tree!");
       return false;
     }
     return true;
@@ -283,7 +284,7 @@ class WaveletTree : public WaveletTreeInterface {
 
   bool check_interval(uint l, uint r) const {
     if (l < 0 || l >= size() || r < 0 || r >= size()) {
-      LOG(INFO) << ("invalid interval bounds on Wavelet Tree");
+      // LOG(INFO) << ("invalid interval bounds on Wavelet Tree");
       return false;
     }
     return true;

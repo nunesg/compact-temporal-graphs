@@ -60,7 +60,10 @@ class VariableSizeDenseArray : public Array {
   FixedSizeArray inBlockOffsets;
 
   void setup(std::vector<uint> values) {
+    // LOG(INFO) << "variableSize dense array. sz = " << values.size();
     sz = values.size();
+    if (!sz) return;
+
     int minVal = (int)*std::min_element(values.begin(), values.end());
     valueOffset = 1 - minVal;
     shift_values(values);
