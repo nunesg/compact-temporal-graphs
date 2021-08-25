@@ -15,14 +15,16 @@ TEST(EdgeLogTest, edgelog_test) {
   /*
     init
   */
+  // LOG(INFO) << "EdgeLogTest init";
   EdgeLog graph(5);
   EXPECT_EQ(5, graph.size());
   AbstractGraph::TemporalNeighbourContainer events = {{2, {0, 4}}, {3, {3, 5}}};
   graph.set_events(0, events);
   graph.set_events(2, events);
+  // LOG(INFO) << "EdgeLogTest events set";
 
   AbstractGraph::EdgeContainer edges = graph.aggregate(2, 4);
-  LOG(INFO) << "here";
+  // LOG(INFO) << "EdgeLogTest after aggregate";
   AbstractGraph::EdgeContainer expectedEdges = {{0, 2}, {0, 3}, {2, 2}, {2, 3}};
 
   LOG(INFO) << "Aggregate result:";
@@ -32,6 +34,7 @@ TEST(EdgeLogTest, edgelog_test) {
 
   EXPECT_EQ(edges, expectedEdges);
 
+  // LOG(INFO) << "EdgeLogTest before has_edge tests";
   // check has_edge function
   EXPECT_EQ(false, graph.has_edge(0, 3, 0, 2));
   EXPECT_EQ(false, graph.has_edge(0, 3, 6, 6));
@@ -44,6 +47,7 @@ TEST(EdgeLogTest, edgelog_test) {
   EXPECT_EQ(true, graph.has_edge(2, 3, 5, 5));
   EXPECT_EQ(true, graph.has_edge(2, 3, 2, 4));
 
+  // LOG(INFO) << "EdgeLogTest after has_edge tests";
   LOG(INFO) << graph.to_string();
 }
 

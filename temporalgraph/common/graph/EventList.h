@@ -20,7 +20,7 @@ class EventList {
   using Array = lib::VariableSizeDenseArray;
 
  public:
-  EventList() {}
+  EventList() { sz = 0; }
 
   // consider each edge being a pair {v, t}, where v is the vertex number, and t
   // is the time of the event
@@ -58,7 +58,10 @@ class EventList {
   VertexContainer get_neighbours(uint start, uint end) const {
     if (sz == 0) return VertexContainer();
 
+    // LOG(INFO) << "EventList get_neighbours. size = " << sz;
     auto timestamps = get_timestamps();
+    // LOG(INFO) << "EventList get_neighbours got timestamps. size = "
+    //           << timestamps.size();
     lib::BitArray activeElements;
     activeElements.assign(n, 0);
     // check which elements were active before the interval start

@@ -23,7 +23,7 @@ class EdgeLog : public AbstractGraph {
 
   EdgeLog(uint n) {
     this->n = n;
-    adj = new EdgeList[n];
+    adj = new EdgeList[n]();
   }
 
   // returns whether there is an edge (u, v) active during that time interval

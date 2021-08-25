@@ -30,8 +30,10 @@ class AbstractGraph {
     EdgeContainer edges;
     VertexContainer tmpVertices;
     for (uint i = 0; i < this->n; i++) {
+      // LOG(INFO) << "aggregate: i = " << i << ", n = " << this->n;
       tmpVertices.clear();
       tmpVertices = this->neighbours(i, start, end);
+      // LOG(INFO) << "result: " << tmpVertices.size() << " neighbours";
 
       for (uint j = 0; j < tmpVertices.size(); j++) {
         edges.push_back(Edge(i, tmpVertices[j]));

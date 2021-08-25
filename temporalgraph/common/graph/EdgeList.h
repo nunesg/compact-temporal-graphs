@@ -25,7 +25,7 @@ class EdgeList {
   using Container = std::vector<uint>;
 
  public:
-  EdgeList() {}
+  EdgeList() { sz = 0; }
 
   // each event is a triple {vertex, {start_t, end_t}}
   void set_events(TemporalNeighbourContainer& events) {
@@ -71,9 +71,10 @@ class EdgeList {
   */
   VertexContainer get_neighbours(uint start, uint end) const {
     if (!sz) return VertexContainer();
-
+    // LOG(INFO) << "EdgeList get_neighbours";
     VertexContainer neighbours;
     auto labels = retrieve(this->labels, labels_huff, labels_dgap);
+    // LOG(INFO) << "EdgeList get_labels: labels_retrieved";
     for (uint i = 0; i < labels.size(); i++) {
       if (check_edge(labels[i], start, end)) {
         neighbours.push_back(labels[i]);

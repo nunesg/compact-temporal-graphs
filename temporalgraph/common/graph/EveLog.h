@@ -22,7 +22,7 @@ class EveLog : public AbstractGraph {
 
   EveLog(uint n) {
     this->n = n;
-    adj = new EventList[n];
+    adj = new EventList[n]();
   }
 
   // returns whether there is an edge (u, v) active during that time interval

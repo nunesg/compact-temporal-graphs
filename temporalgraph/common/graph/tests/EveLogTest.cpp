@@ -15,14 +15,17 @@ TEST(EveLogTest, evelog_test) {
   /*
     init
   */
+  // LOG(INFO) << "EvelogTest init";
   EveLog graph(5);
   EXPECT_EQ(5, graph.size());
 
   AbstractGraph::EdgeContainer events = {{2, 0}, {3, 3}, {3, 5}, {2, 4}};
   graph.set_events(0, events);
   graph.set_events(2, events);
+  // LOG(INFO) << "EvelogTest events set";
 
   AbstractGraph::EdgeContainer edges = graph.aggregate(2, 4);
+  // LOG(INFO) << "EvelogTest finished aggregate";
   AbstractGraph::EdgeContainer expectedEdges = {{0, 2}, {0, 3}, {2, 2}, {2, 3}};
 
   LOG(INFO) << "Aggregate result:";

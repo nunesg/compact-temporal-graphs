@@ -58,6 +58,9 @@ class HuffmanBitTree {
   }
 
   Node* get_tree() const {
+    if (bit_tree.size() == 0) {
+      return NULL;
+    }
     uint idx = 0;
     return get_tree_pre_order(idx);
   }
@@ -147,8 +150,17 @@ class HuffmanTree {
   }
 
   void decode(const BitArray& bit_stream, ContainerType& values) const {
-    std::string s;
+    values.clear();
+    if (!bit_stream.size()) return;
+
+    // LOG(INFO) << "decode HuffmanTree. bit_stream: " <<
+    // bit_stream.to_string();
     Node* root = bit_tree.get_tree();
+    if (!root) return;
+
+    // std::string s;
+    // root->infix(s);
+    // LOG(INFO) << "decode HuffmanTree. got tree: " << s;
 
     uint idx = 0;
     values.clear();
