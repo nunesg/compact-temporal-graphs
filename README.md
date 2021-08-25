@@ -35,3 +35,10 @@ The experiments for temporal graphs are under the `temporalgraph` folder, on the
 
 - `python3 main.py`
 - This will execute the experiments considering the parameters in `config.py`
+
+### Test versions description
+- `v0`: Standard Adjacency List graph representation.
+- `v1`: Standard Adjacency Matrix graph representation.
+- `v2`: EdgeLog graph representation.
+- `v3`: EveLog graph representation.
+- `v4`: CAS graph representation.
