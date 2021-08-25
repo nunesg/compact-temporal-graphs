@@ -42,6 +42,7 @@ cc_library(
     deps = [
         "//lib:bitvector",
         "//lib:wavelet_tree",
+        "//temporalgraph/common",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -102,20 +103,20 @@ cc_test(
     ],
 )
 
-cc_test(
-    name = "test",
-    srcs = [
-        "tests/CASTest.cpp",
-        "tests/EdgeLogTest.cpp",
-        "tests/EveLogTest.cpp",
-    ],
-    deps = [
-        ":cas",
-        ":edgelog",
-        ":evelog",
-        "//temporalgraph/common",
-        "@com_github_google_glog//:glog",
-        "@gtest",
-        "@gtest//:gtest_main",
-    ],
-)
+# cc_test(
+#     name = "test",
+#     srcs = [
+#         "tests/CASTest.cpp",
+#         "tests/EdgeLogTest.cpp",
+#         "tests/EveLogTest.cpp",
+#     ],
+#     deps = [
+#         ":cas",
+#         ":edgelog",
+#         ":evelog",
+#         "//temporalgraph/common",
+#         "@com_github_google_glog//:glog",
+#         "@gtest",
+#         "@gtest//:gtest_main",
+#     ],
+# )

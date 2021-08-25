@@ -67,6 +67,7 @@ class GraphParser {
 
   static void fillEdgeLog(TemporalAdjacencyList& adj, EdgeLog& g) {
     for (uint u = 0; u < adj.size(); u++) {
+      // LOG(INFO) << "set events for vertex " << u;
       g.set_events(u, adj[u]);
     }
   }

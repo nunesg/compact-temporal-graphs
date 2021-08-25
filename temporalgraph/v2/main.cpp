@@ -15,8 +15,11 @@ int main() {
   GraphParser::TemporalAdjacencyList adj;
   GraphParser::parseStdin(adj, nVertices, nEdges);
 
+  // LOG(INFO) << "before EdgeLog";
   EdgeLog g(nVertices);
+  // LOG(INFO) << "after EdgeLog";
   GraphParser::fillEdgeLog(adj, g);
+  // LOG(INFO) << "after filling EdgeLog";
 
   std::cout << g.to_string() << std::endl;
 

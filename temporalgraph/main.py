@@ -2,6 +2,7 @@ import time
 import config as config_obj
 import timegen
 import subprocess
+from os import path
 from datagenerator import DataGenerator
 from graphgenerator import GraphGenerator
 from monitor import ProcessMonitor
@@ -57,8 +58,10 @@ def main(config):
 
     # I am executing "make target" here
     if config.version == "all":
-        for i in range(2):
+        i = 0
+        while path.exists(f"v{i}"):
             run_version(config, i)
+            i += 1
     else:
         run_version(config, int(config.version))
     return

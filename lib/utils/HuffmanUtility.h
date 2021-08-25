@@ -25,12 +25,16 @@ class HuffmanUtility {
 
   template <typename ArrayType>
   void encode(const ArrayType& values, BitArray& bit_stream) {
+    // LOG(INFO) << "HuffmanUtility encode. values: " << values;
+
     FrequencyContainer freq;
     build_frequencies(values, freq);
 
     CodeContainer codes;
     tree.build(freq, codes);
+    // LOG(INFO) << "tree: " << tree.to_string();
     build_stream(values, codes, bit_stream);
+    // LOG(INFO) << "bit_stream: " << bit_stream.to_string();
   }
 
   void decode(const BitArray& bit_stream, ContainerType& values) const {
@@ -80,10 +84,18 @@ class HuffmanUtility {
     if (values.empty()) {
       return;
     }
+    // LOG(INFO) << "build_stream. values: " << values;
+    // for (auto& p : codes) {
+    //   LOG(INFO) << "code - value: " << p.first << ", code: " <<
+    //   p.second.first
+    //             << ", code_size = " << p.second.second;
+    // }
+
     uint total_length = 0;
     for (auto val : values) {
       total_length += codes.at(val).second;
     }
+    // LOG(INFO) << "total_length: " << total_length;
 
     bit_stream.resize(total_length);
     uint idx = 0;

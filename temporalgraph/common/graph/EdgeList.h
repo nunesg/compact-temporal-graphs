@@ -32,11 +32,15 @@ class EdgeList {
     sz = events.size();
     if (!sz) return;
 
+    // LOG(INFO) << "set_events on EdgeList. Size = " << events.size();
     std::sort(events.begin(), events.end());
 
     build_intervals(events);
+    // LOG(INFO) << "intervals built. size = " << intervals.size();
     build_labels(events);
+    // LOG(INFO) << "labels built. labels = " << labels.to_string();
     build_offsets(events, retrieve(labels, labels_huff, labels_dgap));
+    // LOG(INFO) << "offsets built";
   }
 
   bool check_edge(uint v, int start, int end) const {
@@ -111,8 +115,12 @@ class EdgeList {
                      const lib::HuffmanUtility& huff,
                      const lib::DeltaGapUtility& dgap) const {
     Container tmp;
+    // LOG(INFO) << "enter retrieve. bit_stream size = " << bit_stream.size();
     huff.decode(bit_stream, tmp);
-    return dgap.decode_array(tmp);
+    // LOG(INFO) << "decoded bit_stream. tmp size = " << tmp.size();
+    auto ans = dgap.decode_array(tmp);
+    // LOG(INFO) << "dgap decoded";
+    return ans;
   }
 
   static uint get_label_index(uint label, const std::vector<uint>& labels) {
@@ -140,6 +148,7 @@ class EdgeList {
   void build_labels(const TemporalNeighbourContainer& sorted_events) {
     VertexContainer labels_array;
     get_labels_from_events(sorted_events, labels_array);
+    // LOG(INFO) << "build_labels. labels_array size: " << labels_array.size();
     labels_huff.encode(labels_dgap.get_array_code(labels_array), labels);
   }
 
@@ -151,8 +160,11 @@ class EdgeList {
   void build_offsets(const TemporalNeighbourContainer& sorted_events,
                      const ArrayType& labels) {
     VertexContainer offsets_array;
+    // LOG(INFO) << "build_offsets";
     get_offsets_from_events(sorted_events, labels, offsets_array);
+    // LOG(INFO) << "got offsets from events";
     offsets_huff.encode(offsets_dgap.get_array_code(offsets_array), offsets);
+    // LOG(INFO) << "finished encoding";
   }
 
   /*

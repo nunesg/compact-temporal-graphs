@@ -278,6 +278,9 @@ class HuffmanTree {
       }
       code_size++;
     }
+    code_size = std::max(
+        code_size,
+        uint(1));  // when the tree has only the root, the element's code is 0
     return {code, code_size};
   }
 
@@ -290,13 +293,17 @@ class HuffmanTree {
   }
 
   static uint decode_next(const BitArray& bit_stream, Node* root, uint& idx) {
+    bool is_root = true;
     while (root->left && root->right) {
+      is_root = false;
+      // LOG(INFO) << "decode_next";
       if (bit_stream[idx++]) {
         root = root->right;
       } else {
         root = root->left;
       }
     }
+    if (is_root) idx++;
     return root->val;
   }
 };
