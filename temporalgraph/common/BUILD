@@ -9,6 +9,7 @@ cc_library(
         "AdjacencyMatrix.h",
         "Edge.h",
         "Graph.h",
+        "TimeCounter.h",
         "Utils.h",
         "Vertex.h",
     ],
