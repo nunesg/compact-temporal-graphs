@@ -62,8 +62,13 @@ def main(config):
         while path.exists(f"v{i}"):
             run_version(config, i)
             i += 1
+    elif isinstance(config.version, list):
+        for i in config.version:
+            run_version(config, i)
+    elif isinstance(config.version, int):
+        run_version(config, config.version)
     else:
-        run_version(config, int(config.version))
+        raise Exception("Invalid config version")
     return
 
 
