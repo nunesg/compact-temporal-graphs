@@ -47,6 +47,8 @@ TEST(EdgeLogTest, edgelog_test) {
   EXPECT_EQ(true, graph.has_edge(2, 3, 5, 5));
   EXPECT_EQ(true, graph.has_edge(2, 3, 2, 4));
 
+  EXPECT_EQ(graph.get_name(), std::string("EdgeLog"));
+
   // LOG(INFO) << "EdgeLogTest after has_edge tests";
   LOG(INFO) << graph.to_string();
 }

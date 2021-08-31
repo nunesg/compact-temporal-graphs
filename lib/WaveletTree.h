@@ -110,6 +110,9 @@ class WaveletTreeNode {
     // LOG(INFO) << "low = " << low << ", high = " << high
     //           << ", mid = " << get_mid() << ", [l = " << l << ", r = " << r
     //           << "), val = " << val;
+    if (l == r) {
+      return r;
+    }
     if (low == high) {
       if (low < val) {
         // LOG(INFO) << "leaf >> low = " << low << ", return " << r;

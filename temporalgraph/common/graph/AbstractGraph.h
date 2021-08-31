@@ -25,6 +25,12 @@ class AbstractGraph {
 
   virtual VertexContainer neighbours(uint u, uint start, uint end) const = 0;
 
+  virtual std::string get_name() const = 0;
+
+  // virtual uint size_edges() const = 0;
+
+  uint size() const { return this->n; }
+
   // returns the graph's edges that were active on that time interval
   EdgeContainer aggregate(uint start, uint end) const {
     EdgeContainer edges;

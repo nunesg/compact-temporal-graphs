@@ -47,6 +47,8 @@ TEST(EveLogTest, evelog_test) {
   EXPECT_EQ(true, graph.has_edge(2, 3, 5, 5));
   EXPECT_EQ(true, graph.has_edge(2, 3, 2, 4));
 
+  EXPECT_EQ(graph.get_name(), std::string("EveLog"));
+
   LOG(INFO) << graph.to_string();
 }
 

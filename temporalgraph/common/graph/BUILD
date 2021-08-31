@@ -3,6 +3,14 @@ load("@rules_cc//cc:defs.bzl", "cc_library")
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "graph",
+    hdrs = [
+        "AbstractGraph.h",
+        "GraphUtils.h",
+    ],
+)
+
+cc_library(
     name = "evelog",
     hdrs = [
         "AbstractGraph.h",

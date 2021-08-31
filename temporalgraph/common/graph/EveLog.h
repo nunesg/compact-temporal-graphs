@@ -38,13 +38,13 @@ class EveLog : public AbstractGraph {
     return adj[u].get_neighbours(start, end);
   }
 
+  std::string get_name() const override { return "EveLog"; }
+
   // consider each edge being a pair {v, t}, where v is the vertex number, and t
   // is the time of the event
   void set_events(uint u, EdgeContainer& events) {
     adj[u].set_events(events, n);
   }
-
-  uint size() const { return n; }
 
   std::string to_string() const {
     std::string line = "\nEveLog\n";

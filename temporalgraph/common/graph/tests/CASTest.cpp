@@ -65,12 +65,12 @@ TEST(CASTest, cas_test) {
   */
 
   /*
-    0: {1, {20, 22}}, {2, {25, 28}}
-    1: {2, {30, 32}}
-    2:
+    0:
+    1: {1, {20, 22}}, {2, {25, 28}}
+    2: {2, {30, 32}}
   */
   CAS::TemporalAdjacencyList adj{
-      {{1, {25, 28}}, {2, {20, 25}}}, {{2, {30, 32}}}, {}};
+      {}, {{1, {25, 28}}, {2, {20, 25}}}, {{2, {30, 32}}}};
   CAS graph(adj);
   EXPECT_EQ(3, graph.size());
 
@@ -88,6 +88,7 @@ TEST(CASTest, cas_test) {
       EXPECT_EQ(true, equals(aggregate(adj, i, j), graph.aggregate(i, j)));
     }
   }
+  EXPECT_EQ(graph.get_name(), std::string("CAS"));
   LOG(INFO) << graph.to_string();
 
   // auto expected_edges = aggregate(adj, 26, 30);

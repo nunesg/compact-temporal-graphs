@@ -28,10 +28,11 @@ def generate_data(config):
 
 
 def run_version(config, version):
-    subprocess.run(["bazel", "build", f"v{version}:main"])
+    subprocess.run(
+        ["bazel", "build", f"v{version}:main"])
     print(config.datapath)
     pmonitor = ProcessMonitor(
-        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath}")
+        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath} --test_flag='Hello Flag!'")
 
     try:
         pmonitor.execute(shell=True)

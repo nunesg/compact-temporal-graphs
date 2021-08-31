@@ -39,12 +39,12 @@ class EdgeLog : public AbstractGraph {
     return adj[u].get_neighbours(start, end);
   }
 
+  std::string get_name() const override { return "EdgeLog"; }
+
   // each event is a triple {vertex, {start_t, end_t}}
   void set_events(Vertex u, TemporalNeighbourContainer& events) {
     adj[u].set_events(events);
   }
-
-  uint size() const { return n; }
 
   std::string to_string() const {
     std::string line = "\nEdgeLog\n";

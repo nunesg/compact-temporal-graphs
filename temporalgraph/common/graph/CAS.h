@@ -38,12 +38,12 @@ class CAS : public AbstractGraph {
   }
 
   CAS(TemporalAdjacencyList adj) {
-    n = adj.size();
+    this->n = adj.size();
     build(adj);
   }
 
   void reset(TemporalAdjacencyList adj) {
-    n = adj.size();
+    this->n = adj.size();
     build(adj);
   }
 
@@ -56,7 +56,12 @@ class CAS : public AbstractGraph {
     // u's range on the wavelet tree is [i,j]
     uint i = bitv.rank(bitv.select(u, 1), 0);
     // LOG(INFO) << "select = " << bitv.select(u, 1) << ", i: " << i;
-    uint j = bitv.rank(bitv.select(u + 1, 1), 0) - 1;
+    uint j = bitv.rank(bitv.select(u + 1, 1), 0);
+
+    if (j <= i) {
+      return false;
+    }
+    j--;
     // LOG(INFO) << "select = " << bitv.select(u + 1, 1) << ", j: " << j;
 
     uint kbegin = wavelet.range_next_value_pos(i, j, start);
@@ -122,7 +127,7 @@ class CAS : public AbstractGraph {
     return answer;
   }
 
-  uint size() const { return n; }
+  std::string get_name() const override { return "CAS"; }
 
   std::string to_string() const {
     std::string line("CAS_");

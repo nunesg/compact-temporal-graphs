@@ -14,3 +14,15 @@ cc_library(
         "Vertex.h",
     ],
 )
+
+cc_library(
+    name = "experiments",
+    hdrs = [
+        "TestRunner.h",
+        "TestSummary.h",
+    ],
+    deps = [
+        ":common",
+        "//temporalgraph/common/graph",
+    ],
+)
