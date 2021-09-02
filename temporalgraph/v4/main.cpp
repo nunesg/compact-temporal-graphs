@@ -13,27 +13,34 @@
 
 using namespace compact::temporalgraph;
 
-DEFINE_string(test_flag, "Test Flag!", "Test flag message to print!");
+DEFINE_int32(has_edge_epochs, 10,
+             "Number of times to run the has_edge operation");
+DEFINE_int32(neighbours_epochs, 10,
+             "Number of times to run the neighbours operation");
+DEFINE_int32(aggregate_epochs, 10,
+             "Number of times to run the aggregate operation");
 
 int main(int argc, char *argv[]) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  LOG(INFO) << FLAGS_test_flag;
-
-  uint nVertices, nEdges;
+  uint V, E, T;
   GraphParser::TemporalAdjacencyList adj;
-  GraphParser::parseStdin(adj, nVertices, nEdges);
+  GraphParser::parseStdin(adj, V, E, T);
 
   TimeCounter counter;
   counter.start();
   CAS g(adj);
   counter.stop();
 
-  LOG(INFO) << TestRunner::run(g).to_string();
+  TestSummary summary =
+      (new TestRunner())
+          ->run(g, V, E, T, FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
+                FLAGS_aggregate_epochs);
+  summary.set_build_time(counter.get_mean());
+  LOG(INFO) << summary.to_string();
 
   // std::cout << g.to_string() << std::endl;
-
-  std::cout << "Time to build (ms): " << counter.get_mean() << std::endl;
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 

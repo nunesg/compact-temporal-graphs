@@ -40,8 +40,9 @@ class GraphParser {
     1 0 6 7
     1 0 8 9
   */
-  static void parseStdin(TemporalAdjacencyList& adj, uint& n, uint& m) {
-    scanf("%d %d", &n, &m);
+  static void parseStdin(TemporalAdjacencyList& adj, uint& n, uint& m,
+                         uint& t) {
+    scanf("%d %d %d", &n, &m, &t);
     uint from, to, st, en, neighbours;
     adj.resize(n);
     for (from = 0; from < n; from++) {

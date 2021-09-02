@@ -9,19 +9,15 @@ class ProcessMonitor:
         self.execution_state = False
 
     def execute(self, shell=False):
-        self.max_vms_memory = 0
+        self.rss_baseline = -1
         self.max_rss_memory = 0
 
-        self.t1 = None
-        self.t0 = time.time()
         self.p = subprocess.Popen(self.command, shell=shell)
         self.execution_state = True
 
     def poll(self):
         if not self.check_execution_state():
             return False
-
-        self.t1 = time.time()
 
         try:
 
@@ -31,22 +27,20 @@ class ProcessMonitor:
             descendants = descendants + [pp]
 
             rss_memory = 0
-            vms_memory = 0
 
             # calculate and sum up the memory of the subprocess and all its descendants
-
             for descendant in descendants:
                 try:
                     mem_info = descendant.memory_info()
 
-                    rss_memory += mem_info[0]
-                    vms_memory += mem_info[1]
+                    rss_memory += mem_info.rss
                 except psutil.NoSuchProcess:
                     # sometimes a subprocess descendant will have terminated between the time
                     # we obtain a list of descendants, and the time we actually poll this
                     # descendant's memory usage.
                     pass
-            self.max_vms_memory = max(self.max_vms_memory, vms_memory)
+            if self.rss_baseline == -1:
+                self.rss_baseline = rss_memory
             self.max_rss_memory = max(self.max_rss_memory, rss_memory)
 
         except psutil.NoSuchProcess:
@@ -75,3 +69,4 @@ class ProcessMonitor:
                 pp.terminate()
         except psutil.NoSuchProcess:
             pass
+        self.max_rss_memory = self.max_rss_memory - self.rss_baseline

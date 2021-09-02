@@ -4,8 +4,8 @@ class DataGenerator:
     # V, E are the number of vertices and edges, respectively
     # datapath is the path in which to write the graph
     @staticmethod
-    def gen(graph, V, E, datapath):
-        str = f'{V} {E}\n'
+    def gen(graph, V, E, T, datapath):
+        str = f'{V} {E} {T}\n'
         for i in range(V):
             sz = len(graph[i])
             str += f'{sz}'

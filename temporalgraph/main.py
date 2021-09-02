@@ -9,22 +9,23 @@ from monitor import ProcessMonitor
 
 BAZEL_BIN_DIR = '../bazel-bin/temporalgraph'
 
-TIME_GENERATORS = {
-    'dummy': timegen.DummyGenerator()
-}
+# TIME_GENERATORS = {
+#     'dummy': timegen.DummyGenerator()
+# }
 
 
-def get_time_generator(timegen_type):
-    return TIME_GENERATORS.get(timegen_type, timegen.DummyGenerator())
+# def get_time_generator(timegen_type):
+#     return TIME_GENERATORS.get(timegen_type, timegen.DummyGenerator())
 
 
 def generate_data(config):
-    V = config.graph_vertices
-    E = config.graph_edges
-    print(f"V = {V}, E = {E}")
+    V = config.V
+    E = config.E
+    T = config.T
+    print(f"V = {V}, E = {E}, T = {T}")
     graph = GraphGenerator.gen_adjacencies(
-        V, E, get_time_generator(config.time_gen))
-    DataGenerator.gen(graph, V, E, config.datapath)
+        V, E, T)
+    DataGenerator.gen(graph, V, E, T, config.datapath)
 
 
 def run_version(config, version):
@@ -32,7 +33,7 @@ def run_version(config, version):
         ["bazel", "build", f"v{version}:main"])
     print(config.datapath)
     pmonitor = ProcessMonitor(
-        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath} --test_flag='Hello Flag!'")
+        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath} --has_edge_epochs={config.has_edge_epochs} --neighbours_epochs={config.neighbours_epochs} --aggregate_epochs={config.aggregate_epochs}")
 
     try:
         pmonitor.execute(shell=True)
@@ -47,8 +48,7 @@ def run_version(config, version):
 
     print(f"========== Run Version {version} ==========\n")
     print(f"return code:{pmonitor.p.returncode}")
-    print(f"time:{(pmonitor.t1 - pmonitor.t0): .9f} seconds")
-    print(f"max_vms_memory:{pmonitor.max_vms_memory/1024} KB")
+    print(f"baseline_rss_memory:{pmonitor.rss_baseline/1024} KB")
     print(f"max_rss_memory:{pmonitor.max_rss_memory/1024} KB")
     print(f"\n=====================================")
     return
