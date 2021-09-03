@@ -51,6 +51,7 @@ def run_version(config, version):
     print(f"baseline_rss_memory:{pmonitor.rss_baseline/1024} KB")
     print(f"max_rss_memory:{pmonitor.max_rss_memory/1024} KB")
     print(f"\n=====================================")
+    pmonitor.print()
     return
 
 

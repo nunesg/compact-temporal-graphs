@@ -1,6 +1,7 @@
 import time
 import psutil
 import subprocess
+from matplotlib import pyplot
 
 
 class ProcessMonitor:
@@ -11,6 +12,7 @@ class ProcessMonitor:
     def execute(self, shell=False):
         self.rss_baseline = -1
         self.max_rss_memory = 0
+        self.rss_memory_array = []
 
         self.p = subprocess.Popen(self.command, shell=shell)
         self.execution_state = True
@@ -39,6 +41,7 @@ class ProcessMonitor:
                     # we obtain a list of descendants, and the time we actually poll this
                     # descendant's memory usage.
                     pass
+            self.rss_memory_array.append(rss_memory)
             if self.rss_baseline == -1:
                 self.rss_baseline = rss_memory
             self.max_rss_memory = max(self.max_rss_memory, rss_memory)
@@ -70,3 +73,7 @@ class ProcessMonitor:
         except psutil.NoSuchProcess:
             pass
         self.max_rss_memory = self.max_rss_memory - self.rss_baseline
+
+    def print(self):
+        pyplot.plot(self.rss_memory_array)
+        pyplot.show()
