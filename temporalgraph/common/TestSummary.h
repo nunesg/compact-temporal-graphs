@@ -15,6 +15,7 @@ class TestSummary {
     this->E = E;
     this->T = T;
     this->build_time = 0;
+    this->graph_rss = 0;
     this->edge_counter = edge_counter;
     this->neighbour_counter = neighbour_counter;
     this->aggregate_counter = aggregate_counter;
@@ -22,6 +23,8 @@ class TestSummary {
   }
 
   void set_build_time(uint t) { this->build_time = t; }
+
+  void set_graph_rss(uint val) { this->graph_rss = val; }
 
   std::string to_string() {
     std::string str;
@@ -36,6 +39,7 @@ class TestSummary {
     str += "aggregate   (avg time ms): " +
            std::to_string(aggregate_counter.get_mean()) + "\n";
     str += "build time (ms): " + std::to_string(this->build_time) + "\n";
+    str += "graph rss (kb): " + std::to_string(this->graph_rss) + "\n";
     return str;
   }
 
@@ -44,6 +48,7 @@ class TestSummary {
   uint E;
   uint T;
   uint build_time;
+  uint graph_rss;
   TimeCounter edge_counter;
   TimeCounter neighbour_counter;
   TimeCounter aggregate_counter;

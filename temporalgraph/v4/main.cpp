@@ -3,6 +3,7 @@
 */
 
 #include <bits/stdc++.h>
+#include <sys/resource.h>
 
 #include "gflags/gflags.h"
 #include "temporalgraph/common/TestRunner.h"
@@ -28,16 +29,23 @@ int main(int argc, char *argv[]) {
   GraphParser::TemporalAdjacencyList adj;
   GraphParser::parseStdin(adj, V, E, T);
 
+  struct rusage rusage_before;
+  getrusage(RUSAGE_SELF, &rusage_before);
+
   TimeCounter counter;
   counter.start();
   CAS g(adj);
   counter.stop();
+
+  struct rusage rusage_after;
+  getrusage(RUSAGE_SELF, &rusage_after);
 
   TestSummary summary =
       (new TestRunner())
           ->run(g, V, E, T, FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
                 FLAGS_aggregate_epochs);
   summary.set_build_time(counter.get_mean());
+  summary.set_graph_rss(rusage_after.ru_maxrss - rusage_before.ru_maxrss);
   LOG(INFO) << summary.to_string();
 
   // std::cout << g.to_string() << std::endl;
