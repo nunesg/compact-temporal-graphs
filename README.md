@@ -11,6 +11,7 @@ before following the next steps.
 
 ### Python dependencies
 - psutil: `pip3 install psutil`
+- mysql connector: `pip install mysql-connector-python`
 
 ## Unit testing
 

@@ -50,7 +50,7 @@ class TestRunner {
       agg_c.stop();
     }
 
-    return TestSummary(V, E, T, edge_c, neigh_c, agg_c, graph.get_name());
+    return TestSummary(graph.get_name(), V, E, T, edge_c, neigh_c, agg_c);
   }
 
  private:

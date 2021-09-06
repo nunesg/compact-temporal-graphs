@@ -18,11 +18,14 @@ cc_library(
 cc_library(
     name = "experiments",
     hdrs = [
+        "CommandLineFlags.h",
+        "RssMonitor.h",
         "TestRunner.h",
         "TestSummary.h",
     ],
     deps = [
         ":common",
         "//temporalgraph/common/graph",
+        "@com_github_gflags_gflags//:gflags",
     ],
 )

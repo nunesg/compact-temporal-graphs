@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+
 #include <string>
 
 #include "temporalgraph/common/TimeCounter.h"
@@ -8,51 +10,92 @@ namespace compact {
 namespace temporalgraph {
 class TestSummary {
  public:
-  TestSummary(uint V, uint E, uint T, const TimeCounter& edge_counter,
+  /*
+   graph_type  VARCHAR(50),
+   V           INT,
+   E           INT,
+   T           INT,
+   build_time_ms      FLOAT,
+   has_edge_time_ms   FLOAT,
+   neighbours_time_ms FLOAT,
+   aggregate_time_ms  FLOAT,
+   graph_rss_kb       INT,
+   max_rss_kb         INT,
+   has_edge_epochs     INT,
+   neighbours_epochs   INT,
+   aggregate_epochs    INT
+  */
+  TestSummary(const std::string& graph_type, uint V, uint E, uint T,
+              const TimeCounter& edge_counter,
               const TimeCounter& neighbour_counter,
-              const TimeCounter& aggregate_counter, const std::string& id) {
+              const TimeCounter& aggregate_counter) {
+    this->graph_type = graph_type;
     this->V = V;
     this->E = E;
     this->T = T;
-    this->build_time = 0;
-    this->graph_rss = 0;
     this->edge_counter = edge_counter;
     this->neighbour_counter = neighbour_counter;
     this->aggregate_counter = aggregate_counter;
-    this->id = id;
   }
 
-  void set_build_time(uint t) { this->build_time = t; }
+  void set_remaining_fields(double build_time_ms, uint graph_rss_kb,
+                            uint max_rss_kb, uint has_edge_epochs,
+                            uint neighbours_epochs, uint aggregate_epochs) {
+    this->build_time_ms = build_time_ms;
+    this->graph_rss_kb = graph_rss_kb;
+    this->max_rss_kb = max_rss_kb;
+    this->has_edge_epochs = has_edge_epochs;
+    this->neighbours_epochs = neighbours_epochs;
+    this->aggregate_epochs = aggregate_epochs;
+  }
 
-  void set_graph_rss(uint val) { this->graph_rss = val; }
+  //   std::string to_csv() {
+  //     char str[1000];
+  //     sprintf(str, "%s,%d,%d,%d,%lf,%lf,%lf,%lf,")
+  //   }
 
-  std::string to_string() {
-    std::string str;
-    str += "Graph type: " + id + "\n";
-    str += "V: " + std::to_string(V) + "\n";
-    str += "E: " + std::to_string(E) + "\n";
-    str += "T: " + std::to_string(T) + "\n";
-    str += "has_edge    (avg time ms): " +
-           std::to_string(edge_counter.get_mean()) + "\n";
-    str += "neighbours  (avg time ms): " +
-           std::to_string(neighbour_counter.get_mean()) + "\n";
-    str += "aggregate   (avg time ms): " +
-           std::to_string(aggregate_counter.get_mean()) + "\n";
-    str += "build time (ms): " + std::to_string(this->build_time) + "\n";
-    str += "graph rss (kb): " + std::to_string(this->graph_rss) + "\n";
-    return str;
+  std::string to_json() {
+    char str[1000];
+
+    sprintf(str,
+            "\n"
+            "{\n"
+            "      \"graph_type\" = \"%s\",\n"
+            "      \"V\" = %d,\n"
+            "      \"E\" = %d,\n"
+            "      \"T\" = %d,\n"
+            "      \"build_time_ms\" = %.4lf,\n"
+            "      \"has_edge_time_ms\" = %.4lf,\n"
+            "      \"neighbours_time_ms\" = %.4lf,\n"
+            "      \"aggregate_time_ms\" = %.4lf,\n"
+            "      \"graph_rss_kb\" = %d,\n"
+            "      \"max_rss_kb\" = %d,\n"
+            "      \"has_edge_epochs\" = %d,\n"
+            "      \"neighbours_epochs\" = %d,\n"
+            "      \"aggregate_epochs\" = %d,\n"
+            "}\n"
+            "\n",
+            graph_type.c_str(), V, E, T, build_time_ms, edge_counter.get_mean(),
+            neighbour_counter.get_mean(), aggregate_counter.get_mean(),
+            graph_rss_kb, max_rss_kb, has_edge_epochs, neighbours_epochs,
+            aggregate_epochs);
+    return std::string(str);
   }
 
  private:
+  std::string graph_type;
   uint V;
   uint E;
   uint T;
-  uint build_time;
-  uint graph_rss;
+  uint graph_rss_kb;
+  uint max_rss_kb;
+  uint has_edge_epochs;
+  uint neighbours_epochs;
+  uint aggregate_epochs;
+  double build_time_ms;
   TimeCounter edge_counter;
   TimeCounter neighbour_counter;
   TimeCounter aggregate_counter;
-  std::string id;
 };
 }  // namespace temporalgraph
 }  // namespace compact

@@ -6,6 +6,8 @@
 #include <sys/resource.h>
 
 #include "gflags/gflags.h"
+#include "temporalgraph/common/CommandLineFlags.h"
+#include "temporalgraph/common/RssMonitor.h"
 #include "temporalgraph/common/TestRunner.h"
 #include "temporalgraph/common/TimeCounter.h"
 #include "temporalgraph/common/graph/CAS.h"
@@ -13,13 +15,6 @@
 #include "temporalgraph/common/graph/GraphUtils.h"
 
 using namespace compact::temporalgraph;
-
-DEFINE_int32(has_edge_epochs, 10,
-             "Number of times to run the has_edge operation");
-DEFINE_int32(neighbours_epochs, 10,
-             "Number of times to run the neighbours operation");
-DEFINE_int32(aggregate_epochs, 10,
-             "Number of times to run the aggregate operation");
 
 int main(int argc, char *argv[]) {
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -29,26 +24,28 @@ int main(int argc, char *argv[]) {
   GraphParser::TemporalAdjacencyList adj;
   GraphParser::parseStdin(adj, V, E, T);
 
-  struct rusage rusage_before;
-  getrusage(RUSAGE_SELF, &rusage_before);
+  RssMonitor rss;
 
-  TimeCounter counter;
-  counter.start();
+  TimeCounter build_time_counter;
+  build_time_counter.start();
   CAS g(adj);
-  counter.stop();
+  build_time_counter.stop();
 
-  struct rusage rusage_after;
-  getrusage(RUSAGE_SELF, &rusage_after);
+  rss.measure("after_build");
 
   TestSummary summary =
       (new TestRunner())
           ->run(g, V, E, T, FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
                 FLAGS_aggregate_epochs);
-  summary.set_build_time(counter.get_mean());
-  summary.set_graph_rss(rusage_after.ru_maxrss - rusage_before.ru_maxrss);
-  LOG(INFO) << summary.to_string();
 
-  // std::cout << g.to_string() << std::endl;
+  rss.measure("after_tests");
+
+  summary.set_remaining_fields(
+      build_time_counter.get_mean(), rss.get_discounted("after_build"),
+      rss.get_discounted("after_tests"), FLAGS_has_edge_epochs,
+      FLAGS_neighbours_epochs, FLAGS_aggregate_epochs);
+
+  LOG(INFO) << summary.to_json();
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
