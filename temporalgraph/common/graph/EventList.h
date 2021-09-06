@@ -90,6 +90,7 @@ class EventList {
     for (i = 0; i < sz; i++) {
       uint t = timestamps[i];
       uint vtx = labels[i];
+      if (t < start) continue;
       if (t > end) break;
 
       if (!activeElements[vtx]) {

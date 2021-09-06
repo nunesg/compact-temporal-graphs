@@ -8,7 +8,10 @@ cc_binary(
         "main.cpp",
     ],
     deps = [
-        "//temporalgraph/common/graph:edgelog",
+        "//temporalgraph/common",
+        "//temporalgraph/common:experiments",
+        "//temporalgraph/common/graph:cas",
         "//temporalgraph/common/graph:parser",
+        "@com_github_gflags_gflags//:gflags",
     ],
 )

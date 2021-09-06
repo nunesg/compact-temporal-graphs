@@ -1,35 +1,57 @@
 /*
-  Test using standard Adjacency Matrix to represent Temporal Graphs
+  Test using EveLog to represent Temporal Graphs
 */
 
 #include <bits/stdc++.h>
 
-#include "lib/FixedSizeArray.h"
-#include "temporalgraph/common/AdjacencyMatrix.h"
-#include "temporalgraph/common/Graph.h"
+#include "gflags/gflags.h"
+#include "temporalgraph/common/CommandLineFlags.h"
+#include "temporalgraph/common/RssMonitor.h"
+#include "temporalgraph/common/TestRunner.h"
 #include "temporalgraph/common/TimeCounter.h"
+#include "temporalgraph/common/graph/EveLog.h"
 #include "temporalgraph/common/graph/GraphParser.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
-using namespace compact;
 using namespace compact::temporalgraph;
 
-int main() {
+int main(int argc, char *argv[]) {
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  uint nVertices, nEdges;
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+  uint V, E, T;
   GraphParser::TemporalAdjacencyList adj;
-  GraphParser::parseStdin(adj, nVertices, nEdges);
+  GraphParser::parseStdin(adj, V, E, T);
 
-  TimeCounter counter;
-  counter.start();
-  Graph<AdjacencyMatrix<lib::FixedSizeArray>> g(nVertices,
-                                                "MyAdjacencyMatrixGraph");
-  GraphParser::fillGraph(adj, g);
-  counter.stop();
+  RssMonitor rss;
 
-  // std::cout << g.toString() << std::endl;
-  std::cout << "Time to build (ms): " << counter.get_mean() << std::endl;
+  TimeCounter build_time_counter;
+  build_time_counter.start();
+  EveLog g(V);
+  // LOG(INFO) << "built evelog";
+  GraphParser::fillEveLog(adj, g);
+  // LOG(INFO) << "filled evelog";
+  build_time_counter.stop();
+
+  rss.measure("after_build");
+
+  TestSummary summary =
+      (new TestRunner())
+          ->run(g, V, E, T, FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
+                FLAGS_aggregate_epochs);
+
+  rss.measure("after_tests");
+
+  summary.set_remaining_fields(
+      build_time_counter.get_mean(), rss.get_discounted("after_build"),
+      rss.get_discounted("after_tests"), FLAGS_has_edge_epochs,
+      FLAGS_neighbours_epochs, FLAGS_aggregate_epochs);
+
+  LOG(INFO) << summary.to_json();
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  gflags::ShutDownCommandLineFlags();
   return 0;
 }
