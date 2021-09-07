@@ -49,8 +49,8 @@ class VariableSizeDenseArray : public Array {
   void reset(const std::vector<uint>& values) { setup(values); }
 
  private:
-  // TODO: make this equal to BitmaskUtility::kWordSize * ln(2)
-  static const uint kBlockSize = 2;  // k
+  // 22 == BitmaskUtility::kWordSize * ln(2)
+  static const uint kBlockSize = 22;  // k
   // 12 = log2(w*w*2), where w = wordSize = 32
   static const uint kInBlockOffsetsBitSize = 12;
   uint sz;

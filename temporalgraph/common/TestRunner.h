@@ -28,8 +28,7 @@ class TestRunner {
       auto t = get_random_temporal_range(T);
       LOG(INFO) << "u: " << u << ", v: " << v << ", t0: " << t.first
                 << ", t1: " << t.second;
-      graph.has_edge(u, v, t.first,
-                     t.second);  // dummy values. TODO: use random
+      graph.has_edge(u, v, t.first, t.second);
       edge_c.stop();
     }
     LOG(INFO) << "neighbours:";
@@ -38,7 +37,7 @@ class TestRunner {
       int u = get_random_vertex(V);
       auto t = get_random_temporal_range(T);
       LOG(INFO) << "u: " << u << ", t0: " << t.first << ", t1: " << t.second;
-      graph.neighbours(u, t.first, t.second);  // dummy values. TODO: use random
+      graph.neighbours(u, t.first, t.second);
       neigh_c.stop();
     }
     LOG(INFO) << "aggregate:";
@@ -46,7 +45,7 @@ class TestRunner {
       agg_c.start();
       auto t = get_random_temporal_range(T);
       LOG(INFO) << "t0: " << t.first << ", t1: " << t.second;
-      graph.aggregate(t.first, t.second);  // dummy values. TODO: use random
+      graph.aggregate(t.first, t.second);
       agg_c.stop();
     }
 

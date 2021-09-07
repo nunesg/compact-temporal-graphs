@@ -29,7 +29,7 @@ uint range_next_value_pos(const std::unique_ptr<std::vector<uint>> &vet_ptr,
   return r + 1;
 }
 
-uint range_report(const std::unique_ptr<std::vector<uint>> &vet_ptr, uint l,
+void range_report(const std::unique_ptr<std::vector<uint>> &vet_ptr, uint l,
                   uint r, std::unordered_map<uint, uint> &result) {
   result.clear();
   for (uint i = l; i <= r; i++) {
