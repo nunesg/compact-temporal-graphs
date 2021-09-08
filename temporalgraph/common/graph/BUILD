@@ -87,9 +87,11 @@ cc_test(
     name = "evelog_test",
     srcs = [
         "tests/EveLogTest.cpp",
+        "tests/TestUtils.h",
     ],
     deps = [
         ":evelog",
+        ":parser",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",

@@ -41,6 +41,10 @@ class EventList {
 
   bool check_edge(uint v, int start, int end) const {
     auto timestamps = get_timestamps();
+    // LOG(INFO) << "timestamps:";
+    // for (auto t : timestamps) {
+    //   LOG(INFO) << t;
+    // }
     if (timestamps.size() == 0) return false;
     uint tbegin = lib::Utils::lower_bound(timestamps, 0,
                                           (int)timestamps.size() - 1, start);
@@ -48,6 +52,8 @@ class EventList {
         lib::Utils::upper_bound(timestamps, 0, (int)timestamps.size() - 1, end);
     uint fbegin = count_label(v, tbegin);
     uint fend = count_label(v, tend);
+    // LOG(INFO) << "tbegin: " << tbegin << ", tend: " << tend
+    //           << ", fbegin: " << fbegin << ", fend: " << fend;
     return (fbegin % 2) || fend > fbegin;
   }
 
@@ -62,8 +68,9 @@ class EventList {
     auto timestamps = get_timestamps();
     // LOG(INFO) << "EventList get_neighbours got timestamps. size = "
     //           << timestamps.size();
-    lib::BitArray activeElements;
+    lib::BitArray activeElements, chosen;
     activeElements.assign(n, 0);
+    chosen.assign(n, 0);
     // check which elements were active before the interval start
     uint i;
     for (i = 0; i < sz; i++) {
@@ -81,8 +88,9 @@ class EventList {
       uint t = timestamps[j];
       uint vtx = labels[j];
       if (t >= start) break;
-      if (activeElements[vtx]) {
+      if (activeElements[vtx] && !chosen[vtx]) {
         neighbours.push_back(vtx);
+        chosen.write(vtx, 1);
       }
     }
 
@@ -93,13 +101,12 @@ class EventList {
       if (t < start) continue;
       if (t > end) break;
 
-      if (!activeElements[vtx]) {
+      if (!activeElements[vtx] && !chosen[vtx]) {
         neighbours.push_back(vtx);
+        chosen.write(vtx, 1);
       }
     }
 
-    neighbours.resize(std::distance(
-        neighbours.begin(), std::unique(neighbours.begin(), neighbours.end())));
     return neighbours;
   }
 
