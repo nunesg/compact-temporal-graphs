@@ -69,6 +69,17 @@ cc_library(
     ],
 )
 
+cc_library(
+    name = "test_utils",
+    hdrs = [
+        "tests/TestUtils.h",
+    ],
+    deps = [
+        ":parser",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
 cc_test(
     name = "cas_test",
     srcs = [
@@ -76,6 +87,7 @@ cc_test(
     ],
     deps = [
         ":cas",
+        ":test_utils",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",
@@ -87,11 +99,10 @@ cc_test(
     name = "evelog_test",
     srcs = [
         "tests/EveLogTest.cpp",
-        "tests/TestUtils.h",
     ],
     deps = [
         ":evelog",
-        ":parser",
+        ":test_utils",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",
@@ -106,6 +117,7 @@ cc_test(
     ],
     deps = [
         ":edgelog",
+        ":test_utils",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",
