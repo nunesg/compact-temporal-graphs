@@ -27,6 +27,32 @@ The output should look like this:
 
 ![Example of unit testing output](images/test_example.png)
 
+## Database
+
+The results of the experiments are kept in a MySQL table called `experiments_data` on the `experiments` database.
+The table has the following schema:
+
+```
+experiments_data(
+    graph_type          VARCHAR(50),
+    V                   INT,
+    E                   INT,
+    T                   INT,
+    build_time_ms       FLOAT,
+    has_edge_time_ms    FLOAT,
+    neighbours_time_ms  FLOAT,
+    aggregate_time_ms   FLOAT,
+    graph_rss_kb        INT,
+    max_rss_kb          INT,
+    has_edge_epochs     INT,
+    neighbours_epochs   INT,
+    aggregate_epochs    INT,
+    PRIMARY KEY (graph_type, V, E, T)
+)
+```
+
+You can check how the database is set up on the `temporalgraph/databasemanager.py` file.
+
 ## Experimentation
 
 The parameters for the experimentation are in the file `config.py`. You should first fill
@@ -34,11 +60,10 @@ the parameters as you like, before proceeding with the experimentation.
 
 The experiments for temporal graphs are under the `temporalgraph` folder, on the `v<version_number>` subfolders. So, to run the experiments, on `temporalgraph` run:
 
-- `python3 main.py`
-- This will execute the experiments considering the parameters in `config.py`
+- `python3 resetdb.py` will reset the table with the experiments data.
+- `python3 main.py` will execute the experiments considering the parameters in `config.py`, and populate the `experiments_data` table on the database
 
 ### Test versions description
 - `v0`: EdgeLog graph representation.
 - `v1`: EveLog graph representation.
 - `v2`: CAS graph representation.
-- `v5`: test of getrusage.

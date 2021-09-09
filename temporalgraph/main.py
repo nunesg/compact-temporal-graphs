@@ -1,8 +1,9 @@
 import time
 import config as config_obj
-import timegen
 import subprocess
+import json
 from os import path
+from databasemanager import DatabaseManager
 from datagenerator import DataGenerator
 from graphgenerator import GraphGenerator
 from monitor import ProcessMonitor
@@ -37,15 +38,16 @@ def update_with_flags(commandline, config, output_file):
     return commandline
 
 
-def run_version(config, version):
+def run_version(config, version, database):
     subprocess.run(
         ["bazel", "build", f"v{version}:main"])
     print(config.datapath)
+    output_file = f"v{version}/{OUTPUT_FILENAME}"
     pmonitor = ProcessMonitor(
         update_with_flags(
             commandline=f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath}",
             config=config,
-            output_file=f"v{version}/{OUTPUT_FILENAME}"))
+            output_file=output_file))
 
     try:
         pmonitor.execute(shell=True)
@@ -63,26 +65,34 @@ def run_version(config, version):
     print(f"baseline_rss_memory:{pmonitor.rss_baseline/1024} KB")
     print(f"max_rss_memory:{pmonitor.max_rss_memory/1024} KB")
     print(f"\n=====================================")
-    pmonitor.print()
+    # pmonitor.print()
+
+    results = open(output_file)
+    data = json.load(results)
+    results.close()
+    database.insert(data)
     return
 
 
 def main(config):
     generate_data(config)
+    database_manager = DatabaseManager()
 
     # I am executing "make target" here
     if config.version == "all":
         i = 0
         while path.exists(f"v{i}"):
-            run_version(config, i)
+            run_version(config, i, database_manager)
             i += 1
     elif isinstance(config.version, list):
         for i in config.version:
-            run_version(config, i)
+            run_version(config, i, database_manager)
     elif isinstance(config.version, int):
-        run_version(config, config.version)
+        run_version(config, config.version, database_manager)
     else:
         raise Exception("Invalid config version")
+
+    database_manager.close()
     return
 
 
