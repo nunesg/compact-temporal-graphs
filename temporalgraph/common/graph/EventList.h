@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <unordered_set>
 
 #include "glog/logging.h"
 #include "lib/BitArray.h"
@@ -68,9 +69,9 @@ class EventList {
     auto timestamps = get_timestamps();
     // LOG(INFO) << "EventList get_neighbours got timestamps. size = "
     //           << timestamps.size();
-    lib::BitArray activeElements, chosen;
-    activeElements.assign(n, 0);
-    chosen.assign(n, 0);
+
+    std::unordered_set<uint> activeElements, chosen;
+
     // check which elements were active before the interval start
     uint i;
     for (i = 0; i < sz; i++) {
@@ -79,7 +80,11 @@ class EventList {
       if (t >= start) {
         break;
       }
-      activeElements.write(vtx, 1 - activeElements[vtx]);
+      if (activeElements.count(vtx)) {
+        activeElements.erase(vtx);
+      } else {
+        activeElements.insert(vtx);
+      }
     }
 
     // add the active elements to the answer
@@ -88,9 +93,9 @@ class EventList {
       uint t = timestamps[j];
       uint vtx = labels[j];
       if (t >= start) break;
-      if (activeElements[vtx] && !chosen[vtx]) {
+      if (activeElements.count(vtx) && !chosen.count(vtx)) {
         neighbours.push_back(vtx);
-        chosen.write(vtx, 1);
+        chosen.insert(vtx);
       }
     }
 
@@ -101,9 +106,9 @@ class EventList {
       if (t < start) continue;
       if (t > end) break;
 
-      if (!activeElements[vtx] && !chosen[vtx]) {
+      if (!activeElements.count(vtx) && !chosen.count(vtx)) {
         neighbours.push_back(vtx);
-        chosen.write(vtx, 1);
+        chosen.insert(vtx);
       }
     }
 
