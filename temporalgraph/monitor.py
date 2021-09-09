@@ -1,6 +1,6 @@
-import time
 import psutil
 import subprocess
+import time
 from matplotlib import pyplot
 
 

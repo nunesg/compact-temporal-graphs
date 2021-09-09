@@ -1,13 +1,12 @@
-import time
 import config as config_obj
-import subprocess
 import json
-import inspect
-from os import path
+import subprocess
+import time
 from databasemanager import DatabaseManager
 from datagenerator import DataGenerator
 from graphgenerator import GraphGenerator
 from monitor import ProcessMonitor
+from os import path
 
 BAZEL_BIN_DIR = '../bazel-bin/temporalgraph'
 OUTPUT_FILENAME = "results.json"

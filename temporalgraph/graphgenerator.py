@@ -1,5 +1,4 @@
 import random
-from timegen import DummyGenerator
 
 # generate a 0-indexed temporal graph with distinct positive timestamps
 

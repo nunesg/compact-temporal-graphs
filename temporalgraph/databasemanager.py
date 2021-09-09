@@ -1,5 +1,4 @@
 from mysql import connector as con
-from tabulate import tabulate
 import re
 
 CREATE_DATABASE_QUERY = "CREATE DATABASE IF NOT EXISTS experiments"

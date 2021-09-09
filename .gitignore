@@ -1,4 +1,4 @@
 bazel*
 _*
-.txt*
-*v*/*.json
+temporalgraph/data/*.txt
+temporalgraph/v*/results.json
