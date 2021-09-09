@@ -1,5 +1,5 @@
 datapath = "data/input_graph.txt"  # string
-version = "all"  # int, [ints] or "all"
+version = 0  # int, [ints] or "all"
 V = 30000  # int
 E = 50000  # int
 T = 100  # int

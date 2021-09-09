@@ -8,6 +8,7 @@ from graphgenerator import GraphGenerator
 from monitor import ProcessMonitor
 
 BAZEL_BIN_DIR = '../bazel-bin/temporalgraph'
+OUTPUT_FILENAME = "results.json"
 
 # TIME_GENERATORS = {
 #     'dummy': timegen.DummyGenerator()
@@ -28,12 +29,23 @@ def generate_data(config):
     DataGenerator.gen(graph, V, E, T, config.datapath)
 
 
+def update_with_flags(commandline, config, output_file):
+    commandline = f"{commandline} --has_edge_epochs={config.has_edge_epochs}"
+    commandline = f"{commandline} --neighbours_epochs={config.neighbours_epochs}"
+    commandline = f"{commandline} --aggregate_epochs={config.aggregate_epochs}"
+    commandline = f"{commandline} --output_file={output_file}"
+    return commandline
+
+
 def run_version(config, version):
     subprocess.run(
         ["bazel", "build", f"v{version}:main"])
     print(config.datapath)
     pmonitor = ProcessMonitor(
-        f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath} --has_edge_epochs={config.has_edge_epochs} --neighbours_epochs={config.neighbours_epochs} --aggregate_epochs={config.aggregate_epochs}")
+        update_with_flags(
+            commandline=f"{BAZEL_BIN_DIR}/v{version}/main < {config.datapath}",
+            config=config,
+            output_file=f"v{version}/{OUTPUT_FILENAME}"))
 
     try:
         pmonitor.execute(shell=True)

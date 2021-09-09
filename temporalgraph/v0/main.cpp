@@ -45,7 +45,12 @@ int main(int argc, char *argv[]) {
       rss.get_discounted("after_tests"), FLAGS_has_edge_epochs,
       FLAGS_neighbours_epochs, FLAGS_aggregate_epochs);
 
+  // write results to file
+  std::ofstream f;
+  f.open(FLAGS_output_file);
   LOG(INFO) << summary.to_json();
+  f << summary.to_json();
+  f.close();
 
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 

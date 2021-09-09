@@ -58,23 +58,21 @@ class TestSummary {
     char str[1000];
 
     sprintf(str,
-            "\n"
             "{\n"
-            "      \"graph_type\" = \"%s\",\n"
-            "      \"V\" = %d,\n"
-            "      \"E\" = %d,\n"
-            "      \"T\" = %d,\n"
-            "      \"build_time_ms\" = %.4lf,\n"
-            "      \"has_edge_time_ms\" = %.4lf,\n"
-            "      \"neighbours_time_ms\" = %.4lf,\n"
-            "      \"aggregate_time_ms\" = %.4lf,\n"
-            "      \"graph_rss_kb\" = %d,\n"
-            "      \"max_rss_kb\" = %d,\n"
-            "      \"has_edge_epochs\" = %d,\n"
-            "      \"neighbours_epochs\" = %d,\n"
-            "      \"aggregate_epochs\" = %d,\n"
-            "}\n"
-            "\n",
+            "      \"graph_type\": \"%s\",\n"
+            "      \"V\": %d,\n"
+            "      \"E\": %d,\n"
+            "      \"T\": %d,\n"
+            "      \"build_time_ms\": %.4lf,\n"
+            "      \"has_edge_time_ms\": %.4lf,\n"
+            "      \"neighbours_time_ms\": %.4lf,\n"
+            "      \"aggregate_time_ms\": %.4lf,\n"
+            "      \"graph_rss_kb\": %d,\n"
+            "      \"max_rss_kb\": %d,\n"
+            "      \"has_edge_epochs\": %d,\n"
+            "      \"neighbours_epochs\": %d,\n"
+            "      \"aggregate_epochs\": %d\n"
+            "}",
             graph_type.c_str(), V, E, T, build_time_ms, edge_counter.get_mean(),
             neighbour_counter.get_mean(), aggregate_counter.get_mean(),
             graph_rss_kb, max_rss_kb, has_edge_epochs, neighbours_epochs,
