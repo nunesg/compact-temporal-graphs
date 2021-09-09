@@ -1,0 +1,15 @@
+{
+      "graph_type": "CAS",
+      "V": 30000,
+      "E": 5000,
+      "T": 20,
+      "build_time_ms": 2554.0000,
+      "has_edge_time_ms": 0.0000,
+      "neighbours_time_ms": 0.0000,
+      "aggregate_time_ms": 1251.0000,
+      "graph_rss_kb": 55752,
+      "max_rss_kb": 55752,
+      "has_edge_epochs": 1,
+      "neighbours_epochs": 3,
+      "aggregate_epochs": 1
+}

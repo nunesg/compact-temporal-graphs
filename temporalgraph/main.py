@@ -2,6 +2,7 @@ import time
 import config as config_obj
 import subprocess
 import json
+import inspect
 from os import path
 from databasemanager import DatabaseManager
 from datagenerator import DataGenerator
@@ -20,14 +21,11 @@ OUTPUT_FILENAME = "results.json"
 #     return TIME_GENERATORS.get(timegen_type, timegen.DummyGenerator())
 
 
-def generate_data(config):
-    V = config.V
-    E = config.E
-    T = config.T
+def generate_data(V, E, T, datapath):
     print(f"V = {V}, E = {E}, T = {T}")
     graph = GraphGenerator.gen_adjacencies(
         V, E, T)
-    DataGenerator.gen(graph, V, E, T, config.datapath)
+    DataGenerator.gen(graph, V, E, T, datapath)
 
 
 def update_with_flags(commandline, config, output_file):
@@ -75,22 +73,34 @@ def run_version(config, version, database):
 
 
 def main(config):
-    generate_data(config)
     database_manager = DatabaseManager()
+    if not isinstance(config.V, list):
+        config.V = [config.V]
+    if not isinstance(config.E, list):
+        config.E = [config.E]
+    if not isinstance(config.T, list):
+        config.T = [config.T]
 
-    # I am executing "make target" here
-    if config.version == "all":
-        i = 0
-        while path.exists(f"v{i}"):
-            run_version(config, i, database_manager)
-            i += 1
-    elif isinstance(config.version, list):
-        for i in config.version:
-            run_version(config, i, database_manager)
-    elif isinstance(config.version, int):
-        run_version(config, config.version, database_manager)
-    else:
-        raise Exception("Invalid config version")
+    print(f"V: {config.V}, E: {config.E}, T: {config.T}")
+
+    for V in config.V:
+        for E in config.E:
+            for T in config.T:
+                generate_data(V, E, T, config.datapath)
+
+                # I am executing "make target" here
+                if config.version == "all":
+                    i = 0
+                    while path.exists(f"v{i}"):
+                        run_version(config, i, database_manager)
+                        i += 1
+                elif isinstance(config.version, list):
+                    for i in config.version:
+                        run_version(config, i, database_manager)
+                elif isinstance(config.version, int):
+                    run_version(config, config.version, database_manager)
+                else:
+                    raise Exception("Invalid config version")
 
     database_manager.close()
     return
