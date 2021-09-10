@@ -67,3 +67,4 @@ The experiments for temporal graphs are under the `temporalgraph` folder, on the
 - `v0`: EdgeLog graph representation.
 - `v1`: EveLog graph representation.
 - `v2`: CAS graph representation.
+- `v3`: AdjacencyList graph representation.

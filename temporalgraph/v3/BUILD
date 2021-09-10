@@ -10,7 +10,7 @@ cc_binary(
     deps = [
         "//temporalgraph/common",
         "//temporalgraph/common:experiments",
-        "//temporalgraph/common/graph:cas",
+        "//temporalgraph/common/graph:adjlist",
         "//temporalgraph/common/graph:parser",
         "@com_github_gflags_gflags//:gflags",
     ],

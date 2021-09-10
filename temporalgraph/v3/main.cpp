@@ -1,5 +1,5 @@
 /*
-  Test using CAS to represent Temporal Graphs
+  Test using standard AdjacencyList to represent Temporal Graphs
 */
 
 #include <bits/stdc++.h>
@@ -9,7 +9,7 @@
 #include "temporalgraph/common/RssMonitor.h"
 #include "temporalgraph/common/TestRunner.h"
 #include "temporalgraph/common/TimeCounter.h"
-#include "temporalgraph/common/graph/CAS.h"
+#include "temporalgraph/common/graph/AdjacencyList.h"
 #include "temporalgraph/common/graph/GraphParser.h"
 #include "temporalgraph/common/graph/GraphUtils.h"
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
   TimeCounter build_time_counter;
   build_time_counter.start();
-  CAS g(adj);
+  AdjacencyList g(adj);
   build_time_counter.stop();
 
   rss.measure("after_build");
