@@ -13,12 +13,11 @@ cc_library(
 cc_library(
     name = "evelog",
     hdrs = [
-        "AbstractGraph.h",
         "EveLog.h",
         "EventList.h",
-        "GraphUtils.h",
     ],
     deps = [
+        ":graph",
         "//lib:array",
         "//lib:utils",
         "@com_github_google_glog//:glog",
@@ -28,12 +27,11 @@ cc_library(
 cc_library(
     name = "edgelog",
     hdrs = [
-        "AbstractGraph.h",
         "EdgeList.h",
         "EdgeLog.h",
-        "GraphUtils.h",
     ],
     deps = [
+        ":graph",
         "//lib:array",
         "//lib:utils",
         "@com_github_google_glog//:glog",
@@ -43,11 +41,10 @@ cc_library(
 cc_library(
     name = "cas",
     hdrs = [
-        "AbstractGraph.h",
         "CAS.h",
-        "GraphUtils.h",
     ],
     deps = [
+        ":graph",
         "//lib:bitvector",
         "//lib:wavelet_tree",
         "//temporalgraph/common",
@@ -56,15 +53,26 @@ cc_library(
 )
 
 cc_library(
+    name = "adjlist",
+    hdrs = [
+        "AdjacencyList.h",
+    ],
+    deps = [
+        ":graph",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_library(
     name = "parser",
     hdrs = [
         "GraphParser.h",
-        "GraphUtils.h",
     ],
     deps = [
         ":cas",
         ":edgelog",
         ":evelog",
+        ":graph",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -75,7 +83,7 @@ cc_library(
         "tests/TestUtils.h",
     ],
     deps = [
-        ":parser",
+        ":graph",
         "@com_github_google_glog//:glog",
     ],
 )
@@ -102,6 +110,8 @@ cc_test(
     ],
     deps = [
         ":evelog",
+        ":graph",
+        ":parser",
         ":test_utils",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
@@ -117,6 +127,24 @@ cc_test(
     ],
     deps = [
         ":edgelog",
+        ":graph",
+        ":parser",
+        ":test_utils",
+        "//temporalgraph/common",
+        "@com_github_google_glog//:glog",
+        "@gtest",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "adjlist_test",
+    srcs = [
+        "tests/AdjacencyListTest.cpp",
+    ],
+    deps = [
+        ":adjlist",
+        ":graph",
         ":test_utils",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
@@ -128,14 +156,17 @@ cc_test(
 cc_test(
     name = "test",
     srcs = [
+        "tests/AdjacencyListTest.cpp",
         "tests/CASTest.cpp",
         "tests/EdgeLogTest.cpp",
         "tests/EveLogTest.cpp",
     ],
     deps = [
+        ":adjlist_test",
         ":cas",
         ":edgelog",
         ":evelog",
+        ":parser",
         "//temporalgraph/common",
         "@com_github_google_glog//:glog",
         "@gtest",

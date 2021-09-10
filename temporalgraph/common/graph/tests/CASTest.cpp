@@ -4,7 +4,6 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "temporalgraph/common/graph/CAS.h"
-#include "temporalgraph/common/graph/GraphParser.h"
 #include "temporalgraph/common/graph/tests/TestUtils.h"
 
 namespace compact {
@@ -69,10 +68,10 @@ TEST(CASTest, CAS_test) {
   uint V = 20, E = 100, T = 100, epochs = 10, graphs = 10;
   CAS graph;
   for (uint x = 0; x < graphs; x++) {
-    GraphParser::TemporalAdjacencyList adj =
+    GraphUtils::TemporalAdjacencyList adj =
         TestUtils::get_random_graph(V, E, T);
     graph.reset(adj);
-    LOG(INFO) << "adj: " << TestUtils::to_string(adj);
+    LOG(INFO) << "adj: " << GraphUtils::to_string(adj);
     // LOG(INFO) << graph.to_string();
 
     for (uint i = 0; i < V; i++) {
@@ -84,16 +83,16 @@ TEST(CASTest, CAS_test) {
 
           // test has_edge
           EXPECT_EQ(graph.has_edge(i, j, t.first, t.second),
-                    TestUtils::has_edge(adj, i, j, t.first, t.second));
+                    GraphUtils::has_edge(adj, i, j, t.first, t.second));
 
           // test neighbours
           auto tmp = graph.neighbours(i, t.first, t.second);
           std::sort(tmp.begin(), tmp.end());
-          EXPECT_EQ(tmp, TestUtils::neighbours(adj, i, t.first, t.second));
+          EXPECT_EQ(tmp, GraphUtils::neighbours(adj, i, t.first, t.second));
 
           tmp = graph.neighbours(j, t.first, t.second);
           std::sort(tmp.begin(), tmp.end());
-          EXPECT_EQ(tmp, TestUtils::neighbours(adj, j, t.first, t.second));
+          EXPECT_EQ(tmp, GraphUtils::neighbours(adj, j, t.first, t.second));
         }
       }
     }

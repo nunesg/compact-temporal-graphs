@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
   uint V, E, T;
-  GraphParser::TemporalAdjacencyList adj;
+  GraphUtils::TemporalAdjacencyList adj;
   GraphParser::parseStdin(adj, V, E, T);
 
   RssMonitor rss;

@@ -4,27 +4,26 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 #include "temporalgraph/common/graph/AbstractGraph.h"
-#include "temporalgraph/common/graph/EveLog.h"
-#include "temporalgraph/common/graph/GraphParser.h"
+#include "temporalgraph/common/graph/AdjacencyList.h"
 #include "temporalgraph/common/graph/tests/TestUtils.h"
 
 namespace compact {
 namespace temporalgraph {
 namespace test {
 
-// test expected functionalities of EveLog data structure
-TEST(EveLogTest, evelog_test) {
+// test expected functionalities of AdjacencyList data structure
+TEST(AdjacencyListTest, adjacencyList_test) {
   /*
     init
   */
-  LOG(INFO) << "EvelogTest init";
+  LOG(INFO) << "AdjacencyListTest init";
   uint V = 20, E = 100, T = 100, epochs = 10, graphs = 10;
-  EveLog graph(V);
+  AdjacencyList graph(V);
   for (uint x = 0; x < graphs; x++) {
     GraphUtils::TemporalAdjacencyList adj =
         TestUtils::get_random_graph(V, E, T);
     LOG(INFO) << "adj: " << GraphUtils::to_string(adj);
-    GraphParser::fillEveLog(adj, graph);
+    graph.reset(adj);
     // LOG(INFO) << graph.to_string();
 
     for (uint i = 0; i < V; i++) {
@@ -49,7 +48,7 @@ TEST(EveLogTest, evelog_test) {
       }
     }
   }
-  EXPECT_EQ(graph.get_name(), std::string("EveLog"));
+  EXPECT_EQ(graph.get_name(), std::string("AdjacencyList"));
 
   LOG(INFO) << graph.to_string();
 }

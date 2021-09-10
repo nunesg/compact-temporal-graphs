@@ -21,9 +21,9 @@ TEST(EdgeLogTest, edgeLog_test) {
   uint V = 20, E = 100, T = 100, epochs = 10, graphs = 10;
   EdgeLog graph(V);
   for (uint x = 0; x < graphs; x++) {
-    GraphParser::TemporalAdjacencyList adj =
+    GraphUtils::TemporalAdjacencyList adj =
         TestUtils::get_random_graph(V, E, T);
-    LOG(INFO) << "adj: " << TestUtils::to_string(adj);
+    LOG(INFO) << "adj: " << GraphUtils::to_string(adj);
     GraphParser::fillEdgeLog(adj, graph);
     // LOG(INFO) << graph.to_string();
 
@@ -36,15 +36,15 @@ TEST(EdgeLogTest, edgeLog_test) {
 
           // test has_edge
           EXPECT_EQ(graph.has_edge(i, j, t.first, t.second),
-                    TestUtils::has_edge(adj, i, j, t.first, t.second));
+                    GraphUtils::has_edge(adj, i, j, t.first, t.second));
 
           // test neighbours
           auto tmp = graph.neighbours(i, t.first, t.second);
           std::sort(tmp.begin(), tmp.end());
-          EXPECT_EQ(tmp, TestUtils::neighbours(adj, i, t.first, t.second));
+          EXPECT_EQ(tmp, GraphUtils::neighbours(adj, i, t.first, t.second));
           tmp = graph.neighbours(j, t.first, t.second);
           std::sort(tmp.begin(), tmp.end());
-          EXPECT_EQ(tmp, TestUtils::neighbours(adj, j, t.first, t.second));
+          EXPECT_EQ(tmp, GraphUtils::neighbours(adj, j, t.first, t.second));
         }
       }
     }

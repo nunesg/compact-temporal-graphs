@@ -12,8 +12,7 @@ namespace temporalgraph {
 class GraphParser {
  public:
   using TemporalNeighbourContainer = GraphUtils::TemporalNeighbourContainer;
-  using TemporalAdjacencyList =
-      std::vector<GraphUtils::TemporalNeighbourContainer>;
+  using TemporalAdjacencyList = GraphUtils::TemporalAdjacencyList;
   /*
     parse the input from stdin considering the following structure:
 
