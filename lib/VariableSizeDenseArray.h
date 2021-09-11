@@ -60,7 +60,6 @@ class VariableSizeDenseArray : public Array {
   FixedSizeArray inBlockOffsets;
 
   void setup(std::vector<uint> values) {
-    // LOG(INFO) << "variableSize dense array. sz = " << values.size();
     sz = values.size();
     if (!sz) return;
 

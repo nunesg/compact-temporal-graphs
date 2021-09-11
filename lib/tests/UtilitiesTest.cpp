@@ -70,7 +70,7 @@ TEST(DensePointersUtilityTest, densePointersCompressionTest) {
     test ::get_code(uint) function
   */
   BitArray code = DensePointersUtility::get_code(5);
-  BitArray arr1{0, 1};
+  BitArray arr1{1, 0};
 
   for (int i = 0; i < 2; i++) {
     LOG(INFO) << "i = " << i << ", code = " << code[i]
@@ -182,7 +182,7 @@ TEST(UtilsTest, deltaGapTest) {
 
   for (uint i = 0; i < codeDense.size(); i++) {
     LOG(INFO) << "codeDense[" << i << "]: " << codeDense[i]
-              << ", arr = " << arr[i];
+              << ", arr = " << arr[i] << ", expectedArr: " << expectedArr[i];
   }
   EXPECT_EQ(codeDense, expectedArr);
 

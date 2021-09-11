@@ -24,7 +24,7 @@ class DensePointersUtility {
     BitArray arr;
     arr.assign(sz, 0);
     for (uint i = 0; i < sz; i++) {
-      arr.write(i, (val >> (sz - i - 1)) & 1);
+      arr.write(i, (val >> i) & 1);
     }
     return arr;
   }
@@ -41,7 +41,7 @@ class DensePointersUtility {
       uint sz = get_code_length(val);
 
       for (uint j = 0; j < sz; j++) {
-        arr.write(arridx, (val >> (sz - j - 1)) & 1);
+        arr.write(arridx, (val >> j) & 1);
         arridx++;
       }
     }
@@ -55,10 +55,8 @@ class DensePointersUtility {
       throw std::runtime_error("Invalid interval!");
     }
 
-    uint result = 1;
-    for (uint i = start; i < end; i++) {
-      result = (result << 1) | arr[i];
-    }
+    uint interval = start == end ? 0 : arr.read_interval(start, end - 1);
+    uint result = (1 << (end - start)) | interval;
     return result;
   }
 
