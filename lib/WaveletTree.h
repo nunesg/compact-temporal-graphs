@@ -14,7 +14,20 @@ namespace lib {
 
 class WaveletTreeNode {
  public:
-  using WaveletTreeNodePointer = typename std::unique_ptr<WaveletTreeNode>;
+  using WaveletTreeNodePointer = typename std::shared_ptr<WaveletTreeNode>;
+
+  // smallest value represented by this node
+  uint low;
+  // highest value represented by this node
+  uint high;
+  // bitvector of the values
+  BitVector bitvec;
+  // left node
+  WaveletTreeNodePointer left;
+  // right node
+  WaveletTreeNodePointer right;
+
+  uint get_mid() const { return low + (high - low) / 2; }
 
   WaveletTreeNode() : low(0), high(0), bitvec() {}
 
@@ -59,24 +72,6 @@ class WaveletTreeNode {
   }
 
   uint size() const { return bitvec.size(); }
-
-  uint access(uint idx) const {
-    if (low == high) {
-      return low;
-    }
-
-    if (!bitvec[idx]) return left->access(bitvec.rank(idx, 0));
-    return right->access(bitvec.rank(idx));
-  }
-
-  uint rank(uint idx, uint c) const {
-    if (low == high) {
-      return low == c ? idx : 0;
-    }
-
-    if (c <= get_mid()) return left->rank(bitvec.rank(idx, 0), c);
-    return right->rank(bitvec.rank(idx), c);
-  }
 
   uint select(uint idx, uint c) const {
     if (low == high) return idx;
@@ -167,20 +162,6 @@ class WaveletTreeNode {
       right->range_report(bitvec.rank(l), bitvec.rank(r), result);
     }
   }
-
- private:
-  // smallest value represented by this node
-  uint low;
-  // highest value represented by this node
-  uint high;
-  // bitvector of the values
-  BitVector bitvec;
-  // left node
-  WaveletTreeNodePointer left;
-  // right node
-  WaveletTreeNodePointer right;
-
-  uint get_mid() const { return low + (high - low) / 2; }
 };
 
 // ========================= Wavelet Tree ========================
@@ -207,13 +188,33 @@ class WaveletTree : public WaveletTreeInterface {
 
   uint size() const { return root->size(); }
 
-  uint access(uint idx) const { return root->access(idx); }
+  uint access(uint idx) const {
+    NodePtr node = root;
+
+    while (node->low != node->high) {
+      uint b = node->bitvec[idx];
+      idx = node->bitvec.rank(idx, b);
+      node = !b ? node->left : node->right;
+    }
+    return node->low;
+  }
 
   uint rank(uint pos, uint c) const {
     if (!check_value(c)) {
       return 0;
     }
-    return root->rank(pos, c);
+
+    NodePtr node = root;
+    while (node->low != node->high) {
+      if (c <= node->get_mid()) {
+        pos = node->bitvec.rank(pos, 0);
+        node = node->left;
+      } else {
+        pos = node->bitvec.rank(pos, 1);
+        node = node->right;
+      }
+    }
+    return pos;
   }
 
   uint select(uint pos, uint c) const {
