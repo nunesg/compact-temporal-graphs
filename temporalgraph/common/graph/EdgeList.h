@@ -49,20 +49,7 @@ class EdgeList {
     auto intervals = retrieve(this->intervals, intervals_huff, intervals_dgap);
     auto offsets = retrieve(this->offsets, offsets_huff, offsets_dgap);
 
-    uint v_index = get_label_index(v, labels);
-    if (v_index == labels.size()) return false;
-
-    uint l_offset = offsets[v_index];
-    uint r_offset = (v_index + 1) < offsets.size() ? offsets[v_index + 1] - 1
-                                                   : (int)intervals.size() - 1;
-
-    TimeInterval t{start, end};
-    for (uint i = l_offset; i < r_offset; i += 2) {
-      if (GraphUtils::intersects(t, {intervals[i], intervals[i + 1]})) {
-        return true;
-      }
-    }
-    return false;
+    return check_edge(v, start, end, labels, intervals, offsets);
   }
 
   /*
@@ -74,9 +61,11 @@ class EdgeList {
     // LOG(INFO) << "EdgeList get_neighbours";
     VertexContainer neighbours;
     auto labels = retrieve(this->labels, labels_huff, labels_dgap);
+    auto intervals = retrieve(this->intervals, intervals_huff, intervals_dgap);
+    auto offsets = retrieve(this->offsets, offsets_huff, offsets_dgap);
     // LOG(INFO) << "EdgeList get_labels: labels_retrieved";
     for (uint i = 0; i < labels.size(); i++) {
-      if (check_edge(labels[i], start, end)) {
+      if (check_edge(labels[i], start, end, labels, intervals, offsets)) {
         neighbours.push_back(labels[i]);
       }
     }
@@ -111,6 +100,24 @@ class EdgeList {
   lib::BitArray labels, intervals, offsets;
   lib::DeltaGapUtility labels_dgap, intervals_dgap, offsets_dgap;
   lib::HuffmanUtility labels_huff, intervals_huff, offsets_huff;
+
+  bool check_edge(uint v, int start, int end, Container& labels,
+                  Container& intervals, Container& offsets) const {
+    uint v_index = get_label_index(v, labels);
+    if (v_index == labels.size()) return false;
+
+    uint l_offset = offsets[v_index];
+    uint r_offset = (v_index + 1) < offsets.size() ? offsets[v_index + 1] - 1
+                                                   : (int)intervals.size() - 1;
+
+    TimeInterval t{start, end};
+    for (uint i = l_offset; i < r_offset; i += 2) {
+      if (GraphUtils::intersects(t, {intervals[i], intervals[i + 1]})) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   Container retrieve(const lib::BitArray& bit_stream,
                      const lib::HuffmanUtility& huff,
