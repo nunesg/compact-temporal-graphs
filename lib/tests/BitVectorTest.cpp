@@ -41,6 +41,20 @@ uint linear_rank(const std::shared_ptr<BitArray>& arr_ptr, uint idx,
   return ans;
 }
 
+void run_clark_linearly(uint n, uint bit_value, uint iterations, uint p = 50) {
+  std::shared_ptr<BitArray> bitv;
+  std::shared_ptr<ClarkSelect<BitArray>> clark;
+  for (uint i = 0; i < iterations; i++) {
+    bitv = get_random_bitarray(n, p);
+    clark.reset(new ClarkSelect<BitArray>(bitv, bit_value));
+    clark->build();
+    for (uint j = 0; j < bitv->size(); j++) {
+      EXPECT_EQ(clark->select(j), linear_select(bitv, j, bit_value));
+    }
+    // LOG(INFO) << "p = " << p << ", bitarray = " << bitv->to_string();
+  }
+}
+
 // test BitVector
 TEST(BitVectorTest, bitVectorTest) {
   /*
@@ -109,21 +123,6 @@ TEST(BitVectorTest, jacobsonRankTest) {
   /*
     init
   */
-  // std::shared_ptr<BitArray> bitv = get_random_bitarray(100);
-  // std::shared_ptr<BitArray> bitv(
-  //     new BitArray({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  //                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}));
-  // std::shared_ptr<BitArray> bitv(new BitArray{1, 1, 1, 1, 0, 1, 0, 1, 1, 0});
-  // std::shared_ptr<BitArray> bitv(new BitArray{0, 1, 0, 1, 0, 0, 0, 0, 1, 1});
-  // std::shared_ptr<BitArray> bitv(new BitArray{1, 1, 1, 1, 1, 1, 0, 1, 1, 1});
-  // std::shared_ptr<BitArray> bitv(
-  //     new BitArray{1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-  //     1,
-  //                  0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-  //                  1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,
-  //                  1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
-  //                  0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0,
-  //                  0, 1, 0, 1});
   std::shared_ptr<BitArray> bitv;
   std::shared_ptr<JacobsonRank<BitArray>> jacob;
 
@@ -133,8 +132,8 @@ TEST(BitVectorTest, jacobsonRankTest) {
     bitv = get_random_bitarray(1000, p);
     jacob.reset(new JacobsonRank<BitArray>(bitv));
     jacob->build();
-    for (uint i = 0; i < bitv->size(); i++) {
-      EXPECT_EQ(jacob->rank(i), linear_rank(bitv, i));
+    for (uint j = 0; j < bitv->size(); j++) {
+      EXPECT_EQ(jacob->rank(j), linear_rank(bitv, j));
     }
     // LOG(INFO) << "p = " << p << ", bitarray = " << bitv->to_string();
   }
@@ -145,20 +144,6 @@ TEST(BitVectorTest, clarkSelectTest) {
   /*
     init
   */
-  // std::shared_ptr<BitArray> bitv(
-  //     new BitArray({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  //                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}));
-  // std::shared_ptr<BitArray> bitv(new BitArray{1, 1, 1, 1, 0, 1, 0, 1, 1, 0});
-  // std::shared_ptr<BitArray> bitv(new BitArray{0, 1, 0, 1, 0, 0, 0, 0, 1, 1});
-  // std::shared_ptr<BitArray> bitv(new BitArray{1, 1, 1, 1, 1, 1, 0, 1, 1, 1});
-  // std::shared_ptr<BitArray> bitv(
-  //     new BitArray{1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-  //     1,
-  //                  0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-  //                  1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,
-  //                  1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
-  //                  0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0,
-  //                  0, 1, 0, 1});
   std::shared_ptr<BitArray> bitv;
   std::shared_ptr<ClarkSelect<BitArray>> clark[2];
 
@@ -177,28 +162,12 @@ TEST(BitVectorTest, clarkSelectTest) {
       EXPECT_EQ(clark[bit_value]->select(i), linear_select(bitv, i, bit_value));
     }
 
-    uint iterations = 12;
-    for (uint i = 0; i < iterations; i++) {
-      uint p = i * (100 / iterations);
-      bitv = get_random_bitarray(1000, p);
-      clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
-      clark[bit_value]->build();
-      for (uint i = 0; i < bitv->size(); i++) {
-        EXPECT_EQ(clark[bit_value]->select(i),
-                  linear_select(bitv, i, bit_value));
-      }
-      // LOG(INFO) << "p = " << p << ", bitarray = " << bitv->to_string();
+    uint iterations = 2;
+    for (uint p = 0; p <= 100; p += 10) {
+      run_clark_linearly(1000, bit_value, iterations, p);
     }
-    for (uint i = 0; 4 * i < iterations; i++) {
-      uint p = 4 * i * (100 / iterations);
-      bitv = get_random_bitarray(5000, p);
-      clark[bit_value].reset(new ClarkSelect<BitArray>(bitv, bit_value));
-      clark[bit_value]->build();
-      for (uint i = 0; i < bitv->size(); i++) {
-        EXPECT_EQ(clark[bit_value]->select(i),
-                  linear_select(bitv, i, bit_value));
-      }
-      // LOG(INFO) << "bitarray = " << bitv->to_string();
+    for (uint p = 0; p <= 100; p += 25) {
+      run_clark_linearly(5000, bit_value, iterations / 2, p);
     }
   }
 }

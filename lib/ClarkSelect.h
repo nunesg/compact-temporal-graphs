@@ -45,6 +45,7 @@ class ClarkSelect {
       return big_block_select[big_block] +
              big_sparse_lookup[sparse_index][idx % big_block_weight];
     }
+    assert(n_dense_big > 0);
     // big block dense, check small block
     uint small_block = get_small_block(idx);
     idx %= big_block_weight;
@@ -74,6 +75,8 @@ class ClarkSelect {
   uint big_block_weight;
   // number of big blocks
   uint n_big_blocks;
+  // number of dense big blocks
+  uint n_dense_big;
   // (logn)^4
   uint big_block_threshold;
   // sqrt(logn) bit_value bits per small block
@@ -139,7 +142,7 @@ class ClarkSelect {
     for (uint i = 0; i < bit_stream_ptr->size(); i++)
       total_rank += get_bit_weight((*bit_stream_ptr)[i]);
     build_big_blocks();
-    build_small_blocks();
+    if (n_dense_big > 0) build_small_blocks();
   }
 
   void build_big_blocks() {
@@ -170,6 +173,8 @@ class ClarkSelect {
     }
     big_sparse_rank_manager.reset(big_block_sparse_ptr);
     big_sparse_rank_manager.build();
+    n_dense_big = n_big_blocks -
+                  big_sparse_rank_manager.rank(big_block_sparse_ptr->size());
   }
 
   void build_big_sparse_lookup() {
@@ -208,7 +213,6 @@ class ClarkSelect {
       uint small_block = get_small_block(total_sum);
       uint big_block = get_big_block(total_sum);
       if (big_block != previous_big_block) {  // beginning of big block
-        small_block_select.write(small_block, i);
         big_block_sum = 0;
         inblock_offset = 0;
       }
