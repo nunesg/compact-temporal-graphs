@@ -45,8 +45,6 @@ class WaveletTreeNode {
              uint high) {
     this->low = low;
     this->high = high;
-    // LOG(INFO) << "wavelet low = " << low << ", high = " << high
-    //           << ", start = " << start << ", end = " << end;
     if (start == end || low == high) return;
 
     uint mid = get_mid();
@@ -55,17 +53,10 @@ class WaveletTreeNode {
     uint sz = end - start;
     BitArray b(sz);
     for (uint i = 0; i < sz; i++) b.write(i, !checker(values[start + i]));
-    // LOG(INFO) << "values before partition = "
-    //           << Utils::join(values.begin() + start, values.begin() + end,
-    //           ",");
     auto pivot_idx = std::stable_partition(values.begin() + start,
                                            values.begin() + end, checker) -
                      values.begin();
-    // LOG(INFO) << "values after partition = "
-    //           << Utils::join(values.begin() + start, values.begin() + end,
-    //           ",");
     bitvec.reset(b);
-    // LOG(INFO) << "bitvector = " << bitvec.to_string();
 
     left.reset(new WaveletTreeNode(values, start, pivot_idx, low, mid));
     right.reset(new WaveletTreeNode(values, pivot_idx, end, mid + 1, high));
@@ -87,27 +78,20 @@ class WaveletTreeNode {
 
   // considering half-open interval [l, r)
   uint range_next_value_pos(uint l, uint r, uint val) const {
-    // LOG(INFO) << "low = " << low << ", high = " << high
-    //           << ", mid = " << get_mid() << ", [l = " << l << ", r = " << r
-    //           << "), val = " << val;
     if (l == r) {
       return r;
     }
     if (low == high) {
       if (low < val) {
-        // LOG(INFO) << "leaf >> low = " << low << ", return " << r;
         return r;
       }
-      // LOG(INFO) << "leaf << low = " << low << ", return " << l;
       return l;
     }
-    // LOG(INFO) << "not leaf";
     // if val is on the right, the answer must also be to the right
     if (val > get_mid()) {
       uint idx_below = right ? right->range_next_value_pos(bitvec.rank(l),
                                                            bitvec.rank(r), val)
                              : r;
-      // LOG(INFO) << "idx_below (right) = " << idx_below;
       return bitvec.select(idx_below, 1);
     }
 
@@ -116,19 +100,11 @@ class WaveletTreeNode {
 
     // position of first element to go to the right
     uint ans_right = bitvec.select(bitvec.rank(l, 1), 1);
-    // LOG(INFO) << "ans_right = " << ans_right;
-    // LOG(INFO) << "left_null = " << (left == nullptr);
     // position of the answer going to the left
     uint idx_below = left ? left->range_next_value_pos(bitvec.rank(l, 0),
                                                        bitvec.rank(r, 0), val)
                           : r;
-    // LOG(INFO) << "idx_below = " << idx_below;
     uint ans_left = bitvec.select(idx_below, 0);
-    // LOG(INFO) << "ans_left = " << ans_left;
-
-    // LOG(INFO) << "ans_right = " << ans_right
-    //           << ", idx_below (left) = " << idx_below
-    //           << ", ans_left = " << ans_left;
     return std::min(ans_left, ans_right);
   }
 
@@ -242,9 +218,6 @@ class WaveletTree : public WaveletTreeInterface {
   uint range_next_value(uint l, uint r, uint val) const {
     uint idx = range_next_value_pos(l, r + 1, val);
     if (idx > r) {
-      // LOG(WARNING) << "range_next_value for value " << val
-      //              << " doesn't exist on the interval [" << l << "," << r
-      //              << "]";
       return 0;
     }
     return access(idx);
@@ -277,9 +250,6 @@ class WaveletTree : public WaveletTreeInterface {
 
   bool check_value(uint val) const {
     if (val < low || val > high) {
-      // LOG(INFO) << (std::string() + "Error! The value " + std::to_string(val)
-      // +
-      //               " is not part of the wavelet tree!");
       return false;
     }
     return true;
@@ -287,7 +257,6 @@ class WaveletTree : public WaveletTreeInterface {
 
   bool check_interval(uint l, uint r) const {
     if (l < 0 || l >= size() || r < 0 || r >= size()) {
-      // LOG(INFO) << ("invalid interval bounds on Wavelet Tree");
       return false;
     }
     return true;
