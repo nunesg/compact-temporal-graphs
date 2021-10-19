@@ -1,8 +1,8 @@
 datapath = "data/input_graph.txt"  # string
-version = "all"  # int, [ints] or "all"
-V = [3000, 4000]  # int, [ints]
-E = 5000  # int, [ints]
-T = [10, 20]  # int, [ints]
-has_edge_epochs = 1
-neighbours_epochs = 3
-aggregate_epochs = 1
+version = 2  # int, [ints] or "all"
+V = [50]  # int, [ints]
+E = [1000]  # int, [ints]
+T = [1000]  # int, [ints]
+has_edge_epochs = 10
+neighbours_epochs = 10
+aggregate_epochs = 5

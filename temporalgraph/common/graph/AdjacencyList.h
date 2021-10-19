@@ -41,6 +41,10 @@ class AdjacencyList : public AbstractGraph {
 
   std::string get_name() const override { return "AdjacencyList"; }
 
+  uint measure_memory() const override {
+    return GraphUtils::measure_memory(adj);
+  }
+
   std::string to_string() const {
     std::string line = "\nAdjacencyList\n";
     return line + GraphUtils::to_string(this->adj);

@@ -42,7 +42,7 @@ experiments_data(
     has_edge_time_ms    FLOAT,
     neighbours_time_ms  FLOAT,
     aggregate_time_ms   FLOAT,
-    graph_rss_kb        INT,
+    graph_size_kb        INT,
     max_rss_kb          INT,
     has_edge_epochs     INT,
     neighbours_epochs   INT,

@@ -41,6 +41,14 @@ class EdgeLog : public AbstractGraph {
 
   std::string get_name() const override { return "EdgeLog"; }
 
+  uint measure_memory() const override {
+    uint sum = 0;
+    for (uint i = 0; i < n; i++) {
+      sum += adj[i].measure_memory();
+    }
+    return sum;
+  }
+
   // each event is a triple {vertex, {start_t, end_t}}
   void set_events(Vertex u, TemporalNeighbourContainer& events) {
     adj[u].set_events(events);

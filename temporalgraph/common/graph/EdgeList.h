@@ -95,6 +95,14 @@ class EdgeList {
     return line;
   }
 
+  uint measure_memory() const {
+    return sizeof(sz) + labels.measure_memory() + intervals.measure_memory() +
+           offsets.measure_memory() + labels_dgap.measure_memory() +
+           intervals_dgap.measure_memory() + offsets_dgap.measure_memory() +
+           labels_huff.measure_memory() + intervals_huff.measure_memory() +
+           offsets_huff.measure_memory();
+  }
+
  private:
   uint sz;
   lib::BitArray labels, intervals, offsets;

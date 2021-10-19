@@ -34,8 +34,6 @@ int main(int argc, char *argv[]) {
   // LOG(INFO) << "filled evelog";
   build_time_counter.stop();
 
-  rss.measure("after_build");
-
   TestSummary summary =
       (new TestRunner())
           ->run(g, V, E, T, FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
@@ -43,10 +41,12 @@ int main(int argc, char *argv[]) {
 
   rss.measure("after_tests");
 
-  summary.set_remaining_fields(
-      build_time_counter.get_mean(), rss.get_discounted("after_build"),
-      rss.get_discounted("after_tests"), FLAGS_has_edge_epochs,
-      FLAGS_neighbours_epochs, FLAGS_aggregate_epochs);
+  uint graph_size_kb = g.measure_memory() >> 10;
+
+  summary.set_remaining_fields(build_time_counter.get_mean(), graph_size_kb,
+                               rss.get_discounted("after_tests"),
+                               FLAGS_has_edge_epochs, FLAGS_neighbours_epochs,
+                               FLAGS_aggregate_epochs);
   // write results to file
   std::ofstream f;
   f.open(FLAGS_output_file);

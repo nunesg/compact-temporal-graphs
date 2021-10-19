@@ -40,6 +40,14 @@ class EveLog : public AbstractGraph {
 
   std::string get_name() const override { return "EveLog"; }
 
+  uint measure_memory() const override {
+    uint sum = 0;
+    for (uint i = 0; i < n; i++) {
+      sum += adj[i].measure_memory();
+    }
+    return sum;
+  }
+
   // consider each edge being a pair {v, t}, where v is the vertex number, and t
   // is the time of the event
   void set_events(uint u, EdgeContainer& events) {

@@ -19,7 +19,7 @@ class TestSummary {
    has_edge_time_ms   FLOAT,
    neighbours_time_ms FLOAT,
    aggregate_time_ms  FLOAT,
-   graph_rss_kb       INT,
+   graph_size_kb       INT,
    max_rss_kb         INT,
    has_edge_epochs     INT,
    neighbours_epochs   INT,
@@ -38,11 +38,11 @@ class TestSummary {
     this->aggregate_counter = aggregate_counter;
   }
 
-  void set_remaining_fields(double build_time_ms, uint graph_rss_kb,
+  void set_remaining_fields(double build_time_ms, uint graph_size_kb,
                             uint max_rss_kb, uint has_edge_epochs,
                             uint neighbours_epochs, uint aggregate_epochs) {
     this->build_time_ms = build_time_ms;
-    this->graph_rss_kb = graph_rss_kb;
+    this->graph_size_kb = graph_size_kb;
     this->max_rss_kb = max_rss_kb;
     this->has_edge_epochs = has_edge_epochs;
     this->neighbours_epochs = neighbours_epochs;
@@ -67,7 +67,7 @@ class TestSummary {
             "      \"has_edge_time_ms\": %.4lf,\n"
             "      \"neighbours_time_ms\": %.4lf,\n"
             "      \"aggregate_time_ms\": %.4lf,\n"
-            "      \"graph_rss_kb\": %d,\n"
+            "      \"graph_size_kb\": %d,\n"
             "      \"max_rss_kb\": %d,\n"
             "      \"has_edge_epochs\": %d,\n"
             "      \"neighbours_epochs\": %d,\n"
@@ -75,7 +75,7 @@ class TestSummary {
             "}",
             graph_type.c_str(), V, E, T, build_time_ms, edge_counter.get_mean(),
             neighbour_counter.get_mean(), aggregate_counter.get_mean(),
-            graph_rss_kb, max_rss_kb, has_edge_epochs, neighbours_epochs,
+            graph_size_kb, max_rss_kb, has_edge_epochs, neighbours_epochs,
             aggregate_epochs);
     return std::string(str);
   }
@@ -85,7 +85,7 @@ class TestSummary {
   uint V;
   uint E;
   uint T;
-  uint graph_rss_kb;
+  uint graph_size_kb;
   uint max_rss_kb;
   uint has_edge_epochs;
   uint neighbours_epochs;

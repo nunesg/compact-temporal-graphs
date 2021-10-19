@@ -47,6 +47,7 @@ def run_version(config, version, database):
             output_file=output_file))
 
     try:
+        print("running...")
         pmonitor.execute(shell=True)
         # poll as often as possible; otherwise the subprocess might
         # "sneak" in some extra memory usage while you aren't looking

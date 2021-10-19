@@ -27,6 +27,8 @@ class AbstractGraph {
 
   virtual std::string get_name() const = 0;
 
+  virtual uint measure_memory() const = 0;
+
   // virtual uint size_edges() const = 0;
 
   uint size() const { return this->n; }

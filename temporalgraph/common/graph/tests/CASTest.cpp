@@ -70,7 +70,7 @@ TEST(CASTest, CAS_test) {
   for (uint x = 0; x < graphs; x++) {
     GraphUtils::TemporalAdjacencyList adj =
         TestUtils::get_random_graph(V, E, T);
-    graph.reset(adj);
+    CAS graph(adj);
     LOG(INFO) << "adj: " << GraphUtils::to_string(adj);
     // LOG(INFO) << graph.to_string();
 
@@ -96,54 +96,10 @@ TEST(CASTest, CAS_test) {
         }
       }
     }
+    LOG(INFO) << graph.to_string();
+    EXPECT_EQ(graph.get_name(), std::string("CAS"));
   }
-  EXPECT_EQ(graph.get_name(), std::string("CAS"));
-
-  LOG(INFO) << graph.to_string();
 }
-
-// // test expected functionalities of CAS data structure
-// TEST(CASTest, cas_test) {
-//   /*
-//     init
-//   */
-
-//   /*
-//     0:
-//     1: {1, {20, 22}}, {2, {25, 28}}
-//     2: {2, {30, 32}}
-//   */
-//   CAS::TemporalAdjacencyList adj{
-//       {}, {{1, {25, 28}}, {2, {20, 25}}}, {{2, {30, 32}}}};
-//   CAS graph(adj);
-//   EXPECT_EQ(3, graph.size());
-
-//   for (uint i = 0; i <= 35; i++) {
-//     for (uint j = i; j <= 35; j++) {
-//       for (uint u = 0; u < 3; u++) {
-//         for (uint v = 0; v < 3; v++) {
-//           // LOG(INFO) << "u: " << u << " v: " << v << " i: " << i << " j: "
-//           <<
-//           // j;
-//           EXPECT_EQ(graph.has_edge(u, v, i, j), has_edge(u, v, i, j, adj));
-//         }
-//         EXPECT_EQ(true,
-//                   equals(neighbours(adj, u, i, j), graph.neighbours(u, i,
-//                   j)));
-//       }
-//       EXPECT_EQ(true, equals(aggregate(adj, i, j), graph.aggregate(i, j)));
-//     }
-//   }
-//   EXPECT_EQ(graph.get_name(), std::string("CAS"));
-//   LOG(INFO) << graph.to_string();
-
-//   // auto expected_edges = aggregate(adj, 26, 30);
-//   // // LOG(INFO) << "aggregate(26, 30):";
-//   // // for (auto& p : expected_edges) {
-//   // //   LOG(INFO) << "(" << p.first << "," << p.second << ")";
-//   // // }
-//   // EXPECT_EQ(expected_edges, graph.aggregate(i, j));
-// }
 
 }  // namespace test
 }  // namespace temporalgraph

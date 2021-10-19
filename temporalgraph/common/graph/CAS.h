@@ -129,6 +129,10 @@ class CAS : public AbstractGraph {
 
   std::string get_name() const override { return "CAS"; }
 
+  uint measure_memory() const override {
+    return sizeof(offset) + bitv.measure_memory() + wavelet.measure_memory();
+  }
+
   std::string to_string() const {
     std::string line("CAS_");
     line += wavelet.to_string();

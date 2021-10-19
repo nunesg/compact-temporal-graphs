@@ -105,6 +105,17 @@ class GraphUtils {
     str += "}";
     return str;
   }
+
+  template <typename T = TemporalAdjacencyList>
+  static uint measure_memory(T adj) {
+    uint n = adj.size();
+    uint sum = sizeof(T);
+    for (uint i = 0; i < n; i++) {
+      sum += sizeof(TemporalNeighbourContainer) +
+             adj[i].size() * sizeof(TemporalNeighbour);
+    }
+    return sum;
+  }
 };
 
 }  // namespace temporalgraph

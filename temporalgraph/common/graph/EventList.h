@@ -127,6 +127,11 @@ class EventList {
     return line;
   }
 
+  uint measure_memory() const {
+    return sizeof(sz) + sizeof(n) + labels.measure_memory() +
+           timestamps.measure_memory() + deltaGapUtils.measure_memory();
+  }
+
  private:
   uint sz;
   uint n;
