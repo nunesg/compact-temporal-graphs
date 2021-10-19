@@ -14,7 +14,7 @@ namespace lib {
 
 class WaveletTreeNode {
  public:
-  using WaveletTreeNodePointer = typename std::shared_ptr<WaveletTreeNode>;
+  using WaveletTreeNodePointer = WaveletTreeNode*;
 
   // smallest value represented by this node
   uint low;
@@ -29,7 +29,7 @@ class WaveletTreeNode {
 
   uint get_mid() const { return low + (high - low) / 2; }
 
-  WaveletTreeNode() : low(0), high(0), bitvec() {}
+  WaveletTreeNode() : low(0), high(0), bitvec(), left(NULL), right(NULL) {}
 
   WaveletTreeNode(std::vector<uint> values, uint start, uint end, uint low,
                   uint high)
@@ -40,6 +40,11 @@ class WaveletTreeNode {
   WaveletTreeNode(const std::initializer_list<uint>& values, uint start,
                   uint end, uint low, uint high)
       : WaveletTreeNode(std::vector<uint>(values), start, end, low, high) {}
+
+  ~WaveletTreeNode() {
+    if (left) delete left;
+    if (right) delete right;
+  }
 
   void build(std::vector<uint>& values, uint start, uint end, uint low,
              uint high) {
@@ -58,8 +63,8 @@ class WaveletTreeNode {
                      values.begin();
     bitvec.reset(b);
 
-    left.reset(new WaveletTreeNode(values, start, pivot_idx, low, mid));
-    right.reset(new WaveletTreeNode(values, pivot_idx, end, mid + 1, high));
+    left = new WaveletTreeNode(values, start, pivot_idx, low, mid);
+    right = new WaveletTreeNode(values, pivot_idx, end, mid + 1, high);
   }
 
   uint size() const { return bitvec.size(); }
@@ -123,6 +128,14 @@ class WaveletTreeNode {
       right->range_report(bitvec.rank(l), bitvec.rank(r), result);
     }
   }
+
+  // measure memory used in bytes
+  uint measure_memory() const {
+    uint l = (left) ? left->measure_memory() : 0;
+    uint r = (right) ? right->measure_memory() : 0;
+    return sizeof(low) + sizeof(high) + sizeof(left) + sizeof(right) + l + r +
+           bitvec.measure_memory();
+  }
 };
 
 // ========================= Wavelet Tree ========================
@@ -132,7 +145,7 @@ class WaveletTree : public WaveletTreeInterface {
   using Node = WaveletTreeNode;
   using NodePtr = WaveletTreeNode::WaveletTreeNodePointer;
 
-  WaveletTree() {}
+  WaveletTree() : root(NULL) {}
 
   WaveletTree(const std::vector<uint>& values) : WaveletTree() {
     reset(values);
@@ -141,10 +154,18 @@ class WaveletTree : public WaveletTreeInterface {
   WaveletTree(const std::initializer_list<uint>& values)
       : WaveletTree(std::vector<uint>(values)) {}
 
+  ~WaveletTree() {
+    if (root) delete root;
+  }
+
   void reset(const std::vector<uint>& values) {
+    if (root) {
+      delete root;
+      root = NULL;
+    }
     low = *std::min_element(values.begin(), values.end());
     high = *std::max_element(values.begin(), values.end());
-    root.reset(new WaveletTreeNode(values, 0, values.size(), low, high));
+    root = new WaveletTreeNode(values, 0, values.size(), low, high);
   }
 
   uint size() const { return root->size(); }
@@ -241,6 +262,11 @@ class WaveletTree : public WaveletTreeInterface {
     }
     s += "]";
     return s;
+  }
+
+  // measure memory used in bytes
+  uint measure_memory() const override {
+    return sizeof(low) + sizeof(high) + root->measure_memory();
   }
 
  private:

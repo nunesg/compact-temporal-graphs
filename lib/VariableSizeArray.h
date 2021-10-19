@@ -48,6 +48,12 @@ class VariableSizeArray : public Array {
 
   void reset(const std::vector<uint>& values) { setup(values); }
 
+  // measure memory used in bytes
+  uint measure_memory() const override {
+    return sizeof(blockSize) + sizeof(sz) + bitStream.measure_memory() +
+           offsets.measure_memory();
+  }
+
  private:
   // TODO: make this equal to BitmaskUtility::kWordSize * ln(2)
   static const uint blockSize = 2;  // k

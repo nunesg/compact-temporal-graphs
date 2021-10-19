@@ -119,6 +119,12 @@ class FixedSizeArray : public Array {
     return str + "]";
   }
 
+  // measure memory used in bytes
+  uint measure_memory() const override {
+    return sizeof(sz) + sizeof(bit_size) + sizeof(array_size) +
+           get_array_memory();
+  }
+
  private:
   uint sz;
   uint bit_size;
@@ -178,6 +184,11 @@ class FixedSizeArray : public Array {
       throw std::runtime_error(
           "Invalid bit interval! Interval should fit in a word len");
     }
+  }
+
+  uint get_array_memory() const {
+    if (!array_size) return 0;
+    return array_size * sizeof(array[0]);
   }
 };
 

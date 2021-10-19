@@ -55,6 +55,12 @@ class Heap {
 
   std::string to_string() const { return heap.to_string(); }
 
+  // measure memory used in bytes
+  uint measure_memory() const {
+    return heap.measure_memory() + sizeof(max_size) + sizeof(sz) +
+           sizeof(comparator);
+  }
+
  private:
   FixedSizeArray heap;
   uint max_size;

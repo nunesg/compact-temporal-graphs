@@ -16,11 +16,24 @@ namespace lib {
 template <typename BitArrayType = BitArray>
 class ClarkSelect {
  public:
-  ClarkSelect() : bit_stream_ptr(NULL), bit_value(1) {}
+  ClarkSelect()
+      : bit_value(1),
+        big_sparse_lookup(NULL),
+        small_sparse_lookup(NULL),
+        big_block_sparse_ptr(NULL),
+        small_block_sparse_ptr(NULL),
+        bit_stream_ptr(NULL) {}
 
-  ClarkSelect(const std::shared_ptr<BitArrayType>& bits, uint bit_val = 1) {
-    bit_stream_ptr = bits;
+  ClarkSelect(BitArrayType& bits, uint bit_val = 1) : ClarkSelect() {
+    bit_stream_ptr = &bits;
     bit_value = bit_val;
+  }
+
+  ~ClarkSelect() {
+    // if (big_sparse_lookup) delete[] big_sparse_lookup;
+    // if (small_sparse_lookup) delete[] small_sparse_lookup;
+    // if (big_block_sparse_ptr) delete big_block_sparse_ptr;
+    // if (small_block_sparse_ptr) delete small_block_sparse_ptr;
   }
 
   void build() {
@@ -66,6 +79,36 @@ class ClarkSelect {
                                   idx, end - start + 1, bit_value);
   }
 
+  // measure memory used in bytes
+  uint measure_memory() const {
+    // LOG(INFO) << "Select memory: "
+    //           << "big_block_select: " << big_block_select.measure_memory()
+    //           << ", small_block_select: " <<
+    //           small_block_select.measure_memory()
+    //           << ", lookup memory: " << get_lookup_memory()
+    //           << ", big_block_sparse: "
+    //           << big_block_sparse_ptr->measure_memory()
+    //           << ", big_sparse_rank_mgr: "
+    //           << big_sparse_rank_manager.measure_memory()
+    //           << ", small_block_sparse: "
+    //           << small_block_sparse_ptr->measure_memory()
+    //           << ", small_sparse_rank_mgr: "
+    //           << small_sparse_rank_manager.measure_memory()
+    //           << ", bit_stream: " << bit_stream_ptr->measure_memory();
+
+    uint big = big_block_select.measure_memory() +
+               big_sparse_rank_manager.measure_memory();
+    if (big_block_sparse_ptr) big += big_block_sparse_ptr->measure_memory();
+
+    uint small = small_block_select.measure_memory() +
+                 small_sparse_rank_manager.measure_memory();
+    if (small_block_sparse_ptr)
+      small += small_block_sparse_ptr->measure_memory();
+
+    uint bits = bit_stream_ptr ? bit_stream_ptr->measure_memory() : 0;
+    return big + small + bits + get_lookup_memory();
+  }
+
  private:
   // which kind of bit this select is about: 0s or 1s
   uint bit_value;
@@ -93,15 +136,15 @@ class ClarkSelect {
   // sparse small block lookup table (subblock, idx_on_subblock) -> answer
   FixedSizeArray* small_sparse_lookup;  // O(n*loglogn/sqrtlogn)
   // answer whether big blocks are sparse
-  std::shared_ptr<BitArrayType> big_block_sparse_ptr;
+  BitArrayType* big_block_sparse_ptr;
   // rank manager for big_block_sparse_ptr bitarray
   JacobsonRank<BitArrayType> big_sparse_rank_manager;
   // answer whether small blocks are sparse
-  std::shared_ptr<BitArrayType> small_block_sparse_ptr;
+  BitArrayType* small_block_sparse_ptr;
   // rank manager for big_block_sparse_ptr bitarray
   JacobsonRank<BitArrayType> small_sparse_rank_manager;
   // bit array
-  std::shared_ptr<BitArrayType> bit_stream_ptr;
+  BitArrayType* bit_stream_ptr;
 
   void setup_big(uint n, uint logn, uint log2n) {
     big_block_weight = log2n;                                   // log^2
@@ -109,13 +152,13 @@ class ClarkSelect {
     uint n_big_blocks = 1 + n / big_block_weight;
 
     big_block_select.resize(n_big_blocks,
-                            logn);  // O(n/logn) = o(n)
-    const uint big_sparse_size = 1 + n / big_block_threshold;  // O(n/log^4)
+                            logn);                       // O(n/logn) = o(n)
+    const uint big_sparse_size = get_big_sparse_size();  // O(n/log^4)
     big_sparse_lookup = new FixedSizeArray[big_sparse_size];
     for (uint i = 0; i < big_sparse_size; i++) {
       big_sparse_lookup[i].resize(big_block_weight, logn);  // O(log^3)
     }
-    big_block_sparse_ptr.reset(new BitArrayType(n_big_blocks));
+    big_block_sparse_ptr = new BitArrayType(n_big_blocks);
   }
 
   void setup_small(uint n, uint logn, uint sqrtlogn, uint loglogn) {
@@ -128,13 +171,13 @@ class ClarkSelect {
         n_small_blocks,
         rel_val_bit_size);  // O(loglogn*n/sqrtlogn) = o(n)
 
-    const uint small_sparse_size = 1 + n / small_block_threshold;  // O(n/logn)
+    const uint small_sparse_size = get_small_sparse_size();  // O(n/logn)
     small_sparse_lookup = new FixedSizeArray[small_sparse_size];
     for (uint i = 0; i < small_sparse_size; i++) {
       small_sparse_lookup[i].resize(small_block_weight,
                                     rel_val_bit_size);  // O(sqrtlog*loglog)
     }
-    small_block_sparse_ptr.reset(new BitArrayType(n_small_blocks));
+    small_block_sparse_ptr = new BitArrayType(n_small_blocks);
   }
 
   void build_blocks() {
@@ -171,7 +214,7 @@ class ClarkSelect {
       uint delta = nxt_val - big_block_select[i];
       big_block_sparse_ptr->write(i, delta >= big_block_threshold);
     }
-    big_sparse_rank_manager.reset(big_block_sparse_ptr);
+    big_sparse_rank_manager.reset(*big_block_sparse_ptr);
     big_sparse_rank_manager.build();
     n_dense_big = n_big_blocks -
                   big_sparse_rank_manager.rank(big_block_sparse_ptr->size());
@@ -241,7 +284,7 @@ class ClarkSelect {
       uint delta = nxt_val - block_offset;
       small_block_sparse_ptr->write(i, delta >= small_block_threshold);
     }
-    small_sparse_rank_manager.reset(small_block_sparse_ptr);
+    small_sparse_rank_manager.reset(*small_block_sparse_ptr);
     small_sparse_rank_manager.build();
   }
 
@@ -300,6 +343,40 @@ class ClarkSelect {
 
   uint small_per_big() const {
     return ceil(1.0 * big_block_weight / small_block_weight);
+  }
+
+  uint get_small_sparse_size() const {
+    return 1 + bit_stream_ptr->size() / small_block_threshold;
+  }
+
+  uint get_big_sparse_size() const {
+    return 1 + bit_stream_ptr->size() / big_block_threshold;
+  }
+
+  uint get_variables_memory() const {
+    uint variables = sizeof(bit_value) + sizeof(total_rank) +
+                     sizeof(big_block_weight) + sizeof(n_big_blocks) +
+                     sizeof(n_dense_big) + sizeof(big_block_threshold) +
+                     sizeof(small_block_weight) + sizeof(n_small_blocks) +
+                     sizeof(small_block_threshold);
+    return variables;
+  }
+
+  uint get_lookup_memory() const {
+    uint sum = sizeof(FixedSizeArray*) * 2;
+    if (big_sparse_lookup) {
+      uint big_sparse_size = get_big_sparse_size();
+      for (uint i = 0; i < big_sparse_size; i++) {
+        sum += big_sparse_lookup[i].measure_memory();
+      }
+    }
+    if (small_sparse_lookup) {
+      uint small_sparse_size = get_small_sparse_size();
+      for (uint i = 0; i < small_sparse_size; i++) {
+        sum += small_sparse_lookup[i].measure_memory();
+      }
+    }
+    return sum;
   }
 };
 

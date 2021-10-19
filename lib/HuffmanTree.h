@@ -67,6 +67,11 @@ class HuffmanBitTree {
 
   std::string to_string() const { return bit_tree.to_string(); }
 
+  // measure memory used in bytes
+  uint measure_memory() const {
+    return sizeof(leaf_bit_size) + bit_tree.measure_memory();
+  }
+
  private:
   BitArray bit_tree;
   // number of bits necessary to store the label of the leaves
@@ -182,6 +187,9 @@ class HuffmanTree {
     bit_tree.get_tree()->infix(s);
     return s;
   }
+
+  // measure memory used in bytes
+  uint measure_memory() const { return bit_tree.measure_memory(); }
 
  private:
   /*

@@ -23,6 +23,8 @@ class BitArray : public Array {
   BitArray(const std::initializer_list<uint>& values)
       : BitArray(std::vector<uint>(values)) {}
 
+  ~BitArray() {}
+
   uint size() const override { return array.size(); }
 
   void resize(uint n) { array.resize(n, 1); }
@@ -54,6 +56,9 @@ class BitArray : public Array {
   // TODO: add write_interval
 
   std::string to_string() const { return array.to_string(); }
+
+  // measure memory used in bytes
+  uint measure_memory() const override { return array.measure_memory(); }
 
  private:
   FixedSizeArray array;

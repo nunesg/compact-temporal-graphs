@@ -157,6 +157,7 @@ TEST(ArrayTest, bitArrayTest) {
   arr.write(32, 1);
   arr.write(33, 1);
   LOG(INFO) << arr.to_string();
+  // LOG(INFO) << "memory spent by bitstream: " << arr.measure_memory();
   for (uint i = 0; i < arr.size(); i++) {
     EXPECT_EQ(arr[i], bit_stream[i]);
   }
@@ -166,6 +167,7 @@ TEST(ArrayTest, bitArrayTest) {
   EXPECT_EQ(arr.read_interval(30, 31), 3);
   EXPECT_EQ(arr.read_interval(32, 33), 3);
   EXPECT_EQ(arr.read_interval(30, 34), 15);
+  EXPECT_EQ(arr.measure_memory(), 20);
 }
 
 }  // namespace test

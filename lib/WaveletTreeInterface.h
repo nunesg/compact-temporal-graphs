@@ -25,6 +25,8 @@ class WaveletTreeInterface {
   virtual uint operator[](uint idx) const = 0;
 
   virtual std::string to_string() const = 0;
+
+  virtual uint measure_memory() const = 0;
 };
 
 }  // namespace lib

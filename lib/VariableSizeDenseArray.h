@@ -48,6 +48,13 @@ class VariableSizeDenseArray : public Array {
 
   void reset(const std::vector<uint>& values) { setup(values); }
 
+  // measure memory used in bytes
+  uint measure_memory() const override {
+    return sizeof(kBlockSize) + sizeof(kInBlockOffsetsBitSize) + sizeof(sz) +
+           sizeof(valueOffset) + bitStream.measure_memory() +
+           offsets.measure_memory() + inBlockOffsets.measure_memory();
+  }
+
  private:
   // 22 == BitmaskUtility::kWordSize * ln(2)
   static const uint kBlockSize = 22;  // k

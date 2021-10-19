@@ -15,6 +15,8 @@ class Array {
 
   virtual void write(uint, uint) = 0;
 
+  virtual uint measure_memory() const = 0;
+
   uint operator[](uint idx) const { return this->read(idx); }
 
   template <typename ArrayType>

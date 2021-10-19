@@ -68,6 +68,8 @@ class DeltaGapUtility {
     return values;
   }
 
+  uint measure_memory() const { return sizeof(offset); }
+
  private:
   int offset;
 

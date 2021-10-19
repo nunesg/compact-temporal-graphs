@@ -17,11 +17,9 @@ class JacobsonRank {
  public:
   JacobsonRank() : bit_stream_ptr(NULL) {}
 
-  JacobsonRank(const std::shared_ptr<BitArrayType>& bits) { reset(bits); }
+  JacobsonRank(BitArrayType& bits) { reset(bits); }
 
-  void reset(const std::shared_ptr<BitArrayType>& bits) {
-    bit_stream_ptr = bits;
-  }
+  void reset(BitArrayType& bits) { bit_stream_ptr = &bits; }
 
   void build() {
     assert(bit_stream_ptr != NULL);
@@ -50,13 +48,22 @@ class JacobsonRank {
            (*bit_stream_ptr)[pos];
   }
 
+  // measure memory used in bytes
+  uint measure_memory() const {
+    uint big = big_block_rank.measure_memory();
+    uint small = small_block_rank.measure_memory();
+    uint bits = (bit_stream_ptr) ? bit_stream_ptr->measure_memory() : 0;
+    return sizeof(total_rank) + sizeof(big_block_size) +
+           sizeof(small_block_size) + bits + big + small;
+  }
+
  private:
   uint total_rank;
   uint big_block_size;
   uint small_block_size;
   FixedSizeArray big_block_rank;
   FixedSizeArray small_block_rank;
-  std::shared_ptr<BitArrayType> bit_stream_ptr;
+  BitArrayType* bit_stream_ptr;
 
   void build_blocks() {
     uint n = bit_stream_ptr->size();

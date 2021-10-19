@@ -32,6 +32,8 @@ TEST(HeapTest, pushTest) {
   LOG(INFO) << "heap = " << heap.to_string();
   EXPECT_EQ(heap.top(), 0);
 
+  LOG(INFO) << "memory used: " << heap.measure_memory();
+
   try {
     heap.push(0);
     LOG(FATAL) << "Fail! Expected exception";

@@ -42,6 +42,8 @@ class HuffmanUtility {
     return;
   }
 
+  uint measure_memory() const { return tree.measure_memory(); }
+
   template <typename ArrayType>
   static HuffmanTree::Node* get_tree(const ArrayType& values,
                                      CodeContainer& codes) {

@@ -93,7 +93,7 @@ cc_library(
 cc_library(
     name = "wavelet_tree",
     hdrs = [
-        "HuffmanWaveletTree.h",
+        # "HuffmanWaveletTree.h",
         "WaveletTree.h",
         "WaveletTreeInterface.h",
     ],
