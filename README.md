@@ -2,7 +2,7 @@
 
 This project aims to implement temporal graphs using compact data structures (CDS).
 The goal is to implement several versions (v0, v1 ...) in which each version will 
-use different sets of CDSs in its implementation, which we'll then compare memory and time efficiency in each of them.
+use different sets of CDSs in its implementation, which we'll then compare memory and time efficiency between each of them.
 
 ## Setup
 
@@ -42,7 +42,7 @@ experiments_data(
     has_edge_time_ms    FLOAT,
     neighbours_time_ms  FLOAT,
     aggregate_time_ms   FLOAT,
-    graph_size_kb        INT,
+    graph_size_kb       INT,
     max_rss_kb          INT,
     has_edge_epochs     INT,
     neighbours_epochs   INT,
